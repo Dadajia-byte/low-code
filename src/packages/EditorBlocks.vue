@@ -15,9 +15,7 @@ const config = inject('config')
 
 // 从组件利用映射拿到对应组件
 const component = config.componentMap[block.key]
-console.log(render);
 
-console.log(component.render());
 
 const renderComponent = component.render()
 
