@@ -9,7 +9,12 @@
       </div>
     </div>
     <!-- 顶部菜单栏 -->
-    <div class="editor-top">菜单栏</div>
+    <div class="editor-top">
+      <div v-for="(btn, index) in buttons" :key="index" @click="btn.handler" class="editor-top-button">
+        <i :class="btn.icon" class="iconfont"></i>
+        <span>{{ btn.label }}</span>
+      </div>
+    </div>
     <!-- 右侧属性控制栏 -->
     <div class="editor-right">属性控制栏</div>
     <!-- 中间画布 -->
@@ -36,11 +41,12 @@
 <script setup>
 /* 编辑区 */
 import EditorBlocks from './EditorBlocks.vue';
-import { computed, inject, ref } from 'vue';
+import { computed, inject, onMounted, ref } from 'vue';
 import { cloneDeep } from 'lodash'
 import useMenuDragger from '../utils/useMenuDragger';
 import { useFocus } from '../utils/useFocus';
 import { useBlockDragger } from '../utils/useBlockDragger';
+import { useCommand } from '../utils/useCommand';
 const { modelValue } = defineProps({
   modelValue: { type: Object }
 })
@@ -75,7 +81,19 @@ let { blockMouseDown, focusData, containerMouseDown, lastSelectBlock } = useFocu
 let { mousedown, markline } = useBlockDragger(focusData, lastSelectBlock, data)
 
 
+const { commands } = useCommand();
 
+// 所有可能使用的按钮
+const buttons = [
+  { label: '撤销', icon: 'icon-chexiao', handler: () => commands.undo() },
+  { label: '重做', icon: 'icon-zhongzuo', handler: () => commands.redo() }
+]
+
+
+onMounted(() => {
+  console.log(commands);
+
+})
 </script>
 
 
@@ -94,7 +112,6 @@ let { mousedown, markline } = useBlockDragger(focusData, lastSelectBlock, data)
     top: 0;
     bottom: 0;
     height: 100%;
-    background-color: red;
   }
 
   &-left {
@@ -146,7 +163,27 @@ let { mousedown, markline } = useBlockDragger(focusData, lastSelectBlock, data)
     right: 280px;
     left: 280px;
     height: 80px;
-    background-color: blue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &-button {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      background-color: rgba(0, 0, 0, .3);
+      user-select: none;
+      cursor: pointer;
+      color: #fff;
+
+      &+& {
+        margin-left: 3px;
+      }
+    }
+
   }
 
   &-container {

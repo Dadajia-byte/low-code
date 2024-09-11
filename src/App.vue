@@ -7,8 +7,9 @@
 import Editor from "./packages/Editor.vue"
 import data from './data.json'
 import { provide, ref } from "vue"
+import './assets/icons/iconfont/iconfont.css'
 
-import { registerConfig as config } from './utils/EditorConfig';
+import { registerConfig as config } from './utils/editorConfig';
 const state = ref(data)
 provide('config', config)
 
@@ -19,8 +20,6 @@ provide('config', config)
 
 <style scoped>
 .app {
-
   height: 95vh;
-
 }
 </style>

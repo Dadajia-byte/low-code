@@ -1,4 +1,7 @@
 // 拖拽相关
+
+import { events } from "./event";
+
 /*
 1. dragenter 进入元素 增加移动标识
 2. dragover 经过目标元素，必须阻止默认行为，否则无法触发drop
@@ -45,6 +48,7 @@ export default function useMenuDragger(containerRef, data) {
     containerRef.value.addEventListener("dragleave", dragleave);
     containerRef.value.addEventListener("drop", drop);
     currentComponent = component;
+    events.emit("start"); // 发布start
   };
   const dragEnd = (e) => {
     // 移除事件
@@ -52,6 +56,7 @@ export default function useMenuDragger(containerRef, data) {
     containerRef.value.removeEventListener("dragover", dragover);
     containerRef.value.removeEventListener("dragleave", dragleave);
     containerRef.value.removeEventListener("drop", drop);
+    events.emit("end"); // 发布end
   };
 
   return {
