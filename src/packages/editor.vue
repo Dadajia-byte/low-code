@@ -21,10 +21,14 @@
           @mousedown="containerMouseDown">
           <div v-for="(item, index) in data.blocks" :key="index">
             <EditorBlocks :class="item.focus ? 'editor-block-focus' : 'editor-block'" :block="item"
-              @mousedown="(e) => blockMouseDown(e, item)">
+              @mousedown="(e) => blockMouseDown(e, item, index)">
             </EditorBlocks>
           </div>
+          <!-- 辅助线 -->
+          <div v-show="markline.x" class="line-x" :style="{ left: markline.x + 'px' }"></div>
+          <div v-show="markline.y" class="line-y" :style="{ top: markline.y + 'px' }"></div>
         </div>
+
       </div>
     </div>
   </div>
@@ -32,7 +36,7 @@
 <script setup>
 /* 编辑区 */
 import EditorBlocks from './EditorBlocks.vue';
-import { computed, inject, ref, watch } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { cloneDeep } from 'lodash'
 import useMenuDragger from '../utils/useMenuDragger';
 import { useFocus } from '../utils/useFocus';
@@ -62,15 +66,13 @@ const containerRef = ref(null)
 // 1. 实现物料堆拖拽
 const { dragStart, dragEnd } = useMenuDragger(containerRef, data)
 
-
-
-// 获取焦点后即可直接拖拽
-let { blockMouseDown, focusData, containerMouseDown } = useFocus(data, (e) => {
+// 2.获取焦点后即可直接拖拽
+let { blockMouseDown, focusData, containerMouseDown, lastSelectBlock } = useFocus(data, (e) => {
   mousedown(e);
 });
 
-// 2. 实现组件拖拽
-let { mousedown } = useBlockDragger(focusData)
+// 3. 实现组件拖拽
+let { mousedown, markline } = useBlockDragger(focusData, lastSelectBlock, data)
 
 
 
@@ -131,8 +133,6 @@ let { mousedown } = useBlockDragger(focusData)
         background-color: #ccc;
         opacity: 0.2;
         bottom: 0;
-
-
       }
     }
   }
@@ -152,20 +152,20 @@ let { mousedown } = useBlockDragger(focusData)
   &-container {
     padding: 80px 270px 0;
     margin: 20px auto;
-    width: 60%;
+
+
     height: calc(100% - 80px);
+    width: 60%;
 
     &-canvas {
-      overflow: scroll;
       height: 100%;
-
+      overflow: scroll;
+      width: 100%;
 
       &-content {
         position: relative;
-
         margin: auto;
         background-color: yellow;
-
       }
     }
   }
@@ -191,5 +191,19 @@ let { mousedown } = useBlockDragger(focusData)
     border: 2px dashed red;
   }
 
+}
+
+.line-x {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed red;
+}
+
+.line-y {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed red;
 }
 </style>
