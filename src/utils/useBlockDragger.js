@@ -108,6 +108,7 @@ export function useBlockDragger(focusData, lastSelectBlock, data) {
       block.top = dragState.startPos[index].top + durY;
       block.left = dragState.startPos[index].left + durX;
     });
+    console.log(dragState);
   };
   const mouseup = (e) => {
     document.removeEventListener("mousemove", mousemove);

@@ -151,21 +151,17 @@ let { mousedown, markline } = useBlockDragger(focusData, lastSelectBlock, data)
 
   &-container {
     padding: 80px 270px 0;
-    margin: 20px auto;
-
-
-    height: calc(100% - 80px);
-    width: 60%;
+    height: 100%;
+    box-sizing: border-box;
 
     &-canvas {
       height: 100%;
       overflow: scroll;
-      width: 100%;
 
       &-content {
-        position: relative;
-        margin: auto;
+        margin: 20px auto;
         background-color: yellow;
+        position: relative;
       }
     }
   }
