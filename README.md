@@ -1,5 +1,11 @@
-# Vue 3 + Vite
+# 低代码开发模板
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+### 核心技术
+vue3.4 + vite + element-plus + mitt
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+### 目标
+在公司打工二次开发别的开源的低代码平台时，总时掺杂些杂七杂八的东西，所以希望能在空余时间开发一个easy嵌入的低代码开发模板，随调随用，二次开发easy<br/>
+同时希望逐渐完善样式配置等，xiwang能做出高级感 ^ ^
+
+### 几句话
+写了一半才发现被单向数据流恶心坏了，同时传递数据的时候嵌了几层，在开发的时候就有点痛苦面具了，开始图方便用了mitt，想着开始就用pinia等状态库或许会好一点吧(悲)，希望之后有空能改
