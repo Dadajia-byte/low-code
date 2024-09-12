@@ -2,7 +2,7 @@
   <div class="editor">
     <!-- 左侧物料堆 -->
     <div class="editor-left">
-      <div draggable="true" @dragstart="(e) => dragStart(e, item)" @dragend="(e) => dragEnd(e, item)"
+      <div draggable="true" @dragstart="e => dragStart(e, item)" @dragend="e => dragEnd(e, item)"
         class="editor-left-item" v-for="(item, index) in config.componentList" :key="index">
         <span>{{ item.label }}</span>
         <component :is="item.preview"></component>
@@ -80,13 +80,13 @@ let { blockMouseDown, focusData, containerMouseDown, lastSelectBlock } = useFocu
 // 3. 实现组件拖拽
 let { mousedown, markline } = useBlockDragger(focusData, lastSelectBlock, data)
 
-
-const { commands } = useCommand();
+// 用于保存可能使用的所有指令(操作)
+const { commands } = useCommand(data);
 
 // 所有可能使用的按钮
 const buttons = [
-  { label: '撤销', icon: 'icon-chexiao', handler: () => commands.undo() },
-  { label: '重做', icon: 'icon-zhongzuo', handler: () => commands.redo() }
+  { label: '撤销', icon: 'icon-chexiao', handler: commands.undo },
+  { label: '重做', icon: 'icon-zhongzuo', handler: commands.redo }
 ]
 
 

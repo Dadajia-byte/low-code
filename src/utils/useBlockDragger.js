@@ -1,4 +1,5 @@
 import { reactive } from "vue";
+import { events } from "./event";
 
 export function useBlockDragger(focusData, lastSelectBlock, data) {
   let dragState = {
@@ -8,6 +9,7 @@ export function useBlockDragger(focusData, lastSelectBlock, data) {
   let markline = reactive({
     x: null,
     y: null,
+    dragging: false, // 当前是否正在拖拽
   });
   const mousedown = (e) => {
     const { width: BWidth, height: BHeight } = lastSelectBlock.value; // 最后一个拖拽的元素作为移动物
@@ -18,6 +20,7 @@ export function useBlockDragger(focusData, lastSelectBlock, data) {
       startLeft: lastSelectBlock.value.left, // 拖拽前的位置，用于比较是否产生辅助线
       startTop: lastSelectBlock.value.top,
       startPos: focusData.value.focus.map(({ top, left }) => ({ top, left })),
+      dragging: false,
       lines: (() => {
         const { unfocused } = focusData.value; // 未拖拽的元素，作为参照物
         let lines = { x: [], y: [] }; // 计算横线的位置，用y来存放横线，用x来存放竖线
@@ -73,8 +76,10 @@ export function useBlockDragger(focusData, lastSelectBlock, data) {
   };
   const mousemove = (e) => {
     let { clientX: moveX, clientY: moveY } = e;
-
-    // 计算当前元素最新的位置，用于确定是否产生显示线
+    if (!dragState.dragging) {
+      dragState.dragging = true;
+      events.emit("start");
+    } // 计算当前元素最新的位置，用于确定是否产生显示线
     let left = dragState.startLeft + (moveX - dragState.startX);
     let top = dragState.startTop + (moveY - dragState.startY);
 
@@ -108,15 +113,16 @@ export function useBlockDragger(focusData, lastSelectBlock, data) {
       block.top = dragState.startPos[index].top + durY;
       block.left = dragState.startPos[index].left + durX;
     });
-    console.log(dragState);
   };
   const mouseup = (e) => {
     document.removeEventListener("mousemove", mousemove);
     document.removeEventListener("mouseup", mouseup);
     markline.x = null;
     markline.y = null;
+    if (dragState.dragging) {
+      events.emit("end");
+    }
   };
-  console.log(markline.x, markline.y);
 
   return {
     mousedown,
