@@ -41,7 +41,7 @@
 <script setup>
 /* 编辑区 */
 import EditorBlocks from './EditorBlocks.vue';
-import { computed, inject, onMounted, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { cloneDeep } from 'lodash'
 import useMenuDragger from '../utils/useMenuDragger';
 import { useFocus } from '../utils/useFocus';
@@ -82,7 +82,7 @@ let { blockMouseDown, focusData, containerMouseDown, lastSelectBlock } = useFocu
 let { mousedown, markline } = useBlockDragger(focusData, lastSelectBlock, data)
 
 // 用于保存可能使用的所有指令(操作)
-const { commands } = useCommand(data);
+const { commands } = useCommand(data, focusData);
 
 // 所有可能使用的按钮
 const buttons = [
@@ -109,18 +109,18 @@ const buttons = [
     },
   },
   {
-    label: '置顶', icon: 'icon-jichu_zhiding'
+    label: '置顶', icon: 'icon-jichu_zhiding', handler: () => {
+      commands.placeTop();
+    }
   },
   {
-    label: '置底', icon: 'icon-jichu_zhidi'
+    label: '置底', icon: 'icon-jichu_zhidi', handler: () => {
+      commands.placeBottom();
+    }
   }
 ]
 
 
-onMounted(() => {
-  console.log(commands);
-
-})
 </script>
 
 

@@ -1,7 +1,7 @@
 import { onUnmounted } from "vue";
 import { events } from "./event";
 import { cloneDeep } from "lodash";
-export const useCommand = (data) => {
+export const useCommand = (data, focusData) => {
   const state = {
     // 前进后退需要指针
     current: -1, // 前进后退的索引值
@@ -112,6 +112,58 @@ export const useCommand = (data) => {
         },
         undo: () => {
           data.value = state.before;
+        },
+      };
+    },
+  });
+  // 置顶
+  registry({
+    name: "placeTop",
+    pushQueue: true,
+    execute() {
+      let before = cloneDeep(data.value.blocks);
+      let after = (() => {
+        // 置顶就是在所有的block中找到最大的zIndex再加1
+        let { focus, unfocused } = focusData.value;
+        let maxZIndex = Math.max(...unfocused.map((item) => item.zIndex)) + 1;
+        focus.forEach((block) => (block.zIndex = maxZIndex++)); // 让当前选中的比最大的+1
+        return data.value.blocks;
+      })();
+      return {
+        undo: () => {
+          // 如果当前blocks前后一致，则不会更新
+          data.value = { ...data.value, blocks: before };
+        },
+        redo: () => {
+          data.value = { ...data.value, blocks: after };
+        },
+      };
+    },
+  });
+  // 置底
+  registry({
+    name: "placeBottom",
+    pushQueue: true,
+    execute() {
+      let before = cloneDeep(data.value.blocks);
+      let after = (() => {
+        // 置底就是在所有的block中找到最小的zIndex再减1，但是index不能是负的,所以让其他unfocused全部+1即可
+        let { focus, unfocused } = focusData.value;
+        let minZIndex = Math.min(...unfocused.map((item) => item.zIndex)) - 1;
+        if (minZIndex < 0) {
+          const dur = Math.abs(minZIndex);
+          minZIndex = 0;
+          unfocused.forEach((block) => (block.zIndex += dur));
+        }
+        focus.forEach((block) => (block.zIndex = minZIndex));
+        return data.value.blocks;
+      })();
+      return {
+        undo: () => {
+          data.value = { ...data.value, blocks: before };
+        },
+        redo: () => {
+          data.value = { ...data.value, blocks: after };
         },
       };
     },
