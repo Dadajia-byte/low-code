@@ -50,6 +50,7 @@ import { useCommand } from '../utils/useCommand';
 const { modelValue } = defineProps({
   modelValue: { type: Object }
 })
+import { $dialog } from '../components/Dialog/Dialog';
 const emit = defineEmits(['update:modelValue'])
 
 const config = inject('config');
@@ -86,7 +87,27 @@ const { commands } = useCommand(data);
 // 所有可能使用的按钮
 const buttons = [
   { label: '撤销', icon: 'icon-chexiao', handler: commands.undo },
-  { label: '重做', icon: 'icon-zhongzuo', handler: commands.redo }
+  { label: '重做', icon: 'icon-zhongzuo', handler: commands.redo },
+  {
+    label: '导出', icon: 'icon-daochu', handler: () => {
+      $dialog({
+        title: '导出JSON',
+        content: JSON.stringify(data.value)
+      })
+    },
+  },
+  {
+    label: '导入', icon: 'icon-daoru', handler: () => {
+      $dialog({
+        title: '导入JSON',
+        footer: true,
+        onConfirm(text) {
+          // data.value = JSON.parse(text); // 这样更改无法实现撤销和重做
+          commands.updateContainer(JSON.parse(text))
+        }
+      })
+    },
+  }
 ]
 
 

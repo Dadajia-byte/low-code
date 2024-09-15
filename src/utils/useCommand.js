@@ -13,10 +13,9 @@ export const useCommand = (data) => {
 
   const registry = (command) => {
     state.commandArray.push(command);
-
-    state.commands[command.name] = () => {
+    state.commands[command.name] = (...args) => {
       // 获取的是执行函数,多嵌一层以实现闭包
-      const { redo, undo } = command.execute();
+      const { redo, undo } = command.execute(...args);
       redo();
       if (!command.pushQueue) {
         return;
@@ -94,6 +93,25 @@ export const useCommand = (data) => {
         undo() {
           // 前一步
           data.value = { ...data.value, blocks: before };
+        },
+      };
+    },
+  });
+  // 更新整个容器
+  registry({
+    name: "updateContainer",
+    pushQueue: true,
+    execute(newValue) {
+      let state = {
+        before: data.value, // 当前的值
+        after: newValue, // 更新之后的值
+      };
+      return {
+        redo: () => {
+          data.value = state.after;
+        },
+        undo: () => {
+          data.value = state.before;
         },
       };
     },

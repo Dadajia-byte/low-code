@@ -13,6 +13,20 @@
       "unicode_decimal": 59123
     },
     {
+      "icon_id": "5387381",
+      "name": "导出",
+      "font_class": "daochu",
+      "unicode": "eabf",
+      "unicode_decimal": 60095
+    },
+    {
+      "icon_id": "5387382",
+      "name": "导入",
+      "font_class": "daoru",
+      "unicode": "eac0",
+      "unicode_decimal": 60096
+    },
+    {
       "icon_id": "5387517",
       "name": "撤销",
       "font_class": "chexiao",
