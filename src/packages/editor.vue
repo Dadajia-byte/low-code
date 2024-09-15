@@ -86,7 +86,7 @@ const { commands } = useCommand(data);
 
 // 所有可能使用的按钮
 const buttons = [
-  { label: '撤销', icon: 'icon-chexiao', handler: commands.undo },
+  { label: '撤销', icon: 'icon-chehui', handler: commands.undo },
   { label: '重做', icon: 'icon-zhongzuo', handler: commands.redo },
   {
     label: '导出', icon: 'icon-daochu', handler: () => {
@@ -107,6 +107,12 @@ const buttons = [
         }
       })
     },
+  },
+  {
+    label: '置顶', icon: 'icon-jichu_zhiding'
+  },
+  {
+    label: '置底', icon: 'icon-jichu_zhidi'
   }
 ]
 
@@ -199,6 +205,14 @@ onMounted(() => {
       user-select: none;
       cursor: pointer;
       color: #fff;
+
+      .iconfont {
+        font-size: 28px;
+      }
+
+      span {
+        font-size: 12px;
+      }
 
       &+& {
         margin-left: 3px;

@@ -6,13 +6,6 @@
   "description": "",
   "glyphs": [
     {
-      "icon_id": "4890406",
-      "name": "重做",
-      "font_class": "zhongzuo",
-      "unicode": "e6f3",
-      "unicode_decimal": 59123
-    },
-    {
       "icon_id": "5387381",
       "name": "导出",
       "font_class": "daochu",
@@ -27,11 +20,32 @@
       "unicode_decimal": 60096
     },
     {
-      "icon_id": "5387517",
-      "name": "撤销",
-      "font_class": "chexiao",
-      "unicode": "eaf0",
-      "unicode_decimal": 60144
+      "icon_id": "32593013",
+      "name": "基础_置底",
+      "font_class": "jichu_zhidi",
+      "unicode": "e662",
+      "unicode_decimal": 58978
+    },
+    {
+      "icon_id": "32593015",
+      "name": "基础_置顶",
+      "font_class": "jichu_zhiding",
+      "unicode": "e663",
+      "unicode_decimal": 58979
+    },
+    {
+      "icon_id": "36590029",
+      "name": "撤回",
+      "font_class": "chehui",
+      "unicode": "e652",
+      "unicode_decimal": 58962
+    },
+    {
+      "icon_id": "36590249",
+      "name": "重做",
+      "font_class": "zhongzuo",
+      "unicode": "e667",
+      "unicode_decimal": 58983
     }
   ]
 }

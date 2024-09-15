@@ -2,7 +2,7 @@
     <ElDialog v-model="state.isShow" :title="state.option.title">
         <!-- 可以在这里添加对话框的内容 -->
         <template v-slot:default>
-            <ElInput type="textarea" v-model="state.option.content"></ElInput>
+            <ElInput type="textarea" :autosize="{ minRows: 16, maxRows: 24 }" v-model="state.option.content"></ElInput>
         </template>
 
         <!-- 底部插槽内容 -->
