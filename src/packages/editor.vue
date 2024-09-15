@@ -11,8 +11,8 @@
     <!-- 顶部菜单栏 -->
     <div class="editor-top">
       <div v-for="(btn, index) in buttons" :key="index" @click="btn.handler" class="editor-top-button">
-        <i :class="btn.icon" class="iconfont"></i>
-        <span>{{ btn.label }}</span>
+        <i :class="typeof btn.icon == 'function' ? btn.icon() : btn.icon" class="iconfont"></i>
+        <span>{{ typeof btn.label == 'function' ? btn.label() : btn.label }}</span>
       </div>
     </div>
     <!-- 右侧属性控制栏 -->
@@ -25,7 +25,7 @@
         <div class="editor-container-canvas-content" ref="containerRef" :style="containerStyles"
           @mousedown="containerMouseDown">
           <div v-for="(item, index) in data.blocks" :key="index">
-            <EditorBlocks :class="item.focus ? 'editor-block-focus' : 'editor-block'" :block="item"
+            <EditorBlocks :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }" :block="item"
               @mousedown="(e) => blockMouseDown(e, item, index)">
             </EditorBlocks>
           </div>
@@ -51,7 +51,9 @@ const { modelValue } = defineProps({
   modelValue: { type: Object }
 })
 import { $dialog } from '../components/Dialog/Dialog';
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue']);
+// 预览时 内容不再能操作，可以点击输入内容，方便看效果
+const previewRef = ref(false)
 
 const config = inject('config');
 const data = computed({
@@ -74,7 +76,13 @@ const containerRef = ref(null)
 const { dragStart, dragEnd } = useMenuDragger(containerRef, data)
 
 // 2.获取焦点后即可直接拖拽
-let { blockMouseDown, focusData, containerMouseDown, lastSelectBlock } = useFocus(data, (e) => {
+let {
+  blockMouseDown,
+  focusData, // 选中的节点列表
+  containerMouseDown,
+  lastSelectBlock, // 最后一个选中的节点
+  clearBlockFocus, // 清除所有选中
+} = useFocus(data, previewRef, (e) => {
   mousedown(e);
 });
 
@@ -108,14 +116,15 @@ const buttons = [
       })
     },
   },
+  { label: '置顶', icon: 'icon-jichu_zhiding', handler: commands.placeTop },
+  { label: '置底', icon: 'icon-jichu_zhidi', handler: commands.placeBottom },
+  { label: '删除', icon: 'icon-shanchu', handler: commands.delete },
   {
-    label: '置顶', icon: 'icon-jichu_zhiding', handler: () => {
-      commands.placeTop();
-    }
-  },
-  {
-    label: '置底', icon: 'icon-jichu_zhidi', handler: () => {
-      commands.placeBottom();
+    label: () => previewRef.value ? '编辑' : '预览',
+    icon: () => previewRef.value ? 'icon-bianji' : 'icon-yulan',
+    handler: () => {
+      previewRef.value = !previewRef.value;
+      clearBlockFocus()
     }
   }
 ]
@@ -207,7 +216,7 @@ const buttons = [
       color: #fff;
 
       .iconfont {
-        font-size: 28px;
+        font-size: 24px;
       }
 
       span {
@@ -250,7 +259,6 @@ const buttons = [
     right: 0;
     bottom: 0;
   }
-
 }
 
 .editor-block-focus {
@@ -258,7 +266,12 @@ const buttons = [
     content: '';
     border: 2px dashed red;
   }
+}
 
+.editor-block-preview {
+  &::after {
+    display: none;
+  }
 }
 
 .line-x {

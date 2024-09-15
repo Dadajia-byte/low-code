@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-export function useFocus(data, callback) {
+export function useFocus(data, previewRef, callback) {
   const selectIndex = ref(-1); // 记录最后一个被点击的元素
   const lastSelectBlock = computed(() => data.value.blocks[selectIndex.value]);
   // 获取哪些元素
@@ -21,6 +21,7 @@ export function useFocus(data, callback) {
     });
   };
   const blockMouseDown = (e, block, index) => {
+    if (previewRef.value) return;
     // 在block上规划一个属性 focus 获取焦点后将focus变为true
     e.preventDefault();
     e.stopPropagation();
@@ -41,6 +42,7 @@ export function useFocus(data, callback) {
     callback(e);
   };
   const containerMouseDown = () => {
+    if (previewRef.value) return;
     clearBlockFocus();
     selectIndex.value = -1;
   };
@@ -49,5 +51,6 @@ export function useFocus(data, callback) {
     focusData,
     containerMouseDown,
     lastSelectBlock,
+    clearBlockFocus,
   };
 }

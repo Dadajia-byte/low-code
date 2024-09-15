@@ -168,6 +168,25 @@ export const useCommand = (data, focusData) => {
       };
     },
   });
+  // 删除
+  registry({
+    name: "delete",
+    pushQueue: true,
+    execute() {
+      let state = {
+        before: cloneDeep(data.value.blocks), // 保证唯一
+        after: focusData.value.unfocused, // 留下的都是未选中的
+      };
+      return {
+        redo: () => {
+          data.value = { ...data.value, blocks: state.after };
+        },
+        undo: () => {
+          data.value = { ...data.value, blocks: state.before };
+        },
+      };
+    },
+  });
   // 键盘事件
   const keyboardEvent = (() => {
     const keyCodes = {

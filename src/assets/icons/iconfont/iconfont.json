@@ -20,6 +20,27 @@
       "unicode_decimal": 60096
     },
     {
+      "icon_id": "6966955",
+      "name": "预览",
+      "font_class": "yulan",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
+      "icon_id": "9495494",
+      "name": "编辑",
+      "font_class": "bianji",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "29657619",
+      "name": "删除",
+      "font_class": "shanchu",
+      "unicode": "e68c",
+      "unicode_decimal": 59020
+    },
+    {
       "icon_id": "32593013",
       "name": "基础_置底",
       "font_class": "jichu_zhidi",
