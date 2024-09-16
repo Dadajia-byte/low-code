@@ -1,4 +1,4 @@
-import { reactive } from "vue";
+
 import { events } from "./event";
 
 export function useBlockDragger(focusData, lastSelectBlock, data) {

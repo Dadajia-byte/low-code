@@ -8,7 +8,7 @@ import { events } from "./event";
 3. dragleave 离开元素 增加禁用标识
 4. drop 松手时 根据拖拽组件放置组件
  */
-export default function useMenuDragger(containerRef, data) {
+export function useMenuDragger(containerRef, data) {
   // 增设当前拖动元素
   let currentComponent = null;
   const dragenter = (e) => {

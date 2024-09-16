@@ -1,5 +1,4 @@
-import { ElButton, ElInput } from "element-plus";
-import { h } from "vue";
+
 /*
  *列表区可以显示所有物料，key对应所有组件的映射关系
  */

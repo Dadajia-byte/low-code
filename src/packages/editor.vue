@@ -1,5 +1,5 @@
 <template>
-  <div class="editor">
+  <div class="editor" v-if="editorRef">
     <!-- 左侧物料堆 -->
     <div class="editor-left">
       <div draggable="true" @dragstart="e => dragStart(e, item)" @dragend="e => dragEnd(e, item)"
@@ -25,35 +25,47 @@
         <div class="editor-container-canvas-content" ref="containerRef" :style="containerStyles"
           @mousedown="containerMouseDown">
           <div v-for="(item, index) in data.blocks" :key="index">
-            <EditorBlocks :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }" :block="item"
-              @mousedown="(e) => blockMouseDown(e, item, index)">
+            <EditorBlocks :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
+              :block="item" @mousedown="(e) => blockMouseDown(e, item, index)"
+              @Contextmenu="(e) => onContextMenu(e, block)">
             </EditorBlocks>
           </div>
           <!-- 辅助线 -->
           <div v-show="markline.x" class="line-x" :style="{ left: markline.x + 'px' }"></div>
           <div v-show="markline.y" class="line-y" :style="{ top: markline.y + 'px' }"></div>
         </div>
-
       </div>
     </div>
+  </div>
+  <div v-if="!editorRef">
+    <div class="editor-container-canvas-content" :style="containerStyles" style="margin: 0;">
+      <div v-for="(item, index) in data.blocks" :key="index">
+        <EditorBlocks class="editor-block-preview" :block="item" />
+      </div>
+    </div>
+    <ElButton type="primary" @click="editorRef = true">继续编辑</ElButton>
   </div>
 </template>
 <script setup>
 /* 编辑区 */
 import EditorBlocks from './EditorBlocks.vue';
-import { computed, inject, ref } from 'vue';
 import { cloneDeep } from 'lodash'
-import useMenuDragger from '../utils/useMenuDragger';
-import { useFocus } from '../utils/useFocus';
-import { useBlockDragger } from '../utils/useBlockDragger';
-import { useCommand } from '../utils/useCommand';
+import {
+  useFocus,
+  useMenuDragger,
+  useBlockDragger,
+  useCommand
+} from "../utils"
+import { $dropdown } from "../components/Dropdown/Dropdown";
+import { $dialog } from '../components/Dialog/Dialog';
 const { modelValue } = defineProps({
   modelValue: { type: Object }
 })
-import { $dialog } from '../components/Dialog/Dialog';
+
 const emit = defineEmits(['update:modelValue']);
 // 预览时 内容不再能操作，可以点击输入内容，方便看效果
 const previewRef = ref(false)
+const editorRef = ref(true)
 
 const config = inject('config');
 const data = computed({
@@ -92,6 +104,18 @@ let { mousedown, markline } = useBlockDragger(focusData, lastSelectBlock, data)
 // 用于保存可能使用的所有指令(操作)
 const { commands } = useCommand(data, focusData);
 
+// 右键菜单
+const onContextMenu = (e, block) => {
+  e.preventDefault();
+  $dropdown({
+    el: e.target,// 以哪个元素作为基准
+    isShow: true,
+    option: {}
+  })
+
+
+}
+
 // 所有可能使用的按钮
 const buttons = [
   { label: '撤销', icon: 'icon-chehui', handler: commands.undo },
@@ -125,6 +149,11 @@ const buttons = [
     handler: () => {
       previewRef.value = !previewRef.value;
       clearBlockFocus()
+    }
+  },
+  {
+    label: '关闭', icon: 'icon-guanbi', handler: () => {
+      editorRef.value = false
     }
   }
 ]

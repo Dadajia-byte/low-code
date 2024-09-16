@@ -1,4 +1,3 @@
-import { computed, ref } from "vue";
 export function useFocus(data, previewRef, callback) {
   const selectIndex = ref(-1); // 记录最后一个被点击的元素
   const lastSelectBlock = computed(() => data.value.blocks[selectIndex.value]);

@@ -14,9 +14,6 @@
 </template>
 
 <script setup>
-import { ElDialog, ElInput, ElButton } from "element-plus";
-import { reactive, defineExpose, defineProps } from "vue";
-
 const props = defineProps({
     option: Object,
 });
