@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import AutoImport from 'unplugin-auto-import/vite';
+import {resolve} from "path";
 
 export default defineConfig({
   plugins: [
@@ -15,4 +16,12 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],  // 自动导入 Element Plus
     }),
   ],
+  resolve:{
+    alias:[
+      {
+        find:'@',
+        replacement:resolve(__dirname,'./src')
+      }
+    ]
+  }
 });

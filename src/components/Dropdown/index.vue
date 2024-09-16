@@ -1,7 +1,7 @@
 <template>
     <div :class="{ 'dropdown': true, 'dropdown-isShow': state.isShow }"
         :style="{ top: state.top + 'px', left: state.left + 'px' }" ref="el">
-        下拉菜单内容区
+        <component :is="state.option.content" />
     </div>
 </template>
 
@@ -30,6 +30,10 @@ const onMousedownDocument = (e) => {
         state.isShow = false;
     }
 }
+
+provide('hide', () => {
+    state.isShow = false;
+})
 onMounted(() => {
     // 事件的传递行为是先捕获再冒泡
     // 之前为了阻止事件的传播，我们给所有的block都增加了stopPropagation

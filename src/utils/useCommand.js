@@ -30,8 +30,9 @@ export const useCommand = (data, focusData) => {
       state.current = current + 1; // 索引加一
     };
   };
+  // 重做
   registry({
-    // 重做
+
     name: "redo",
     keyboard: "ctrl+y",
     execute() {
@@ -46,8 +47,9 @@ export const useCommand = (data, focusData) => {
       };
     },
   });
+  // 撤销
   registry({
-    // 撤销
+
     name: "undo",
     keyboard: "ctrl+z",
     execute() {
@@ -64,9 +66,8 @@ export const useCommand = (data, focusData) => {
     },
   });
   registry({
-    // 如果将希望操作放到队列里 可以增加一个属性用于标识
     name: "drag",
-    pushQueue: true,
+    pushQueue: true,// 如果将希望操作放到队列里 可以增加一个属性用于标识
     init() {
       // 初始化操作，默认会执行
       this.before = null;
@@ -111,6 +112,34 @@ export const useCommand = (data, focusData) => {
         },
         undo: () => {
           data.value = state.before;
+        },
+      };
+    },
+  });
+  // 更新单个block
+  registry({
+    name: "updateBlock",
+    pushQueue: true,
+    execute(newValue,oldValue) {
+      let state = {
+        before: data.value.blocks, // 当前的值
+        after: (()=>{
+          let blocks = [...data.value.blocks]; // 拷贝一份用于赋值
+          const index = data.value.blocks.indexOf(oldValue); // 找到老的索引值
+          if(index>-1) {
+            blocks.splice(index,1,newValue) // 重新赋值
+          }
+          console.log(blocks);
+          
+          return blocks
+        })(), // 更新之后的值
+      };
+      return {
+        redo: () => {
+          data.value = {...data.value,blocks:state.after};
+        },
+        undo: () => {
+          data.value = {...data.value,blocks:state.before};
         },
       };
     },

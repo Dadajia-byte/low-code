@@ -1,5 +1,5 @@
 import { createVNode,render } from "vue";
-import DropdownComponent from "./DropdownComponent.vue";
+import DropdownComponent from "./index.vue";
 let vnode;
 export function $dropdown(option) {
     if(!vnode) {

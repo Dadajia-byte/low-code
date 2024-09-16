@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "2404482",
+      "name": "顶层",
+      "font_class": "dingceng",
+      "unicode": "e648",
+      "unicode_decimal": 58952
+    },
+    {
+      "icon_id": "2404483",
+      "name": "底层",
+      "font_class": "diceng",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
       "icon_id": "5387381",
       "name": "导出",
       "font_class": "daochu",
@@ -18,6 +32,13 @@
       "font_class": "daoru",
       "unicode": "eac0",
       "unicode_decimal": 60096
+    },
+    {
+      "icon_id": "5387522",
+      "name": "关闭",
+      "font_class": "guanbi",
+      "unicode": "eaf2",
+      "unicode_decimal": 60146
     },
     {
       "icon_id": "6966955",
@@ -39,20 +60,6 @@
       "font_class": "shanchu",
       "unicode": "e68c",
       "unicode_decimal": 59020
-    },
-    {
-      "icon_id": "32593013",
-      "name": "基础_置底",
-      "font_class": "jichu_zhidi",
-      "unicode": "e662",
-      "unicode_decimal": 58978
-    },
-    {
-      "icon_id": "32593015",
-      "name": "基础_置顶",
-      "font_class": "jichu_zhiding",
-      "unicode": "e663",
-      "unicode_decimal": 58979
     },
     {
       "icon_id": "36590029",

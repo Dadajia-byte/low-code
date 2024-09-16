@@ -27,7 +27,7 @@
           <div v-for="(item, index) in data.blocks" :key="index">
             <EditorBlocks :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
               :block="item" @mousedown="(e) => blockMouseDown(e, item, index)"
-              @Contextmenu="(e) => onContextMenu(e, block)">
+              @Contextmenu="(e) => onContextMenu(e, item)">
             </EditorBlocks>
           </div>
           <!-- 辅助线 -->
@@ -56,8 +56,9 @@ import {
   useBlockDragger,
   useCommand
 } from "../utils"
-import { $dropdown } from "../components/Dropdown/Dropdown";
-import { $dialog } from '../components/Dialog/Dialog';
+import { $dropdown } from "../components/Dropdown";
+import DropdownItem from "../components/Dropdown/components/DropdownItem/index.vue";
+import { $dialog } from '../components/Dialog';
 const { modelValue } = defineProps({
   modelValue: { type: Object }
 })
@@ -107,13 +108,38 @@ const { commands } = useCommand(data, focusData);
 // 右键菜单
 const onContextMenu = (e, block) => {
   e.preventDefault();
+  const contentVnode = h('div', {}, [
+    h(DropdownItem, { label: '删除', icon: "icon-shanchu", onClick: commands.delete }),
+    h(DropdownItem, { label: '置顶', icon: "icon-dingceng", onClick: commands.placeTop }),
+    h(DropdownItem, { label: '置底', icon: "icon-diceng", onClick: commands.placeBottom }),
+    h(DropdownItem, {
+      label: '查看', icon: "icon-yulan", onClick: () => {
+        $dialog({
+          title: '查看节点数据',
+          content: JSON.stringify(block)
+        })
+      }
+    }),
+    h(DropdownItem, {
+      label: '导入', icon: "icon-daoru", onClick: () => {
+        $dialog({
+          title: '导入节点数据',
+          content: '',
+          footer: true,
+          onConfirm(text) {
+            commands.updateBlock(JSON.parse(text), block)
+          }
+
+        })
+      }
+    }),
+  ])
+  console.log(contentVnode);
+
   $dropdown({
     el: e.target,// 以哪个元素作为基准
-    isShow: true,
-    option: {}
+    content: () => contentVnode
   })
-
-
 }
 
 // 所有可能使用的按钮
@@ -140,8 +166,8 @@ const buttons = [
       })
     },
   },
-  { label: '置顶', icon: 'icon-jichu_zhiding', handler: commands.placeTop },
-  { label: '置底', icon: 'icon-jichu_zhidi', handler: commands.placeBottom },
+  { label: '置顶', icon: 'icon-dingceng', handler: commands.placeTop },
+  { label: '置底', icon: 'icon-diceng', handler: commands.placeBottom },
   { label: '删除', icon: 'icon-shanchu', handler: commands.delete },
   {
     label: () => previewRef.value ? '编辑' : '预览',

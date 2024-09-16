@@ -6,7 +6,7 @@ import { useMenuDragger } from './useMenuDragger';
 
 export {
     useBlockDragger, // 拖动block相关
-    useCommand, // 
-    useFocus, // 点击选中block
+    useCommand, // 菜单栏指令相关
+    useFocus, // 点击选中block相关
     useMenuDragger, // 物料堆拖动到画布
 }

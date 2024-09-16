@@ -28,13 +28,13 @@ registerConfig.register({
 });
 registerConfig.register({
   label: "按钮",
-  preview: () => h(ElButton, {}, "我是预览按钮"),
-  render: () => h(ElButton, {}, "渲染按钮"),
+  preview: () => h(ElButton, {}, ()=>"我是预览按钮"),
+  render: () => h(ElButton, {}, ()=>"渲染按钮"),
   key: "button",
 });
 registerConfig.register({
   label: "输入框",
-  preview: () => h(ElInput, { placeholder: "请输入内容" }, "我是预览输入框"),
-  render: () => h(ElInput, { placeholder: "请输入内容" }, "渲染输入框"),
+  preview: () => h(ElInput, { placeholder: "请输入内容" }, ()=>"我是预览输入框"),
+  render: () => h(ElInput, { placeholder: "请输入内容" }, ()=>"渲染输入框"),
   key: "input",
 });

@@ -1,12 +1,11 @@
 <template>
     <div class="editor-block" ref="blockRef" :style="blockStyle">
-        <component :is="renderComponent"></component>
+        <component :is="component.render()"></component>
     </div>
 </template>
 
 <script setup>
 /* 单个物料组件 */
-import { computed, inject, onMounted, ref, render } from "vue"
 const { block } = defineProps({
     block: { type: Object }
 })
@@ -26,8 +25,6 @@ onMounted(() => {
     block.width = offsetWidth;
     block.height = offsetHeight;
 })
-const renderComponent = component.render()
-
 const blockStyle = computed(() => ({
     top: `${block.top}px`,
     left: `${block.left}px`,

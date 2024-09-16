@@ -6,7 +6,6 @@
 <script setup>
 import Editor from "./packages/Editor.vue"
 import data from './data.json'
-import { provide, ref } from "vue"
 import './assets/icons/iconfont/iconfont.css'
 
 import { registerConfig as config } from './utils/editorConfig';

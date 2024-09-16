@@ -23,7 +23,7 @@
 这种方式类似于使用服务（service）模式来创建组件，像 this.$message() 或者 this.$confirm() 的实现。
  */
 import { createVNode, render } from "vue";
-import DialogComponent from "./DialogComponent.vue"; // 引入模板形式的组件
+import DialogComponent from "./index.vue"; // 引入模板形式的组件
 
 let VNode;
 export function $dialog(option) {

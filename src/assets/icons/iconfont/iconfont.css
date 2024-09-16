@@ -1,6 +1,6 @@
 @font-face {
   font-family: "iconfont"; /* Project id  */
-  src: url('iconfont.ttf?t=1726420191343') format('truetype');
+  src: url('iconfont.ttf?t=1726501346729') format('truetype');
 }
 
 .iconfont {
@@ -11,12 +11,24 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-dingceng:before {
+  content: "\e648";
+}
+
+.icon-diceng:before {
+  content: "\e649";
+}
+
 .icon-daochu:before {
   content: "\eabf";
 }
 
 .icon-daoru:before {
   content: "\eac0";
+}
+
+.icon-guanbi:before {
+  content: "\eaf2";
 }
 
 .icon-yulan:before {
@@ -29,14 +41,6 @@
 
 .icon-shanchu:before {
   content: "\e68c";
-}
-
-.icon-jichu_zhidi:before {
-  content: "\e662";
-}
-
-.icon-jichu_zhiding:before {
-  content: "\e663";
 }
 
 .icon-chehui:before {
