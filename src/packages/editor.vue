@@ -16,7 +16,9 @@
       </div>
     </div>
     <!-- 右侧属性控制栏 -->
-    <div class="editor-right">属性控制栏</div>
+    <div class="editor-right">
+      <EditorOperator :block="lastSelectBlock" :data="data"></EditorOperator>
+    </div>
     <!-- 中间画布 -->
     <div class="editor-container">
       <!-- 产生滚动条 -->
@@ -49,6 +51,7 @@
 <script setup>
 /* 编辑区 */
 import EditorBlocks from './EditorBlocks.vue';
+import EditorOperator from './EditorOperator.vue';
 import { cloneDeep } from 'lodash'
 import {
   useFocus,
@@ -296,7 +299,7 @@ const buttons = [
 
       &-content {
         margin: 20px auto;
-        background-color: yellow;
+        background-color: #f1f1f1;
         position: relative;
       }
     }
@@ -319,7 +322,7 @@ const buttons = [
 .editor-block-focus {
   &::after {
     content: '';
-    border: 2px dashed red;
+    border: 3px dashed #409EFF;
   }
 }
 
@@ -333,13 +336,13 @@ const buttons = [
   position: absolute;
   top: 0;
   bottom: 0;
-  border-left: 1px dashed red;
+  border-left: 1.5px dashed #409EFF;
 }
 
 .line-y {
   position: absolute;
   left: 0;
   right: 0;
-  border-top: 1px dashed red;
+  border-top: 1.5px dashed #409EFF;
 }
 </style>

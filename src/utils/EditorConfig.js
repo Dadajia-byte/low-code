@@ -20,17 +20,47 @@ function createEditorConfig() {
 
 export let registerConfig = createEditorConfig();
 
+// 书写工厂函数便于配置
+const createInputProp = (label)=>({type:'input',label})
+const creatColorProp = (label) =>({type:'color',label})
+const createSelectProp = (label,options)=>({type:'select',label,options})
+
 registerConfig.register({
   label: "预览文本",
   preview: () => "我是预览文本",
   render: () => h("div", {}, "渲染文本"),
   key: "text",
+  props:{
+    text:createInputProp('文本内容'),
+    color:creatColorProp('字体颜色'),
+    size:createSelectProp('字体大小',[
+      { label: '小', value: '14px' },
+      { label: '中', value: '20xp' },
+      { label: '大', value: '24px' },
+    ])
+  }
 });
 registerConfig.register({
   label: "按钮",
   preview: () => h(ElButton, {}, ()=>"我是预览按钮"),
   render: () => h(ElButton, {}, ()=>"渲染按钮"),
   key: "button",
+  props:{
+    text:createInputProp('按钮内容'),
+    type:createSelectProp('按钮类型',[
+      { label: '朴素', value: 'text' },
+      { label: '基础', value: 'primary' },
+      { label: '成功', value: 'success' },
+      { label: '信息', value: 'info' },
+      { label: '警告', value: 'warning' },
+      { label: '危险', value: 'danger' },
+    ]),
+    size:createSelectProp('按钮大小',[
+      { label: '小', value: 'small' },
+      { label: '中等', value: 'medium' },
+      { label: '大', value: 'large' },
+    ])
+  }
 });
 registerConfig.register({
   label: "输入框",
