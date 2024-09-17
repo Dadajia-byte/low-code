@@ -135,8 +135,6 @@ export const useCommand = (data, focusData) => {
       return {
         redo: () => {
           data.value = {...data.value,blocks:state.after};
-          console.log( 111,{...data.value,blocks:state.after});
-          
         },
         undo: () => {
           data.value = {...data.value,blocks:state.before};

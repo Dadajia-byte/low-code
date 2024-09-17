@@ -28,7 +28,7 @@
         <!-- 产生内容区域 -->
         <div class="editor-container-canvas-content" ref="containerRef" :style="containerStyles"
           @mousedown="containerMouseDown">
-          <div v-for="(item, index) in data.blocks" :key="index">
+          <div v-for="(item, index) in data.blocks" :key="item.id">
             <EditorBlocks :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
               :block="item" @mousedown="(e) => blockMouseDown(e, item, index)"
               @Contextmenu="(e) => onContextMenu(e, item)">
@@ -43,7 +43,7 @@
   </div>
   <div v-if="!editorRef">
     <div class="editor-container-canvas-content" :style="containerStyles" style="margin: 0;">
-      <div v-for="(item, index) in data.blocks" :key="index">
+      <div v-for="item in data.blocks" :key="item.id">
         <EditorBlocks class="editor-block-preview" :block="item" />
       </div>
     </div>
@@ -136,9 +136,10 @@ const onContextMenu = (e, block) => {
           content: '',
           footer: true,
           onConfirm(text) {
-            commands.updateBlock(JSON.parse(text), block)
-          }
+            let newId = String(new Date().getTime()) + String(Math.floor(Math.random() * 1000))
 
+            commands.updateBlock({ ...JSON.parse(text), id: newId }, block)
+          }
         })
       }
     }),
