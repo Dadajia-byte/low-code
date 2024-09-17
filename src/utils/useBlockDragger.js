@@ -55,7 +55,6 @@ export function useBlockDragger(focusData, lastSelectBlock, data) {
             showTop: ATop + AHeight,
             top: ATop + AHeight - BHeight,
           }); // 底对底
-
           lines.x.push({ showLeft: ALeft, left: ALeft }); // 左对左
           lines.x.push({ showLeft: ALeft + AWidth, left: ALeft + AWidth }); // 右对左
           lines.x.push({

@@ -129,14 +129,14 @@ export const useCommand = (data, focusData) => {
           if(index>-1) {
             blocks.splice(index,1,newValue) // 重新赋值
           }
-          console.log(blocks);
-          
           return blocks
         })(), // 更新之后的值
       };
       return {
         redo: () => {
           data.value = {...data.value,blocks:state.after};
+          console.log( 111,{...data.value,blocks:state.after});
+          
         },
         undo: () => {
           data.value = {...data.value,blocks:state.before};
@@ -168,7 +168,7 @@ export const useCommand = (data, focusData) => {
       };
     },
   });
-  // 置底
+  // 置底    
   registry({
     name: "placeBottom",
     pushQueue: true,

@@ -4,7 +4,7 @@
   </div>
 </template>
 <script setup>
-import Editor from "./packages/Editor.vue"
+import Editor from "./packages/Editor/index.vue"
 import data from './data.json'
 import './assets/icons/iconfont/iconfont.css'
 

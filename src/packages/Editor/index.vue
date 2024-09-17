@@ -17,7 +17,9 @@
     </div>
     <!-- 右侧属性控制栏 -->
     <div class="editor-right">
-      <EditorOperator :block="lastSelectBlock" :data="data"></EditorOperator>
+      <EditorOperator :block="lastSelectBlock" :data="data" :updateContainer="commands.updateContainer"
+        :updateBlock="commands.updateBlock">
+      </EditorOperator>
     </div>
     <!-- 中间画布 -->
     <div class="editor-container">
@@ -50,19 +52,20 @@
 </template>
 <script setup>
 /* 编辑区 */
-import EditorBlocks from './EditorBlocks.vue';
-import EditorOperator from './EditorOperator.vue';
+import EditorBlocks from '../EditorBlocks/index.vue';
+import EditorOperator from '../EditorOperator/index.vue';
 import { cloneDeep } from 'lodash'
 import {
   useFocus,
   useMenuDragger,
   useBlockDragger,
   useCommand
-} from "../utils"
-import { $dropdown } from "../components/Dropdown";
-import DropdownItem from "../components/Dropdown/components/DropdownItem/index.vue";
-import { $dialog } from '../components/Dialog';
-const { modelValue } = defineProps({
+} from "@/utils"
+import { $dropdown } from "@/components/Dropdown";
+import DropdownItem from "@/components/Dropdown/components/DropdownItem/index.vue";
+import { $dialog } from '@/components/Dialog';
+import { watch } from 'vue';
+const state = defineProps({
   modelValue: { type: Object }
 })
 
@@ -74,11 +77,14 @@ const editorRef = ref(true)
 const config = inject('config');
 const data = computed({
   get() {
-    return modelValue
+    return state.modelValue
   },
   set(newValue) {
     emit('update:modelValue', cloneDeep(newValue))
   }
+})
+watch(data, (newValue) => {
+  console.log(newValue, '111');
 })
 // 获取data.json中的样式
 const containerStyles = computed(() => ({
@@ -137,8 +143,6 @@ const onContextMenu = (e, block) => {
       }
     }),
   ])
-  console.log(contentVnode);
-
   $dropdown({
     el: e.target,// 以哪个元素作为基准
     content: () => contentVnode
@@ -186,8 +190,6 @@ const buttons = [
     }
   }
 ]
-
-
 </script>
 
 

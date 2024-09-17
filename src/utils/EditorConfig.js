@@ -28,7 +28,14 @@ const createSelectProp = (label,options)=>({type:'select',label,options})
 registerConfig.register({
   label: "预览文本",
   preview: () => "我是预览文本",
-  render: () => h("div", {}, "渲染文本"),
+  render: ({props}) => h("span", 
+    {
+      style:{
+        color:props.color,
+        fontSize:props.size
+      }
+    }, 
+    props.text || '渲染文本'),
   key: "text",
   props:{
     text:createInputProp('文本内容'),
@@ -43,7 +50,10 @@ registerConfig.register({
 registerConfig.register({
   label: "按钮",
   preview: () => h(ElButton, {}, ()=>"我是预览按钮"),
-  render: () => h(ElButton, {}, ()=>"渲染按钮"),
+  render: ({props}) => h(ElButton, {
+    type: props.type,
+    size: props.size,
+  }, ()=>props.text || '渲染按钮'),
   key: "button",
   props:{
     text:createInputProp('按钮内容'),
