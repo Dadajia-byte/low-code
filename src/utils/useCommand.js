@@ -127,6 +127,8 @@ export const useCommand = (data, focusData) => {
           let blocks = [...data.value.blocks]; // 拷贝一份用于赋值
           const index = data.value.blocks.indexOf(oldValue); // 找到老的索引值
           if(index>-1) {
+            const newId = String(new Date().getTime()) + String(Math.floor(Math.random() * 1000))
+            newValue = {...newValue,id:newId}
             blocks.splice(index,1,newValue) // 重新赋值
           }
           return blocks

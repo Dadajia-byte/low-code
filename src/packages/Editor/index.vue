@@ -136,9 +136,7 @@ const onContextMenu = (e, block) => {
           content: '',
           footer: true,
           onConfirm(text) {
-            let newId = String(new Date().getTime()) + String(Math.floor(Math.random() * 1000))
-
-            commands.updateBlock({ ...JSON.parse(text), id: newId }, block)
+            commands.updateBlock(JSON.parse(text), block)
           }
         })
       }

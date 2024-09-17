@@ -60,8 +60,7 @@ const apply = () => {
     if (!props.block) { // 绑定的是组件的配置
         props.updateContainer({ ...props.data, container: state.editData })
     } else {
-        let newId = String(new Date().getTime()) + String(Math.floor(Math.random() * 1000))
-        props.updateBlock({ ...state.editData, id: newId }, props.block)
+        props.updateBlock(state.editData, props.block)
     }
 }
 watch(() => props.block, reset, { immediate: true })
