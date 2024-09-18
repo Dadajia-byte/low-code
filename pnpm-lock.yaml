@@ -17,9 +17,6 @@ importers:
       mitt:
         specifier: ^3.0.1
         version: 3.0.1
-      pnpm:
-        specifier: ^9.9.0
-        version: 9.9.0
       vue:
         specifier: ^3.4.37
         version: 3.5.0(typescript@5.6.2)
@@ -36,6 +33,9 @@ importers:
       husky:
         specifier: ^9.1.6
         version: 9.1.6
+      pnpm:
+        specifier: ^9.9.0
+        version: 9.9.0
       sass:
         specifier: ^1.77.8
         version: 1.77.8
