@@ -31,20 +31,22 @@
           <div v-for="(item, index) in data.blocks" :key="item.id">
             <EditorBlocks :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
               :block="item" @mousedown="(e) => blockMouseDown(e, item, index)"
-              @Contextmenu="(e) => onContextMenu(e, item)">
+              @Contextmenu="(e) => onContextMenu(e, item)"
+              :formData="state.formData"
+              >
             </EditorBlocks>
           </div>
           <!-- 辅助线 -->
           <div v-show="markline.x" class="line-x" :style="{ left: markline.x + 'px' }"></div>
           <div v-show="markline.y" class="line-y" :style="{ top: markline.y + 'px' }"></div>
-        </div>
+        </div> 
       </div>
     </div>
   </div>
   <div v-if="!editorRef">
     <div class="editor-container-canvas-content" :style="containerStyles" style="margin: 0;">
       <div v-for="item in data.blocks" :key="item.id">
-        <EditorBlocks class="editor-block-preview" :block="item" />
+        <EditorBlocks class="editor-block-preview" :block="item" :formData="state.formData" />
       </div>
     </div>
     <ElButton type="primary" @click="editorRef = true">继续编辑</ElButton>
@@ -64,9 +66,9 @@ import {
 import { $dropdown } from "@/components/Dropdown";
 import DropdownItem from "@/components/Dropdown/components/DropdownItem/index.vue";
 import { $dialog } from '@/components/Dialog';
-import { watch } from 'vue';
 const state = defineProps({
-  modelValue: { type: Object }
+  modelValue: { type: Object },
+  formData: { type: Object },
 })
 
 const emit = defineEmits(['update:modelValue']);
@@ -82,9 +84,6 @@ const data = computed({
   set(newValue) {
     emit('update:modelValue', cloneDeep(newValue))
   }
-})
-watch(data, (newValue) => {
-  console.log(newValue, '111');
 })
 // 获取data.json中的样式
 const containerStyles = computed(() => ({

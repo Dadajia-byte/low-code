@@ -10,17 +10,30 @@ import { onMounted } from 'vue';
 
 /* 单个物料组件 */
 const props = defineProps({
-    block: { type: Object }
+    block: { type: Object },
+    formData:{type:Object}
 })
 
 const config = inject('config')
 
 // 从组件利用映射拿到对应组件
 const component = config.componentMap[props.block.key]
+console.log(component);
+
 const blockRef = ref(null);
 
 const renderComponent = component.render({
-    props: props.block.props
+    props: props.block.props,
+    model: Object.keys(component.model||{}).reduce((pre,modelName)=>{
+        let propName = props.block.model[modelName];
+        console.log(propName);
+        
+        pre[modelName] = {
+            modelValue:props.formData[propName],
+            "onUpdate:modelValue":v=>props.formData[propName] = v
+        }
+        return pre;
+    },{})
 })
 
 onMounted(() => {

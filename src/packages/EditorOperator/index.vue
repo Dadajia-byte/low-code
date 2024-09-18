@@ -20,6 +20,15 @@
                     </el-select>
                 </el-form-item>
             </template>
+            <template v-if="componentModel">
+                <el-form-item 
+                    v-for="(label,modelName) in componentModel" 
+                    :key="label" 
+                    :label="label"
+                >
+                    <el-input v-model="state.editData.model[modelName]"></el-input>
+                </el-form-item>
+            </template>
         </template>
         <el-form-item>
             <el-button type="primary" @click="() => apply()">应用</el-button>
@@ -36,14 +45,20 @@ const props = defineProps({
     updateContainer: { type: Function },
     updateBlock: { type: Function }
 })
-const config = inject('config')
+const config = inject('config');
 const componentProps = computed(() => {
     if (props.block) {
-        let component = config.componentMap[props.block.key];
-        return component.props;
+        return config.componentMap[props.block.key].props;
     }
     return {};
 });
+const componentModel = computed(() => {
+    if (props.block) {   
+        return config.componentMap[props.block.key].model;
+    }
+    return {};
+})
+
 const state = reactive({
     editData: {}
 })

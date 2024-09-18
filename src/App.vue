@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <Editor v-model="state"></Editor>
+    <Editor v-model="state" :formData="formData"></Editor>
   </div>
 </template>
 <script setup>
@@ -11,7 +11,10 @@ import './assets/icons/iconfont/iconfont.css'
 import { registerConfig as config } from './utils/editorConfig';
 const state = ref(data)
 provide('config', config)
-
+const formData = ref({
+  username:'陈安舒',
+  password:'123456'
+})
 
 </script>
 

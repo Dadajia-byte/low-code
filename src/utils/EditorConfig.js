@@ -33,7 +33,7 @@ registerConfig.register({
       style:{
         color:props.color,
         fontSize:props.size
-      }
+      },
     }, 
     props.text || '渲染文本'),
   key: "text",
@@ -58,7 +58,8 @@ registerConfig.register({
   props:{
     text:createInputProp('按钮内容'),
     type:createSelectProp('按钮类型',[
-      { label: '朴素', value: 'text' },
+      { label: '文本', value: 'text' },
+      { label: '默认', value: 'default' },
       { label: '基础', value: 'primary' },
       { label: '成功', value: 'success' },
       { label: '信息', value: 'info' },
@@ -75,6 +76,9 @@ registerConfig.register({
 registerConfig.register({
   label: "输入框",
   preview: () => h(ElInput, { placeholder: "请输入内容" }, ()=>"我是预览输入框"),
-  render: () => h(ElInput, { placeholder: "请输入内容" }, ()=>"渲染输入框"),
+  render: ({model}) =>  h(ElInput, { placeholder: "请输入内容",...model.default}, ()=>"渲染输入框"),
   key: "input",
+  model:{ 
+    default:'绑定字段'
+  }
 });
