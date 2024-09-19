@@ -14,6 +14,7 @@
         <i :class="typeof btn.icon == 'function' ? btn.icon() : btn.icon" class="iconfont"></i>
         <span>{{ typeof btn.label == 'function' ? btn.label() : btn.label }}</span>
       </div>
+      <el-button @click="console.log(props.formData)">测试</el-button>
     </div>
     <!-- 右侧属性控制栏 -->
     <div class="editor-right">
@@ -28,20 +29,19 @@
         <!-- 产生内容区域 -->
         <div class="editor-container-canvas-content" ref="containerRef" :style="containerStyles"
           @mousedown="containerMouseDown">
-          <div v-for="(item, index) in data.blocks" :key="item.id">
-            <EditorBlocks :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
+            <EditorBlocks v-for="(item, index) in data.blocks" :key="item.id" :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
               :block="item" @mousedown="(e) => blockMouseDown(e, item, index)"
               @Contextmenu="(e) => onContextMenu(e, item)"
               :formData="props.formData"
               >
             </EditorBlocks>
-          </div>
           <!-- 辅助线 -->
           <div v-show="markline.x" class="line-x" :style="{ left: markline.x + 'px' }"></div>
           <div v-show="markline.y" class="line-y" :style="{ top: markline.y + 'px' }"></div>
         </div> 
       </div>
     </div>
+    
   </div>
   <div v-if="!editorRef">
     <div class="editor-container-canvas-content" :style="containerStyles" style="margin: 0;">
@@ -70,7 +70,9 @@ const props = defineProps({
   modelValue: { type: Object },
   formData: { type: Object },
 })
-
+watch(() => props.formData, (newValue, oldValue) => {
+  console.log('响应式更新', newValue);
+});
 const emit = defineEmits(['update:modelValue']);
 // 预览时 内容不再能操作，可以点击输入内容，方便看效果
 const previewRef = ref(false)

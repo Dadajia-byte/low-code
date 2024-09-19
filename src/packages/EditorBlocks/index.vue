@@ -1,10 +1,12 @@
 <template>
     <div class="editor-block" ref="blockRef" :style="blockStyle">
-        <component :is="renderComponent"></component>
+        <component :is="renderComponent" v-model="_value"></component>
     </div>
 </template>
 
 <script setup>
+
+
 
 /* 单个物料组件 */
 const props = defineProps({
@@ -15,19 +17,29 @@ const config = inject('config')
 // 从组件利用映射拿到对应组件
 const component = config.componentMap[props.block.key]
 const blockRef = ref(null);
+let propName = props.block.model[Object.keys(component.model)[0]]
+const _value = computed({
+    get: () => props.formData[propName],
+    set: (v) => {
+        props.formData[propName] = v;
+    }
+})
 
 const renderComponent = component.render({
   props: props.block.props,
-  model: Object.keys(component.model || {}).reduce((pre, modelName) => {
+  /* model: Object.keys(component.model || {}).reduce((pre, modelName) => {
     let propName = props.block.model[modelName];
     pre[modelName] = {
       modelValue: props.formData[propName],
-      'onUpdate:modelValue': (v) => {        
+      'onUpdate:modelValue': (v) => {     
+        // props.block.id=String(new Date().getTime()) + String(Math.floor(Math.random() * 1000))
+        console.log(props.formData);
+        
         props.formData[propName] = v;
     },
     };
     return pre;
-  }, {})
+  }, {}) */
 });
 onMounted(() => {
     let { offsetWidth, offsetHeight } = blockRef.value
@@ -44,6 +56,7 @@ const blockStyle = computed(() => ({
     left: `${props.block.left}px`,
     zIndex: props.block.zIndex
 }));
+
 </script>
 
 <style lang="scss" scoped></style>
