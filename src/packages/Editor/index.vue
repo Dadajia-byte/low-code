@@ -32,7 +32,7 @@
             <EditorBlocks :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
               :block="item" @mousedown="(e) => blockMouseDown(e, item, index)"
               @Contextmenu="(e) => onContextMenu(e, item)"
-              :formData="state.formData"
+              :formData="props.formData"
               >
             </EditorBlocks>
           </div>
@@ -46,7 +46,7 @@
   <div v-if="!editorRef">
     <div class="editor-container-canvas-content" :style="containerStyles" style="margin: 0;">
       <div v-for="item in data.blocks" :key="item.id">
-        <EditorBlocks class="editor-block-preview" :block="item" :formData="state.formData" />
+        <EditorBlocks class="editor-block-preview" :block="item" :formData="props.formData" />
       </div>
     </div>
     <ElButton type="primary" @click="editorRef = true">继续编辑</ElButton>
@@ -66,7 +66,7 @@ import {
 import { $dropdown } from "@/components/Dropdown";
 import DropdownItem from "@/components/Dropdown/components/DropdownItem/index.vue";
 import { $dialog } from '@/components/Dialog';
-const state = defineProps({
+const props = defineProps({
   modelValue: { type: Object },
   formData: { type: Object },
 })
@@ -79,7 +79,7 @@ const editorRef = ref(true)
 const config = inject('config');
 const data = computed({
   get() {
-    return state.modelValue
+    return props.modelValue
   },
   set(newValue) {
     emit('update:modelValue', cloneDeep(newValue))
