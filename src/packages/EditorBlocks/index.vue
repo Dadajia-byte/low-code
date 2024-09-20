@@ -17,7 +17,10 @@ const config = inject('config')
 // 从组件利用映射拿到对应组件
 const component = config.componentMap[props.block.key]
 const blockRef = ref(null);
+
+
 let propName = props.block.model[Object.keys(component.model)[0]]
+console.log(propName);
 const _value = computed({
     get: () => props.formData[propName],
     set: (v) => {

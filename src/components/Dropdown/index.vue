@@ -7,7 +7,7 @@
 
 <script setup>
 const props = defineProps({
-    option: Object,
+    option: {type:Object},
 })
 const el = ref(null)
 const state = reactive({

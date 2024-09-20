@@ -24,6 +24,7 @@ export let registerConfig = createEditorConfig();
 const createInputProp = (label)=>({type:'input',label})
 const creatColorProp = (label) =>({type:'color',label})
 const createSelectProp = (label,options)=>({type:'select',label,options})
+const createTableProp = (label,table)=>({type:'table',label,table})
 
 registerConfig.register({
   label: "预览文本",
@@ -45,7 +46,8 @@ registerConfig.register({
       { label: '中', value: '20xp' },
       { label: '大', value: '24px' },
     ])
-  }
+  },
+  model:{}
 });
 registerConfig.register({
   label: "按钮",
@@ -71,7 +73,8 @@ registerConfig.register({
       { label: '中等', value: 'medium' },
       { label: '大', value: 'large' },
     ])
-  }
+  },
+  model:{}
 });
 registerConfig.register({
   label: "输入框",
@@ -82,3 +85,27 @@ registerConfig.register({
     default:'绑定字段'
   }
 });
+
+registerConfig.register({
+  label:'下拉框',
+  preview:()=>h(ElSelect,{modelValue:''},()=>'预览下拉框'),
+  render:({props})=>h(ElSelect,{},()=>'渲染下拉框'),
+  key:'select',
+  model:{ 
+    default:'绑定字段'
+  },
+  props:{
+    options:createTableProp(
+      '下拉选项',
+      {
+        options:[
+          {label:'绑定值',field:'value'},
+          {label:'显示值',field:'label'}
+        ],
+        key:'label',
+      },
+      
+    )
+  }
+})
+

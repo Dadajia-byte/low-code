@@ -18,6 +18,11 @@
                         <el-option v-for="(item, index) in propConfig.options" :key="index" :label="item.label"
                             :value="item.value"></el-option>
                     </el-select>
+                    <TableEditor 
+                        v-if="propConfig.type === 'table'"
+                        :propConfig="propConfig"
+                        v-model="state.editData.props[propName]"  
+                    ></TableEditor>
                 </el-form-item>
             </template>
             <template v-if="componentModel">
@@ -39,6 +44,7 @@
 
 <script setup>
 import { cloneDeep } from 'lodash'
+import TableEditor from './TableEditor/index.vue'
 const props = defineProps({
     block: { type: Object },
     data: { type: Object },
