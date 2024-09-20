@@ -3,6 +3,7 @@
  *列表区可以显示所有物料，key对应所有组件的映射关系
  */
 
+
 function createEditorConfig() {
   // 物料列表
   const componentList = [];
@@ -51,10 +52,18 @@ registerConfig.register({
 });
 registerConfig.register({
   label: "按钮",
+  resize:{
+    width:true,
+    height:true,//竖向也可以更改
+  },
   preview: () => h(ElButton, {}, ()=>"我是预览按钮"),
-  render: ({props}) => h(ElButton, {
+  render: ({props,size:resize}) => h(ElButton, {
     type: props.type,
     size: props.size,
+    style:{
+      width:resize.width+'px',
+      height:resize.height+'px'
+    }
   }, ()=>props.text || '渲染按钮'),
   key: "button",
   props:{
@@ -78,8 +87,16 @@ registerConfig.register({
 });
 registerConfig.register({
   label: "输入框",
+  resize:{
+    width:true, // 可以更改横向大小
+  },
   preview: () => h(ElInput, { placeholder: "请输入内容" }, ()=>"我是预览输入框"),
-  render: () =>  h(ElInput, { placeholder: "请输入内容"}, ()=>"渲染输入框"),
+  render: ({size:resize}) =>  h(ElInput, { 
+    placeholder: "请输入内容",
+    style:{
+      width:resize.width+'px'
+    }
+  }, ()=>"渲染输入框"),
   key: "input",
   model:{ 
     default:'绑定字段'
@@ -88,8 +105,18 @@ registerConfig.register({
 
 registerConfig.register({
   label:'下拉框',
-  preview:()=>h(ElSelect,{modelValue:''},()=>'预览下拉框'),
-  render:({props})=>h(ElSelect,{},()=>'渲染下拉框'),
+  preview:()=>h(ElSelect,{
+    placeholder:'请选择内容',
+    
+  },()=>'预览下拉框'),
+  render:({props})=>h(ElSelect,{
+      placeholder: props.text || '请设置下拉框预览内容',
+      style:"width: 200px"
+    },
+      ()=>(props.options||[]).map((opt,index)=>{
+        return h(ElOption,{label:opt.label,value:opt.value,key:index})
+      }
+    )),
   key:'select',
   model:{ 
     default:'绑定字段'
@@ -105,7 +132,8 @@ registerConfig.register({
         key:'label',
       },
       
-    )
+    ),
+    text:createInputProp('下拉框预览'),
   }
 })
 

@@ -6,13 +6,21 @@
                 <el-button>重置</el-button>
             </div>
             <el-table :data="state.editData">
-                <el-table-column v-for="(item,index) in state.option.config.table.options" :label="item.label">
+                <el-table-column type="index"></el-table-column>
+                <el-table-column align="center" v-for="(item,index) in state.option.config.table.options" :label="item.label">
                     <template #default="{row}">
                         <el-input v-model="row[item.field]"></el-input>
                     </template>
                 </el-table-column>
+                <el-table-column align="center" label="操作">
+                    <el-button type="danger">删除</el-button>
+                </el-table-column>
             </el-table>
-        </template>    
+        </template> 
+        <template v-slot:footer>
+            <el-button @click="state.isShow=false">取消</el-button>
+            <el-button type="primary" @click="onConfirm">确定</el-button>
+        </template>   
     </ElDialog>
 </template>
 
@@ -27,7 +35,6 @@ const state = reactive({
     isShow:false,
     editData:[],// 编辑的数据
 })
-console.log(state.editData);
 
 const methods= {
     show(option) {
@@ -39,6 +46,12 @@ const methods= {
 const add= ()=>{
     state.editData.push({})
 }
+const onConfirm= ()=>{
+    state.isShow = false;
+    // 触发事件
+    state.option.onConfirm(state.editData)
+}
+
 defineExpose(methods)
 </script>
 

@@ -49,6 +49,7 @@
         <EditorBlocks class="editor-block-preview" :block="item" :formData="props.formData" />
       </div>
     </div>
+    {{ props.formData }}
     <ElButton type="primary" @click="editorRef = true">继续编辑</ElButton>
   </div>
 </template>
