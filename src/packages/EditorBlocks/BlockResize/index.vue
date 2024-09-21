@@ -22,6 +22,7 @@ const {block,component} = defineProps({
     component:{type:Object}
 })
 const {width,height} = component.resize || {}
+import {events} from "@/utils/event"
 let data ={}
 const onMouseMove = (e)=>{
     let {clientX,clientY} = e;
@@ -50,6 +51,9 @@ const onMouseMove = (e)=>{
     block.width = width;
     block.height = height;
     block.hasResize = true;
+
+    // 似乎因为单向数据流的缘故，修改无法被监视到
+    events.emit('block-updated',block)
 }
 const onMouseUp = ()=>{
     console.log(111);

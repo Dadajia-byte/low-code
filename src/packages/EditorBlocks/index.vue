@@ -10,9 +10,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
 import BlockResize from "./BlockResize/index.vue"
-
 
 /* 单个物料组件 */
 const props = defineProps({
@@ -25,6 +23,7 @@ const config = inject('config')
 const component = config.componentMap[props.block.key];
 const blockRef = ref(null);
 
+console.log(props.block);
 
 let propName = props.block.model[Object.keys(component.model)[0]]
 const _value = computed({
@@ -46,6 +45,8 @@ const blockStyle = computed(() => ({
 
 const {width,height} = component.resize || {}
 
+
+
 onMounted(() => {
     let { offsetWidth, offsetHeight } = blockRef.value
     if (props.block.alignCenter) { // 说明是拖拽松手时才渲染，其他的默认渲染到页面上的内容不需要居中
@@ -56,7 +57,6 @@ onMounted(() => {
     props.block.width = offsetWidth;
     props.block.height = offsetHeight;
 })
-console.log(renderComponent,11111111);
 
 </script>
 

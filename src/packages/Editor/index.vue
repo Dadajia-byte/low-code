@@ -29,7 +29,10 @@
         <!-- 产生内容区域 -->
         <div class="editor-container-canvas-content" ref="containerRef" :style="containerStyles"
           @mousedown="containerMouseDown">
-            <EditorBlocks v-for="(item, index) in data.blocks" :key="item.id" :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
+            <EditorBlocks 
+              v-for="(item, index) in data.blocks" 
+              :key="item.id" 
+              :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
               :block="item" @mousedown="(e) => blockMouseDown(e, item, index)"
               @Contextmenu="(e) => onContextMenu(e, item)"
               :formData="props.formData"
@@ -57,6 +60,7 @@
 /* 编辑区 */
 import EditorBlocks from '../EditorBlocks/index.vue';
 import EditorOperator from '../EditorOperator/index.vue';
+import { events } from '../../utils/event';
 import { cloneDeep } from 'lodash'
 import {
   useFocus,
@@ -71,9 +75,6 @@ const props = defineProps({
   modelValue: { type: Object },
   formData: { type: Object },
 })
-watch(() => props.formData, (newValue, oldValue) => {
-  console.log('响应式更新', newValue);
-});
 const emit = defineEmits(['update:modelValue']);
 // 预览时 内容不再能操作，可以点击输入内容，方便看效果
 const previewRef = ref(false)
@@ -191,6 +192,16 @@ const buttons = [
     }
   }
 ]
+onMounted(()=>{
+    events.on('block-updated',(newBlock)=>{
+      // 假设 data.value.blocks 是一个数组，通过 newBlock 的某个唯一标识来查找并替换
+        const index = data.value.blocks.findIndex(block => block.id === newBlock.id);
+        
+        if (index !== -1) {
+            data.value.blocks[index] = newBlock;
+        }
+  })
+})
 </script>
 
 

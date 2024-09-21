@@ -27,6 +27,7 @@ const creatColorProp = (label) =>({type:'color',label})
 const createSelectProp = (label,options)=>({type:'select',label,options})
 const createTableProp = (label,table)=>({type:'table',label,table})
 
+
 registerConfig.register({
   label: "预览文本",
   preview: () => "我是预览文本",
