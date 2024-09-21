@@ -17,6 +17,9 @@ importers:
       mitt:
         specifier: ^3.0.1
         version: 3.0.1
+      pinia:
+        specifier: ^2.2.2
+        version: 2.2.2(typescript@5.6.2)(vue@3.5.0(typescript@5.6.2))
       vue:
         specifier: ^3.5.0
         version: 3.5.0(typescript@5.6.2)
@@ -453,6 +456,9 @@ packages:
 
   '@vue/compiler-ssr@3.5.0':
     resolution: {integrity: sha512-E263QZmA1dqRd7c3u/sWTLRMpQOT0aZ8av/L9SoD/v/BVMZaWFHPUUBswS+bzrfvG2suJF8vSLKx6k6ba5SUdA==}
+
+  '@vue/devtools-api@6.6.4':
+    resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
 
   '@vue/reactivity@3.5.0':
     resolution: {integrity: sha512-Ew3F5riP3B3ZDGjD3ZKb9uZylTTPSqt8hAf4sGbvbjrjDjrFb3Jm15Tk1/w7WwTE5GbQ2Qhwxx1moc9hr8A/OQ==}
@@ -915,6 +921,18 @@ packages:
   picomatch@2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
+
+  pinia@2.2.2:
+    resolution: {integrity: sha512-ja2XqFWZC36mupU4z1ZzxeTApV7DOw44cV4dhQ9sGwun+N89v/XP7+j7q6TanS1u1tdbK4r+1BUx7heMaIdagA==}
+    peerDependencies:
+      '@vue/composition-api': ^1.4.0
+      typescript: '>=4.4.4'
+      vue: ^2.6.14 || ^3.3.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+      typescript:
+        optional: true
 
   pkg-types@1.2.0:
     resolution: {integrity: sha512-+ifYuSSqOQ8CqP4MbZA5hDpb97n3E8SVWdJe+Wms9kj745lmd3b7EZJiqvmLwAlmRfjrI7Hi5z3kdBJ93lFNPA==}
@@ -1488,6 +1506,8 @@ snapshots:
       '@vue/compiler-dom': 3.5.0
       '@vue/shared': 3.5.0
 
+  '@vue/devtools-api@6.6.4': {}
+
   '@vue/reactivity@3.5.0':
     dependencies:
       '@vue/shared': 3.5.0
@@ -1942,6 +1962,14 @@ snapshots:
   picocolors@1.1.0: {}
 
   picomatch@2.3.1: {}
+
+  pinia@2.2.2(typescript@5.6.2)(vue@3.5.0(typescript@5.6.2)):
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.0(typescript@5.6.2)
+      vue-demi: 0.14.10(vue@3.5.0(typescript@5.6.2))
+    optionalDependencies:
+      typescript: 5.6.2
 
   pkg-types@1.2.0:
     dependencies:
