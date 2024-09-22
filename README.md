@@ -1,4 +1,4 @@
-# 低代码开发模板
+# 低代码平台
 
 ### 核心技术
 vue3.4 + vite + element-plus + mitt
