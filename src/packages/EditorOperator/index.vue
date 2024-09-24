@@ -45,6 +45,10 @@
 <script setup>
 import { cloneDeep } from 'lodash'
 import TableEditor from './TableEditor/index.vue'
+import {useEditorDataStore} from '@/store/module/editorData'
+
+const EditorDataStore = useEditorDataStore()
+
 const props = defineProps({
     block: { type: Object },
     data: { type: Object },

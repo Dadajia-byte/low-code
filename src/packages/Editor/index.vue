@@ -14,11 +14,11 @@
         <i :class="typeof btn.icon == 'function' ? btn.icon() : btn.icon" class="iconfont"></i>
         <span>{{ typeof btn.label == 'function' ? btn.label() : btn.label }}</span>
       </div>
-      <el-button @click="console.log(props.formData)">测试</el-button>
+      <el-button @click="console.log(EditorDataStore.formData)">测试</el-button>
     </div>
     <!-- 右侧属性控制栏 -->
     <div class="editor-right">
-      <EditorOperator :block="lastSelectBlock" :data="data" :updateContainer="commands.updateContainer"
+      <EditorOperator :block="lastSelectBlock" :data="EditorDataStore.data" :updateContainer="commands.updateContainer"
         :updateBlock="commands.updateBlock">
       </EditorOperator>
     </div>
@@ -30,12 +30,12 @@
         <div class="editor-container-canvas-content" ref="containerRef" :style="containerStyles"
           @mousedown="containerMouseDown">
             <EditorBlocks 
-              v-for="(item, index) in data.blocks" 
+              v-for="(item, index) in EditorDataStore.data.blocks" 
               :key="item.id" 
               :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
               :block="item" @mousedown="(e) => blockMouseDown(e, item, index)"
               @Contextmenu="(e) => onContextMenu(e, item)"
-              :formData="props.formData"
+              :formData="EditorDataStore.formData"
               >
             </EditorBlocks>
           <!-- 辅助线 -->
@@ -48,12 +48,12 @@
   </div>
   <div v-if="!editorRef">
     <div class="editor-container-canvas-content" :style="containerStyles" style="margin: 0;">
-      <div v-for="item in data.blocks" :key="item.id">
-        <EditorBlocks class="editor-block-preview" :block="item" :formData="props.formData" />
+      <div v-for="item in EditorDataStore.data.blocks" :key="item.id">
+        <EditorBlocks class="editor-block-preview" :block="item" :formData="EditorDataStore.formData" />
       </div>
     </div>
-    {{ props.formData }}
-    <ElButton type="primary" @click="editorRef = true">继续编辑</ElButton>
+    {{ EditorDataStore.formData }}
+    <ElButton type="primary" @click="editorRef = true">继续编辑</ElButton>  
   </div>
 </template>
 <script setup>
@@ -71,34 +71,29 @@ import {
 import { $dropdown } from "@/components/Dropdown";
 import DropdownItem from "@/components/Dropdown/components/DropdownItem/index.vue";
 import { $dialog } from '@/components/Dialog';
-const props = defineProps({
-  modelValue: { type: Object },
-  formData: { type: Object },
-})
+import {useEditorDataStore} from '@/store/index'
+// const props = defineProps({
+//   modelValue: { type: Object },
+//   formData: { type: Object },
+// })
+const EditorDataStore = useEditorDataStore()
 const emit = defineEmits(['update:modelValue']);
 // 预览时 内容不再能操作，可以点击输入内容，方便看效果
 const previewRef = ref(false)
 const editorRef = ref(true)
 
 const config = inject('config');
-const data = computed({
-  get() {
-    return props.modelValue
-  },
-  set(newValue) {
-    emit('update:modelValue', cloneDeep(newValue))
-  }
-})
+// const data = EditorDataStore.data
 // 获取data.json中的样式
 const containerStyles = computed(() => ({
-  width: `${data.value.container.width}px`,
-  height: `${data.value.container.height}px`,
+  width: `${EditorDataStore.data.container.width}px`,
+  height: `${EditorDataStore.data.container.height}px`,
 }))
 
 const containerRef = ref(null)
 
 // 1. 实现物料堆拖拽
-const { dragStart, dragEnd } = useMenuDragger(containerRef, data)
+const { dragStart, dragEnd } = useMenuDragger(containerRef, EditorDataStore.data)
 
 // 2.获取焦点后即可直接拖拽
 let {
@@ -107,15 +102,15 @@ let {
   containerMouseDown,
   lastSelectBlock, // 最后一个选中的节点
   clearBlockFocus, // 清除所有选中
-} = useFocus(data, previewRef, (e) => {
+} = useFocus(EditorDataStore.data, previewRef, (e) => {
   mousedown(e);
 });
 
 // 3. 实现组件拖拽
-let { mousedown, markline } = useBlockDragger(focusData, lastSelectBlock, data)
+let { mousedown, markline } = useBlockDragger(focusData, lastSelectBlock, EditorDataStore.data)
 
 // 用于保存可能使用的所有指令(操作)
-const { commands } = useCommand(data, focusData);
+const { commands } = useCommand(EditorDataStore.data, focusData);
 
 // 右键菜单
 const onContextMenu = (e, block) => {
@@ -159,7 +154,7 @@ const buttons = [
     label: '导出', icon: 'icon-daochu', handler: () => {
       $dialog({
         title: '导出JSON',
-        content: JSON.stringify(data.value)
+        content: JSON.stringify(EditorDataStore.data)
       })
     },
   },
@@ -195,10 +190,10 @@ const buttons = [
 onMounted(()=>{
     events.on('block-updated',(newBlock)=>{
       // 假设 data.value.blocks 是一个数组，通过 newBlock 的某个唯一标识来查找并替换
-        const index = data.value.blocks.findIndex(block => block.id === newBlock.id);
+        const index = EditorDataStore.data.blocks.findIndex(block => block.id === newBlock.id);
         
         if (index !== -1) {
-            data.value.blocks[index] = newBlock;
+            EditorDataStore.data.blocks[index] = newBlock;
         }
   })
 })

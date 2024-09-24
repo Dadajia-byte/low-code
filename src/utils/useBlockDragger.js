@@ -30,8 +30,8 @@ export function useBlockDragger(focusData, lastSelectBlock, data) {
             // 增加对容器的对齐
             top: 0,
             left: 0,
-            width: data.value.container.width,
-            height: data.value.container.height,
+            width: data.container.width,
+            height: data.container.height,
           },
         ].forEach((block) => {
           const {
