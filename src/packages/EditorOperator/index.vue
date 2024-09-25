@@ -45,9 +45,6 @@
 <script setup>
 import { cloneDeep } from 'lodash'
 import TableEditor from './TableEditor/index.vue'
-import {useEditorDataStore} from '@/store/module/editorData'
-
-const EditorDataStore = useEditorDataStore()
 
 const props = defineProps({
     block: { type: Object },
@@ -75,7 +72,10 @@ const state = reactive({
 const reset = () => {
     // 重置表单
     if (!props.block) { // 绑定的是容器的宽度和高度
-        state.editData = cloneDeep(props.data.container)
+         // 解除响应式关系后再进行深拷贝
+         
+         state.editData = cloneDeep(props.data.container);
+
     } else {
         state.editData = cloneDeep(props.block)
     }
@@ -83,12 +83,14 @@ const reset = () => {
 const apply = () => {
     // 应用
     if (!props.block) { // 绑定的是组件的配置
+    
         props.updateContainer({ ...props.data, container: state.editData })
     } else {
         props.updateBlock(state.editData, props.block)
     }
 }
 watch(() => props.block, reset, { immediate: true })
+
 </script>
 
 <style lang="scss" scoped></style>

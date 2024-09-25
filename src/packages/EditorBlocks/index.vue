@@ -23,7 +23,7 @@ const config = inject('config')
 const component = config.componentMap[props.block.key];
 const blockRef = ref(null);
 
-console.log(props.block);
+
 
 let propName = props.block.model[Object.keys(component.model)[0]]
 const _value = computed({

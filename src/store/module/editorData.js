@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
+import { cloneDeep } from "lodash";
 export const useEditorDataStore = defineStore("editorDataStore", () => {
     const data = reactive({
         container: {
-            height: '800',
-            width: '1000',
+            height: 800,
+            width: 1000,
         },
         blocks: [],
 
@@ -13,14 +14,23 @@ export const useEditorDataStore = defineStore("editorDataStore", () => {
         password: '123456',
     })
 
-    const updateData = (newValue) =>{
-        data.container = newValue.container;
+    const updateData = (newValue) => {
+        data.container = cloneDeep(newValue.container);
         data.blocks = newValue.blocks;
     }
+    const updateBlocks = (newBlock) => {
+        const index = data.blocks.findIndex(block => block.id === newBlock.id);
+        if (index !== -1) {
+            // 使用 splice 保证响应式
+            data.blocks.splice(index, 1, newBlock);
+        }
+    }
+
     
     return {
-        data,
-        formData,
-        updateData,
-    }
+    data,
+    formData,
+    updateData,
+    updateBlocks,
+}
 });

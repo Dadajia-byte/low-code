@@ -49,6 +49,7 @@
   <div v-if="!editorRef">
     <div class="editor-container-canvas-content" :style="containerStyles" style="margin: 0;">
       <div v-for="item in EditorDataStore.data.blocks" :key="item.id">
+          
         <EditorBlocks class="editor-block-preview" :block="item" :formData="EditorDataStore.formData" />
       </div>
     </div>
@@ -105,7 +106,6 @@ let {
 } = useFocus(EditorDataStore.data, previewRef, (e) => {
   mousedown(e);
 });
-
 // 3. 实现组件拖拽
 let { mousedown, markline } = useBlockDragger(focusData, lastSelectBlock, EditorDataStore.data)
 
@@ -190,11 +190,13 @@ const buttons = [
 onMounted(()=>{
     events.on('block-updated',(newBlock)=>{
       // 假设 data.value.blocks 是一个数组，通过 newBlock 的某个唯一标识来查找并替换
-        const index = EditorDataStore.data.blocks.findIndex(block => block.id === newBlock.id);
+        // const index = EditorDataStore.data.blocks.findIndex(block => block.id === newBlock.id);
         
-        if (index !== -1) {
-            EditorDataStore.data.blocks[index] = newBlock;
-        }
+        // if (index !== -1) {
+        //   console.log(newBlock);
+        //   EditorDataStore.data.blocks.splice(index, 1, newBlock);
+        // }
+        EditorDataStore.updateBlocks(newBlock)
   })
 })
 </script>

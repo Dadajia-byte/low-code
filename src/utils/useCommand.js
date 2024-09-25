@@ -123,12 +123,12 @@ export const useCommand = (data, focusData) => {
       return {
         redo: () => {
           // data = state.after;
-          editorDataStore.updateData({ ...data, blocks: state.after })
+          editorDataStore.updateData(state.after)
 
         },
         undo: () => {
           // data = state.before;
-          editorDataStore.updateData({ ...data, blocks: state.before })
+          editorDataStore.updateData(state.before)
 
         },
       };
@@ -233,16 +233,18 @@ export const useCommand = (data, focusData) => {
     execute() {
       let state = {
         before: cloneDeep(data.blocks), // 保证唯一
-        after: focusdata.unfocused, // 留下的都是未选中的
+        after: focusData.value.unfocused, // 留下的都是未选中的
       };
       return {
         redo: () => {
           // data = { ...data, blocks: state.after };
+          
           editorDataStore.updateData({ ...data, blocks: state.after })
 
         },
         undo: () => {
           // data = { ...data, blocks: state.before };
+
           editorDataStore.updateData({ ...data, blocks: state.before })
 
         },
