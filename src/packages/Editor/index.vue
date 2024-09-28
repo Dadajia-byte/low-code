@@ -12,7 +12,7 @@
     <div class="editor-top">
       <div v-for="(btn, index) in buttons" :key="index" @click="btn.handler" class="editor-top-button">
         <i :class="typeof btn.icon == 'function' ? btn.icon() : btn.icon" class="iconfont"></i>
-        <span>{{ typeof btn.label == 'function' ? btn.label() : btn.label }}</span>
+        <!-- <span>{{ typeof btn.label == 'function' ? btn.label() : btn.label }}</span> -->
       </div>
       <el-button @click="console.log(EditorDataStore.formData)">测试</el-button>
     </div>
@@ -209,31 +209,38 @@ onMounted(()=>{
   height: 100%;
   position: relative;
   overflow: hidden;
+  background-color: #ffffff;
 
   &-left,
   &-right {
     position: absolute;
     width: 270px;
-    top: 0;
+    top: 30px;
     bottom: 0;
     height: 100%;
   }
 
   &-left {
-    left: 0;
-
+    left: 5px;  
+    border-radius: 20px;
+    border: #e3e3e3 1px solid;
+    background-color: #fff;
+    // overflow-y: scroll;
+    height: calc(100% - 100px);
+    box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.15);
+    
     &-item {
-      width: 250px;
+      width: 240px;
       margin: 20px auto;
       display: flex;
       justify-content: center;
       align-items: center;
       background-color: #fff;
-      padding: 20px;
+      padding: 10px;
       box-sizing: border-box;
       cursor: move;
       user-select: none;
-      min-height: 90px;
+      min-height: 70px;
       position: relative;
 
       >span {
@@ -265,25 +272,34 @@ onMounted(()=>{
 
   &-top {
     position: absolute;
-    right: 280px;
-    left: 280px;
-    height: 80px;
+    left: 50%;
+    translate: -50%;
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
-
+    background-color: white;
+    border-radius: 20px;
+    width: fit-content;
+    padding: 0 40px;
+    border: #e3e3e3 1px solid;
+    box-shadow: 6px 4px 10px rgba(0, 0, 0, 0.1);
+    
     &-button {
-      width: 60px;
-      height: 60px;
+      width: 50px;
+      height: 50px;
       display: flex;
       justify-content: center;
       flex-direction: column;
       align-items: center;
-      background-color: rgba(0, 0, 0, .3);
       user-select: none;
       cursor: pointer;
-      color: #fff;
-
+      color: black;
+      border-radius: 10px;
+      &:hover {
+        background-color: #f1f0ff;
+      }
+      
       .iconfont {
         font-size: 24px;
       }
