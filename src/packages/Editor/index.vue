@@ -14,7 +14,9 @@
         <i :class="typeof btn.icon == 'function' ? btn.icon() : btn.icon" class="iconfont"></i>
         <!-- <span>{{ typeof btn.label == 'function' ? btn.label() : btn.label }}</span> -->
       </div>
-      <el-button @click="console.log(EditorDataStore.formData)">测试</el-button>
+      <div class="editor-top-expand">
+        <el-icon><i-ep-CaretTop /></el-icon>
+      </div>
     </div>
     <!-- 右侧属性控制栏 -->
     <div class="editor-right">
@@ -62,7 +64,6 @@
 import EditorBlocks from '../EditorBlocks/index.vue';
 import EditorOperator from '../EditorOperator/index.vue';
 import { events } from '../../utils/event';
-import { cloneDeep } from 'lodash'
 import {
   useFocus,
   useMenuDragger,
@@ -272,6 +273,7 @@ onMounted(()=>{
 
   &-top {
     position: absolute;
+    top: 10px;
     left: 50%;
     translate: -50%;
     height: 60px;
@@ -310,6 +312,18 @@ onMounted(()=>{
 
       &+& {
         margin-left: 3px;
+      }
+    }
+    &-expand {
+      position: absolute;
+      background-color: white;
+      top: 45px;
+      border: #e3e3e3 1px solid;
+      width: 30px;
+      height: 30px;
+      border-radius: 15px;
+      &:hover {
+        background-color: #f1f0ff;
       }
     }
 
