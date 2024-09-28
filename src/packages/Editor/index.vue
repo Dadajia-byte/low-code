@@ -1,23 +1,20 @@
 <template>
   <div class="editor" v-if="editorRef">
     <!-- 左侧物料堆 -->
-    <div class="editor-left">
+    <div class="editor-left" :style="{ left: isExpanded ? '-270px' : '5px' }">
       <div draggable="true" @dragstart="e => dragStart(e, item)" @dragend="e => dragEnd(e, item)"
         class="editor-left-item" v-for="(item, index) in config.componentList" :key="index">
         <span>{{ item.label }}</span>
-        <component :is="item.preview"></component>
+        <component :is="item.preview"></component>    
       </div>
+      <div class="editor-left-expand" @click="toggleExpand">
+        <el-icon :style="{ transform: isExpanded ? 'rotate(180deg)' : 'none' }" style="font-size: 22px; transition: transform 0.5s;"><i-ep-CaretLeft /></el-icon>
+      </div>
+
+      
     </div>
     <!-- 顶部菜单栏 -->
-    <div class="editor-top">
-      <div v-for="(btn, index) in buttons" :key="index" @click="btn.handler" class="editor-top-button">
-        <i :class="typeof btn.icon == 'function' ? btn.icon() : btn.icon" class="iconfont"></i>
-        <!-- <span>{{ typeof btn.label == 'function' ? btn.label() : btn.label }}</span> -->
-      </div>
-      <div class="editor-top-expand">
-        <el-icon><i-ep-CaretTop /></el-icon>
-      </div>
-    </div>
+    <EditorTop :buttons="buttons"></EditorTop>
     <!-- 右侧属性控制栏 -->
     <div class="editor-right">
       <EditorOperator :block="lastSelectBlock" :data="EditorDataStore.data" :updateContainer="commands.updateContainer"
@@ -61,6 +58,7 @@
 </template>
 <script setup>
 /* 编辑区 */
+import EditorTop from "../EditorTop/index.vue"
 import EditorBlocks from '../EditorBlocks/index.vue';
 import EditorOperator from '../EditorOperator/index.vue';
 import { events } from '../../utils/event';
@@ -74,10 +72,6 @@ import { $dropdown } from "@/components/Dropdown";
 import DropdownItem from "@/components/Dropdown/components/DropdownItem/index.vue";
 import { $dialog } from '@/components/Dialog';
 import {useEditorDataStore} from '@/store/index'
-// const props = defineProps({
-//   modelValue: { type: Object },
-//   formData: { type: Object },
-// })
 const EditorDataStore = useEditorDataStore()
 const emit = defineEmits(['update:modelValue']);
 // 预览时 内容不再能操作，可以点击输入内容，方便看效果
@@ -146,6 +140,13 @@ const onContextMenu = (e, block) => {
     content: () => contentVnode
   })
 }
+
+/* 左侧物料栏相关，后续可能拉到单独文件夹中 */
+const isExpanded = ref(false)
+const toggleExpand = () => {
+  isExpanded.value = !isExpanded.value;
+};
+
 
 // 所有可能使用的按钮
 const buttons = [
@@ -229,6 +230,7 @@ onMounted(()=>{
     // overflow-y: scroll;
     height: calc(100% - 100px);
     box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.15);
+    transition: all .5s;
     
     &-item {
       width: 240px;
@@ -265,69 +267,32 @@ onMounted(()=>{
         bottom: 0;
       }
     }
+    
+    &-expand {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      position: absolute;
+      right: -20px;
+      border: #e3e3e3 1px solid;
+      border-radius: 15px;
+      height: 30px;
+      width: 30px;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+      background-color: #ffffff;
+      cursor: pointer;
+      &:hover {
+        background-color: #f1f0ff;
+      }
+    }
   }
 
   &-right {
     right: 0;
   }
 
-  &-top {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    translate: -50%;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: white;
-    border-radius: 20px;
-    width: fit-content;
-    padding: 0 40px;
-    border: #e3e3e3 1px solid;
-    box-shadow: 6px 4px 10px rgba(0, 0, 0, 0.1);
-    
-    &-button {
-      width: 50px;
-      height: 50px;
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
-      align-items: center;
-      user-select: none;
-      cursor: pointer;
-      color: black;
-      border-radius: 10px;
-      &:hover {
-        background-color: #f1f0ff;
-      }
-      
-      .iconfont {
-        font-size: 24px;
-      }
 
-      span {
-        font-size: 12px;
-      }
-
-      &+& {
-        margin-left: 3px;
-      }
-    }
-    &-expand {
-      position: absolute;
-      background-color: white;
-      top: 45px;
-      border: #e3e3e3 1px solid;
-      width: 30px;
-      height: 30px;
-      border-radius: 15px;
-      &:hover {
-        background-color: #f1f0ff;
-      }
-    }
-
-  }
 
   &-container {
     padding: 80px 270px 0;
