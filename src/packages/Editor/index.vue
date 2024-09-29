@@ -137,7 +137,7 @@ const onContextMenu = (e, block) => {
     h(DropdownItem, { label: '粘贴配置', shortCut: "Ctrl+Alt+V",divider:true, onClick: ()=>console.log('粘贴样式') }),
     h(DropdownItem, { label: '下移一层', shortCut: "Ctrl+[", onClick:  ()=>console.log('上移一层')}),
     h(DropdownItem, { label: '上移一层', shortCut: "Ctrl+]", onClick: ()=>console.log('下移一层') }),
-    h(DropdownItem, { label: '置底', shortCut: "Ctrl+Shift+]", onClick: commands.placeBottom }),
+    h(DropdownItem, { label: '置顶', shortCut: "Ctrl+Shift+[", onClick: commands.placeTop }),
     h(DropdownItem, { label: '置底', shortCut: "Ctrl+Shift+]", divider:true, onClick: commands.placeBottom }),
     h(DropdownItem, {
       label: '查看', shortCut:'', onClick: () => {
@@ -367,7 +367,8 @@ onMounted(()=>{
 
   &-container {
     padding: 40px 200px 0;
-    height: 100%;
+    height: 95%;
+    margin-bottom: 40px;
     box-sizing: border-box;
     border: #e3e3e3 1px solid;
     z-index: 1;

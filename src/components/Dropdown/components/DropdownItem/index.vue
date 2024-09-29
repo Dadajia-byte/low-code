@@ -1,16 +1,18 @@
 <template>
-    <div class="dropdown-item" @click="hide">
-        <div>{{ label }}</div>
-        <div class="shortCut">{{ shortCut }}</div>
+    <div>
+        <div class="dropdown-item" @click="hide">
+            <div>{{ label }}</div>
+            <div class="shortCut">{{ shortCut }}</div>
+        </div>
+        <el-divider v-if="divider" style="margin-top: 5px;margin-bottom: 5px;"></el-divider>
     </div>
-    <el-divider v-if="divider" style="margin-top: 5px;margin-bottom: 5px;"></el-divider>
 </template>
 
 <script setup>
 const { label,shortCut,divider } = defineProps({
     label: String,
     shortCut: String,
-    divider:Boolean
+    divider:Boolean,
 })
 const hide = inject('hide')
 

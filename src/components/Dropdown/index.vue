@@ -55,6 +55,7 @@ onBeforeUnmount(() => {
     width: 200px;
     padding-bottom: 5px;
     overflow: hidden;
+    z-index: 9999;
 }
 
 .dropdown-isShow {

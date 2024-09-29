@@ -16,7 +16,7 @@ provide('config', config)
 
 <style >
 .app {
-  height: 95vh;
+  height: 100vh;
 }
 
 </style>
