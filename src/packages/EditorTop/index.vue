@@ -82,7 +82,8 @@ const toggleExpand = () => {
         cursor: pointer;
         box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
         &:hover {
-        background-color: #f1f0ff;
+        background-color: #e0dfff;
+        color: white;
         }
     }
 

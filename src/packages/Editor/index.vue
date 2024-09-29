@@ -238,7 +238,7 @@ onMounted(()=>{
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #fff;
+      background-color: white;
       padding: 10px;
       box-sizing: border-box;
       cursor: move;
@@ -262,7 +262,7 @@ onMounted(()=>{
         top: 0;
         left: 0;
         right: 0;
-        background-color: #ccc;
+        // background-color: #ccc;
         opacity: 0.2;
         bottom: 0;
       }
@@ -283,7 +283,8 @@ onMounted(()=>{
       background-color: #ffffff;
       cursor: pointer;
       &:hover {
-        background-color: #f1f0ff;
+        background-color: #e0dfff;
+        color: white;
       }
     }
   }
@@ -328,7 +329,13 @@ onMounted(()=>{
 .editor-block-focus {
   &::after {
     content: '';
-    border: 3px dashed #409EFF;
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: calc(100% + 6px);
+    height: calc(100% + 6px);
+    border-radius: 2px;
+    border: 1px solid #6965db;
   }
 }
 

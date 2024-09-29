@@ -16,15 +16,17 @@
 </template>
 
 <script setup>
-
+import { useEditorDataStore } from '../../../store/module/editorData';
+const EditorDataStore = useEditorDataStore();
 const {block,component} = defineProps({
     block:{type:Object},
     component:{type:Object}
 })
 const {width,height} = component.resize || {}
-import {events} from "@/utils/event"
 let data ={}
 const onMouseMove = (e)=>{
+    console.log(111);
+    
     let {clientX,clientY} = e;
     let {startX,startY,startWidth,startHeight,startLeft,startTop,direction} = data;
 
@@ -51,13 +53,11 @@ const onMouseMove = (e)=>{
     block.width = width;
     block.height = height;
     block.hasResize = true;
-
-    // 似乎因为单向数据流的缘故，修改无法被监视到
-    events.emit('block-updated',block)
+    console.log(block);
+    
+    EditorDataStore.updateBlocks(block);
 }
 const onMouseUp = ()=>{
-    console.log(111);
-    
     document.body.removeEventListener('mousemove',onMouseMove)
     document.body.removeEventListener('mouseup',onMouseUp)
 }
@@ -82,44 +82,60 @@ const onMouseDown = (e,direction)=>{
 $pre:"block-resize";
 .#{$pre} {
     position: absolute;
-    width: 8px;
-    height: 8px;
-    background-color: #337ecc;
+    width:6px;
+    height: 6px;
+    background-color: #fff;
+    border:1px solid #6965db;
     z-index: 1000;
-    border-radius: 4px;
+    border-radius: 2px;
     user-select: none;
     
 }
-.#{$pre}-top{
-    top:-3px;
+.#{$pre}-top {
+    top: -7px;
     left: calc(50% - 3px);
+    cursor: n-resize; /* 设置为向上箭头光标 */
 }
+
 .#{$pre}-bottom {
-    bottom: -3px;
+    bottom: -8px;
     left: calc(50% - 3px);
+    cursor: s-resize; /* 设置为向下箭头光标 */
 }
+
 .#{$pre}-left {
-    left: -3px;
+    left: -7px;
     top: calc(50% - 3px);
+    cursor: w-resize; /* 设置为向左箭头光标 */
 }
+
 .#{$pre}-right {
-    right: -3px;
+    right: -6px;
     top: calc(50% - 3px);
+    cursor: e-resize; /* 设置为向右箭头光标 */
 }
+
 .#{$pre}-top-left {
-    top: -3px;
-    left: -3px;
+    top: -7px;
+    left: -7px;
+    cursor: nw-resize; /* 设置为西北箭头光标 */
 }
+
 .#{$pre}-top-right {
-    top: -3px;
-    right: -3px;
+    top: -7px;
+    right: -6px;
+    cursor: ne-resize; /* 设置为东北箭头光标 */
 }
+
 .#{$pre}-bottom-left {
-    bottom: -3px;
-    left: -3px;
+    bottom: -8px;
+    left: -7px;
+    cursor: sw-resize; /* 设置为西南箭头光标 */
 }
+
 .#{$pre}-bottom-right {
-    bottom: -3px;
-    right: -3px;
+    bottom: -8px;
+    right: -6px;
+    cursor: se-resize; /* 设置为东南箭头光标 */
 }
 </style>
