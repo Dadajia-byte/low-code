@@ -23,6 +23,9 @@ importers:
       vue:
         specifier: ^3.5.10
         version: 3.5.10(typescript@5.6.2)
+      vue-router:
+        specifier: ^4.4.5
+        version: 4.4.5(vue@3.5.10(typescript@5.6.2))
     devDependencies:
       '@commitlint/cli':
         specifier: ^19.5.0
@@ -1179,6 +1182,11 @@ packages:
       '@vue/composition-api':
         optional: true
 
+  vue-router@4.4.5:
+    resolution: {integrity: sha512-4fKZygS8cH1yCyuabAXGUAsyi1b2/o/OKgu/RUb+znIYOxPRxdkytJEx+0wGcpBE1pX6vUgh5jwWOKRGvuA/7Q==}
+    peerDependencies:
+      vue: ^3.2.0
+
   vue@3.5.10:
     resolution: {integrity: sha512-Vy2kmJwHPlouC/tSnIgXVg03SG+9wSqT1xu1Vehc+ChsXsRd7jLkKgMltVEFOzUdBr3uFwBCG+41LJtfAcBRng==}
     peerDependencies:
@@ -2252,6 +2260,11 @@ snapshots:
 
   vue-demi@0.14.10(vue@3.5.10(typescript@5.6.2)):
     dependencies:
+      vue: 3.5.10(typescript@5.6.2)
+
+  vue-router@4.4.5(vue@3.5.10(typescript@5.6.2)):
+    dependencies:
+      '@vue/devtools-api': 6.6.4
       vue: 3.5.10(typescript@5.6.2)
 
   vue@3.5.10(typescript@5.6.2):

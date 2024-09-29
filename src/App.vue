@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <Editor ></Editor>
+    <router-view></router-view>
   </div>
 </template>
 <script setup>
