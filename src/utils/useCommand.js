@@ -1,6 +1,17 @@
 import { events } from "./event";
 import { cloneDeep } from "lodash";
+import { useEditorDataStore } from "../store/module/editorData";
+import { setActivePinia, getActivePinia } from 'pinia';
+
+
 export const useCommand = (data, focusData) => {
+  // 激活pinia
+  if (!getActivePinia()) {
+    const pinia = createPinia();
+    setActivePinia(pinia);
+  }
+
+  const editorDataStore = useEditorDataStore();
   const state = {
     // 前进后退需要指针
     current: -1, // 前进后退的索引值
@@ -72,7 +83,7 @@ export const useCommand = (data, focusData) => {
       // 初始化操作，默认会执行
       this.before = null;
       // 监控拖拽开始事件
-      const start = () => (this.before = cloneDeep(data.value.blocks));
+      const start = () => (this.before = cloneDeep(data.blocks));
       // 拖拽之后需要触发的指令
       const end = () => state.commands.drag();
       events.on("start", start);
@@ -84,15 +95,18 @@ export const useCommand = (data, focusData) => {
     },
     execute() {
       let before = this.before;
-      let after = data.value.blocks;
+      let after = data.blocks;
       return {
         redo() {
           // 默认一松手 就把当前的数据做了
-          data.value = { ...data.value, blocks: after };
+          // data = { ...data, blocks: after };
+          editorDataStore.updateData({ ...data, blocks: after })
         },
         undo() {
           // 前一步
-          data.value = { ...data.value, blocks: before };
+          // data = { ...data, blocks: before };
+          editorDataStore.updateData({ ...data, blocks: before })
+
         },
       };
     },
@@ -103,15 +117,19 @@ export const useCommand = (data, focusData) => {
     pushQueue: true,
     execute(newValue) {
       let state = {
-        before: data.value, // 当前的值
+        before: data, // 当前的值
         after: newValue, // 更新之后的值
       };
       return {
         redo: () => {
-          data.value = state.after;
+          // data = state.after;
+          editorDataStore.updateData(state.after)
+
         },
         undo: () => {
-          data.value = state.before;
+          // data = state.before;
+          editorDataStore.updateData(state.before)
+
         },
       };
     },
@@ -122,10 +140,10 @@ export const useCommand = (data, focusData) => {
     pushQueue: true,
     execute(newValue,oldValue) {
       let state = {
-        before: data.value.blocks, // 当前的值
+        before: data.blocks, // 当前的值
         after: (()=>{
-          let blocks = [...data.value.blocks]; // 拷贝一份用于赋值
-          const index = data.value.blocks.indexOf(oldValue); // 找到老的索引值
+          let blocks = [...data.blocks]; // 拷贝一份用于赋值
+          const index = data.blocks.indexOf(oldValue); // 找到老的索引值
           if(index>-1) {
             const newId = String(new Date().getTime()) + String(Math.floor(Math.random() * 1000))
             newValue = {...newValue,id:newId}
@@ -136,10 +154,14 @@ export const useCommand = (data, focusData) => {
       };
       return {
         redo: () => {
-          data.value = {...data.value,blocks:state.after};
+          // data = {...data,blocks:state.after};
+          editorDataStore.updateData({ ...data, blocks: state.after })
+
         },
         undo: () => {
-          data.value = {...data.value,blocks:state.before};
+          // data = {...data,blocks:state.before};
+          editorDataStore.updateData({ ...data, blocks: state.before })
+
         },
       };
     },
@@ -149,21 +171,25 @@ export const useCommand = (data, focusData) => {
     name: "placeTop",
     pushQueue: true,
     execute() {
-      let before = cloneDeep(data.value.blocks);
+      let before = cloneDeep(data.blocks);
       let after = (() => {
         // 置顶就是在所有的block中找到最大的zIndex再加1
         let { focus, unfocused } = focusData.value;
         let maxZIndex = Math.max(...unfocused.map((item) => item.zIndex)) + 1;
         focus.forEach((block) => (block.zIndex = maxZIndex++)); // 让当前选中的比最大的+1
-        return data.value.blocks;
+        return data.blocks;
       })();
       return {
         undo: () => {
           // 如果当前blocks前后一致，则不会更新
-          data.value = { ...data.value, blocks: before };
+          // data = { ...data, blocks: before };
+          editorDataStore.updateData({ ...data, blocks: before })
+
         },
         redo: () => {
-          data.value = { ...data.value, blocks: after };
+          // data = { ...data, blocks: after };
+          editorDataStore.updateData({ ...data, blocks: after })
+
         },
       };
     },
@@ -173,7 +199,7 @@ export const useCommand = (data, focusData) => {
     name: "placeBottom",
     pushQueue: true,
     execute() {
-      let before = cloneDeep(data.value.blocks);
+      let before = cloneDeep(data.blocks);
       let after = (() => {
         // 置底就是在所有的block中找到最小的zIndex再减1，但是index不能是负的,所以让其他unfocused全部+1即可
         let { focus, unfocused } = focusData.value;
@@ -184,14 +210,18 @@ export const useCommand = (data, focusData) => {
           unfocused.forEach((block) => (block.zIndex += dur));
         }
         focus.forEach((block) => (block.zIndex = minZIndex));
-        return data.value.blocks;
+        return data.blocks;
       })();
       return {
         undo: () => {
-          data.value = { ...data.value, blocks: before };
+          // data = { ...data, blocks: before };
+          editorDataStore.updateData({ ...data, blocks: before })
+
         },
         redo: () => {
-          data.value = { ...data.value, blocks: after };
+          // data = { ...data, blocks: after };
+          editorDataStore.updateData({ ...data, blocks: after })
+
         },
       };
     },
@@ -202,15 +232,21 @@ export const useCommand = (data, focusData) => {
     pushQueue: true,
     execute() {
       let state = {
-        before: cloneDeep(data.value.blocks), // 保证唯一
+        before: cloneDeep(data.blocks), // 保证唯一
         after: focusData.value.unfocused, // 留下的都是未选中的
       };
       return {
         redo: () => {
-          data.value = { ...data.value, blocks: state.after };
+          // data = { ...data, blocks: state.after };
+          
+          editorDataStore.updateData({ ...data, blocks: state.after })
+
         },
         undo: () => {
-          data.value = { ...data.value, blocks: state.before };
+          // data = { ...data, blocks: state.before };
+
+          editorDataStore.updateData({ ...data, blocks: state.before })
+
         },
       };
     },

@@ -7,7 +7,7 @@
 
 <script setup>
 const props = defineProps({
-    option: Object,
+    option: {type:Object},
 })
 const el = ref(null)
 const state = reactive({
@@ -48,8 +48,14 @@ onBeforeUnmount(() => {
 .dropdown {
     display: none;
     position: absolute;
-    box-shadow: 2px 2px #ccc;
-    background-color: #ccc;
+    box-shadow: 3px 3px 8px rgba($color: #000000, $alpha: .1);
+    background-color: #fff;
+    border-radius: 5px;
+    border: #adb5bd 1px solid;
+    width: 200px;
+    padding-bottom: 5px;
+    overflow: hidden;
+    z-index: 9999;
 }
 
 .dropdown-isShow {

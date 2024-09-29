@@ -1,13 +1,16 @@
 <template>
     <div class="editor-block" ref="blockRef" :style="blockStyle">
-        <component :is="renderComponent"></component>
+        <component :is="renderComponent" v-model="_value"></component>
+        <BlockResize 
+            v-if="props.block.focus && (width||height)" 
+            :block="props.block"
+            :component="component"
+        ></BlockResize>
     </div>
 </template>
 
 <script setup>
-
-import { onMounted } from 'vue';
-
+import BlockResize from "./BlockResize/index.vue"
 /* 单个物料组件 */
 const props = defineProps({
     block: { type: Object },
@@ -15,26 +18,33 @@ const props = defineProps({
 })
 
 const config = inject('config')
-
 // 从组件利用映射拿到对应组件
-const component = config.componentMap[props.block.key]
-console.log(component);
-
+const component = config.componentMap[props.block.key];
 const blockRef = ref(null);
 
-const renderComponent = component.render({
-    props: props.block.props,
-    model: Object.keys(component.model||{}).reduce((pre,modelName)=>{
-        let propName = props.block.model[modelName];
-        console.log(propName);
-        
-        pre[modelName] = {
-            modelValue:props.formData[propName],
-            "onUpdate:modelValue":v=>props.formData[propName] = v
-        }
-        return pre;
-    },{})
+
+
+let propName = props.block.model[Object.keys(component.model)[0]]
+const _value = computed({
+    get: () => props.formData[propName],
+    set: (v) => {
+        props.formData[propName] = v;
+    }
 })
+
+const renderComponent = component.render({
+  props: props.block.props,
+  size:props.block.hasResize ? {width:props.block.width,height:props.block.height} : {}
+});
+const blockStyle = computed(() => ({
+    top: `${props.block.top}px`,
+    left: `${props.block.left}px`,
+    zIndex: props.block.zIndex
+}));
+
+const {width,height} = component.resize || {}
+
+
 
 onMounted(() => {
     let { offsetWidth, offsetHeight } = blockRef.value
@@ -46,15 +56,7 @@ onMounted(() => {
     props.block.width = offsetWidth;
     props.block.height = offsetHeight;
 })
-const blockStyle = computed(() => ({
-    top: `${props.block.top}px`,
-    left: `${props.block.left}px`,
-    zIndex: props.block.zIndex
-}));
-onMounted(() => {
-    console.log('重新渲染了', props.block);
 
-})
 </script>
 
 <style lang="scss" scoped></style>

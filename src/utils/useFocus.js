@@ -1,11 +1,13 @@
 export function useFocus(data, previewRef, callback) {
+  // console.log(data.blocks);
+
   const selectIndex = ref(-1); // 记录最后一个被点击的元素
-  const lastSelectBlock = computed(() => data.value.blocks[selectIndex.value]);
+  const lastSelectBlock = computed(() => data.blocks[selectIndex.value]);
   // 获取哪些元素
   const focusData = computed(() => {
     let focus = [];
     let unfocused = [];
-    data.value.blocks.forEach((item) => {
+    data.blocks.forEach((item) => {
       if (item.focus) {
         focus.push(item);
       } else {
@@ -15,7 +17,7 @@ export function useFocus(data, previewRef, callback) {
     return { focus, unfocused };
   });
   const clearBlockFocus = () => {
-    data.value.blocks.forEach((item) => {
+    data.blocks.forEach((item) => {
       item.focus = false;
     });
   };
