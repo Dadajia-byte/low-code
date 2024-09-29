@@ -29,7 +29,7 @@ const createTableProp = (label,table)=>({type:'table',label,table})
 
 
 registerConfig.register({
-  label: "预览文本",
+  label: "文本",
   preview: () => "我是预览文本",
   render: ({props}) => h("span", 
     {

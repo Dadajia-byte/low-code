@@ -19,6 +19,8 @@ export const useEditorDataStore = defineStore("editorDataStore", () => {
         data.blocks = newValue.blocks;
     }
     const updateBlocks = (newBlock) => {
+        console.log(11111);
+        
         const index = data.blocks.findIndex(block => block.id === newBlock.id);
         if (index !== -1) {
             // 使用 splice 保证响应式

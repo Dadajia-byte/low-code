@@ -11,7 +11,6 @@
 
 <script setup>
 import BlockResize from "./BlockResize/index.vue"
-
 /* 单个物料组件 */
 const props = defineProps({
     block: { type: Object },

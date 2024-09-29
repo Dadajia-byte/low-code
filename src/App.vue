@@ -14,8 +14,11 @@ provide('config', config)
 
 
 
-<style scoped>
+<style >
 .app {
   height: 95vh;
+}
+.custom-class {
+  --el-button-bg-color: #6965db;
 }
 </style>

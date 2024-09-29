@@ -57,6 +57,7 @@ const toggleExpand = () => {
         
         .iconfont {
         font-size: 24px;
+        color: #606266;
         }
 
         span {
@@ -68,7 +69,7 @@ const toggleExpand = () => {
         }
     }
     &-expand {
-        z-index: 9999;
+        z-index: 99999;
         position: absolute;
         background-color: white;
         top: 50px;

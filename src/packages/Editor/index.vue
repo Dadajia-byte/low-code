@@ -216,7 +216,6 @@ onMounted(()=>{
   &-left,
   &-right {
     position: absolute;
-    width: 270px;
     top: 30px;
     bottom: 0;
     height: 100%;
@@ -225,6 +224,7 @@ onMounted(()=>{
   &-left {
     left: 5px;  
     border-radius: 20px;
+    width: 270px;
     border: #e3e3e3 1px solid;
     background-color: #fff;
     // overflow-y: scroll;
@@ -290,23 +290,26 @@ onMounted(()=>{
   }
 
   &-right {
-    right: 0;
+    right: -310px;
   }
 
 
 
   &-container {
-    padding: 80px 270px 0;
+    padding: 40px 200px 0;
     height: 100%;
     box-sizing: border-box;
+    border: #e3e3e3 1px solid;
+    z-index: 1;
 
     &-canvas {
       height: 100%;
       overflow: scroll;
-
+      border-radius: 40px;
+      border: #e3e3e3 2px dashed;
       &-content {
-        margin: 20px auto;
-        background-color: #f1f1f1;
+        margin: 40px auto;
+        // background-color: #f1f1f1;
         position: relative;
       }
     }
@@ -349,13 +352,13 @@ onMounted(()=>{
   position: absolute;
   top: 0;
   bottom: 0;
-  border-left: 1.5px dashed #409EFF;
+  border-left: 1px dashed #6965db;
 }
 
 .line-y {
   position: absolute;
   left: 0;
   right: 0;
-  border-top: 1.5px dashed #409EFF;
+  border-top: 1px dashed #6965db;
 }
 </style>
