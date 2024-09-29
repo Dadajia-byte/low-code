@@ -1,17 +1,36 @@
 <template>
   <div class="editor" v-if="editorRef">
     <!-- 左侧物料堆 -->
-    <div class="editor-left" :style="{ left: isExpanded ? '-270px' : '5px' }">
-      <div draggable="true" @dragstart="e => dragStart(e, item)" @dragend="e => dragEnd(e, item)"
-        class="editor-left-item" v-for="(item, index) in config.componentList" :key="index">
-        <span>{{ item.label }}</span>
-        <component :is="item.preview"></component>    
-      </div>
-      <div class="editor-left-expand" @click="toggleExpand">
-        <el-icon :style="{ transform: isExpanded ? 'rotate(180deg)' : 'none' }" style="font-size: 22px; transition: transform 0.5s;"><i-ep-CaretLeft /></el-icon>
-      </div>
+    <div class="editor-left" :style="{ left: isExpanded ? '-290px' : '5px' }">
+      <el-text class="mx-1 editor-left-title" size="large">物料堆</el-text>
+      <el-divider style="margin-left: 20px; width: 90%;margin-top: 15px;margin-bottom: 5px;"/>
+        <el-select
+          filterable
+          placeholder="nodo搜索,树形更好？"
+          class="editor-left-search"
+        >
+          <template #prefix>
+            <el-icon><i-ep-Search /></el-icon>
+          </template>
+          <el-option/>
+        </el-select>
+      <el-collapse v-model="activeNames" class="editor-left-menu">
+        <el-collapse-item v-for="menu in config.category" :title="menu.title" :name="menu.id" :key="menu.id">
+          <div class="editor-left-menu-content">
+            <div class="editor-left-menu-content-row" v-for="item in config.componentList.filter(item=>item.category.indexOf(menu.id)!==-1)" :key="item.key">
+              <div draggable="true" @dragstart="e => dragStart(e, item)" @dragend="e => dragEnd(e, item)"
+                class="editor-left-menu-content-item" >
+                <component :is="item.preview"></component>  
+              </div>
+              <div class="editor-left-menu-content-item-label">{{ item.label }}</div>
+            </div>
 
-      
+          </div>
+        </el-collapse-item>
+      </el-collapse>
+      <div class="editor-left-expand" @click="toggleExpand" :style="{right:!isExpanded?'10px':'-20px'}">
+        <el-icon :style="{ transform: isExpanded ? 'rotate(180deg)' : 'none' }" style="font-size: 22px; "><i-ep-CaretLeft /></el-icon>
+      </div>
     </div>
     <!-- 顶部菜单栏 -->
     <EditorTop :buttons="buttons"></EditorTop>
@@ -111,11 +130,17 @@ const { commands } = useCommand(EditorDataStore.data, focusData);
 const onContextMenu = (e, block) => {
   e.preventDefault();
   const contentVnode = h('div', {}, [
-    h(DropdownItem, { label: '删除', icon: "icon-shanchu", onClick: commands.delete }),
-    h(DropdownItem, { label: '置顶', icon: "icon-dingceng", onClick: commands.placeTop }),
-    h(DropdownItem, { label: '置底', icon: "icon-diceng", onClick: commands.placeBottom }),
+    h(DropdownItem, { label: '剪切', shortCut: "Ctrl+X", onClick: ()=>console.log('剪切')}),
+    h(DropdownItem, { label: '复制', shortCut: "Ctrl+C", onClick: ()=>console.log('复制') }),
+    h(DropdownItem, { label: '粘贴', shortCut: "Ctrl+V",divider:true, onClick: ()=>console.log('粘贴') }),
+    h(DropdownItem, { label: '拷贝配置', shortCut: "Ctrl+Alt+C", onClick: ()=>console.log('拷贝样式') }),
+    h(DropdownItem, { label: '粘贴配置', shortCut: "Ctrl+Alt+V",divider:true, onClick: ()=>console.log('粘贴样式') }),
+    h(DropdownItem, { label: '下移一层', shortCut: "Ctrl+[", onClick:  ()=>console.log('上移一层')}),
+    h(DropdownItem, { label: '上移一层', shortCut: "Ctrl+]", onClick: ()=>console.log('下移一层') }),
+    h(DropdownItem, { label: '置底', shortCut: "Ctrl+Shift+]", onClick: commands.placeBottom }),
+    h(DropdownItem, { label: '置底', shortCut: "Ctrl+Shift+]", divider:true, onClick: commands.placeBottom }),
     h(DropdownItem, {
-      label: '查看', icon: "icon-yulan", onClick: () => {
+      label: '查看', shortCut:'', onClick: () => {
         $dialog({
           title: '查看节点数据',
           content: JSON.stringify(block)
@@ -123,7 +148,7 @@ const onContextMenu = (e, block) => {
       }
     }),
     h(DropdownItem, {
-      label: '导入', icon: "icon-daoru", onClick: () => {
+      label: '导入', shortCut:'', divider:true, onClick: () => {
         $dialog({
           title: '导入节点数据',
           content: '',
@@ -134,6 +159,7 @@ const onContextMenu = (e, block) => {
         })
       }
     }),
+    h(DropdownItem, { label: '删除', shortCut: "Delete", onClick: commands.delete }),
   ])
   $dropdown({
     el: e.target,// 以哪个元素作为基准
@@ -146,6 +172,7 @@ const isExpanded = ref(false)
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value;
 };
+const activeNames = ref([1])
 
 
 // 所有可能使用的按钮
@@ -224,49 +251,90 @@ onMounted(()=>{
   &-left {
     left: 5px;  
     border-radius: 20px;
-    width: 270px;
+    width: 300px;
     border: #e3e3e3 1px solid;
     background-color: #fff;
-    // overflow-y: scroll;
+    height: 800px;
     height: calc(100% - 100px);
     box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.15);
     transition: all .5s;
-    
-    &-item {
-      width: 240px;
-      margin: 20px auto;
+    &-title {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: white;
-      padding: 10px;
-      box-sizing: border-box;
-      cursor: move;
-      user-select: none;
-      min-height: 70px;
-      position: relative;
-
-      >span {
-        position: absolute;
-        top: 0;
-        left: 0;
-        background-color: rgb(174, 177, 215);
-        padding: 4px;
-        color: #fff;
-        // font-weight: 700;
-      }
-
-      &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        // background-color: #ccc;
-        opacity: 0.2;
-        bottom: 0;
-      }
+      margin-left: 35px;
+      margin-top: 20px;
+      font-size: 22px;
     }
+    &-search {
+      margin-left: 20px;
+      width: 90%;
+    }
+    &-menu {
+      margin-left: 29px;
+      width: 89%;
+      margin-top: 10px;
+      overflow-y: auto;
+      height: 85%;
+      padding-right: 4px;
+      scrollbar-gutter: stable;
+      
+    }
+    &-menu-content {
+          display: flex;
+          justify-content: space-around;
+          flex-wrap: wrap;
+
+
+        &-row {
+
+          width: 48%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          margin-top: 5px;
+          margin-right: 5px;
+          // border-bottom: #e0dfff 1px solid;
+
+        }
+        &-item {
+          
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: white;
+          box-sizing: border-box;
+          cursor: move;
+          user-select: none;
+          min-height: 40px;
+          position: relative;
+          border-radius: 5px;
+          border: 1px dashed #6965db;
+          padding: 0 4px;
+
+          &-label {
+            font-size: 12px;
+            color: #7d7d7d;
+            width: 100%;
+            text-align: center;
+          }
+          &:hover {
+            border:1px solid #6965db;
+          }
+
+          &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            // background-color: #ccc;
+            opacity: 0.2;
+            bottom: 0;
+          }
+        }
+      }
+    
     
     &-expand {
       display: flex;
@@ -274,13 +342,15 @@ onMounted(()=>{
       align-items: center;
       z-index: 9999;
       position: absolute;
-      right: -20px;
+      right: 10px;
+      top: 20px;
       border: #e3e3e3 1px solid;
       border-radius: 15px;
       height: 30px;
       width: 30px;
       box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
       background-color: #ffffff;
+      transition: transform 0.8s;
       cursor: pointer;
       &:hover {
         background-color: #e0dfff;

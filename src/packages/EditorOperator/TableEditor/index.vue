@@ -1,12 +1,15 @@
 <template>
     <template v-if="!data || data.length===0">
-        <el-button @click="add">添加</el-button>
+        <el-button color="#626aef" @click="add">添加</el-button>
     </template>
     <template v-else>
         <el-tag 
             v-for="item in data" 
             @click="add" 
-            style="cursor: pointer;"
+            style="cursor: pointer;color: white;"
+            color="#626aef"
+            effect="light"
+            
         >{{ item[propConfig.table.key] }}</el-tag>
     </template>
 </template>

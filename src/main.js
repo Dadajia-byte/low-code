@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import { createPinia } from "pinia";
+import "./global.scss"
 
 import "element-plus/dist/index.css";
 const pinia = createPinia();

@@ -2,7 +2,7 @@
     <ElDialog v-model="state.isShow" :title="state.option.config.label ||'请添加标题'">
         <template v-slot:default>
             <div>
-                <el-button @click="add" type="primary">添加</el-button>
+                <el-button @click="add" color="#626aef">添加</el-button>
                 <el-button>重置</el-button>
             </div>
             <el-table :data="state.editData">
@@ -19,7 +19,7 @@
         </template> 
         <template v-slot:footer>
             <el-button @click="state.isShow=false">取消</el-button>
-            <el-button type="primary" @click="onConfirm">确定</el-button>
+            <el-button color="#626aef" @click="onConfirm">确定</el-button>
         </template>   
     </ElDialog>
 </template>

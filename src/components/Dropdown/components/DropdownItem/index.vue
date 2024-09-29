@@ -1,14 +1,16 @@
 <template>
     <div class="dropdown-item" @click="hide">
-        <i :class="icon" class="iconfont"></i>
-        <span>{{ label }}</span>
+        <div>{{ label }}</div>
+        <div class="shortCut">{{ shortCut }}</div>
     </div>
+    <el-divider v-if="divider" style="margin-top: 5px;margin-bottom: 5px;"></el-divider>
 </template>
 
 <script setup>
-const { label, icon } = defineProps({
+const { label,shortCut,divider } = defineProps({
     label: String,
-    icon: String,
+    shortCut: String,
+    divider:Boolean
 })
 const hide = inject('hide')
 
@@ -17,11 +19,26 @@ const hide = inject('hide')
 
 <style lang="scss" scoped>
 .dropdown-item {
-    line-height: 30px;
-    width: 100px;
-    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 12px;
+    line-height: 22px;
+    margin-top: 5px;
     text-align: center;
-    background-color: #fff;
+    font-size: 14px;
+    font-family:'Times New Roman', Times, serif;
     cursor: pointer;
+    .shortCut {
+        color: #717273;
+        font-size: 12px;
+
+    }
+    &:hover {
+        background-color: #6965db;
+        color: white;
+        .shortCut {
+            color: white;
+        }
+    }
 }
 </style>

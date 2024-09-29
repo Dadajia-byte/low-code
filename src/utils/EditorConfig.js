@@ -12,8 +12,22 @@ function createEditorConfig() {
     componentList.push(component);
     componentMap[component.key] = component;
   };
+  const category =  [
+        { title: '常用', id: 0 },
+        { title: '基础组件', id: 1 },
+        { title: '业务组件', id: 2 },
+        { title: '布局组件', id: 3 },
+        { title: '功能组件', id: 4 },
+        { title: '展示组件', id: 5 },
+        { title: '数据组件', id: 6 },
+        { title: '静态组件', id: 7 },
+        { title: '动态组件', id: 8 },
+        { title: '通用组件', id: 9 },
+        { title: '定制组件', id: 10 },
+    ]
   return {
     register,
+    category,
     componentList,
     componentMap,
   };
@@ -30,15 +44,18 @@ const createTableProp = (label,table)=>({type:'table',label,table})
 
 registerConfig.register({
   label: "文本",
-  preview: () => "我是预览文本",
+  category:[1],
+  preview: () => "普通文本",
   render: ({props}) => h("span", 
     {
       style:{
         color:props.color,
         fontSize:props.size
       },
+      size:"small"
+
     }, 
-    props.text || '渲染文本'),
+    props.text || '请设置文本内容'),
   key: "text",
   props:{
     text:createInputProp('文本内容'),
@@ -53,11 +70,14 @@ registerConfig.register({
 });
 registerConfig.register({
   label: "按钮",
+  category:[1],
   resize:{
     width:true,
     height:true,//竖向也可以更改
   },
-  preview: () => h(ElButton, {}, ()=>"我是预览按钮"),
+  preview: () => h(ElButton, {
+    size:'small'
+  }, ()=>"确认"),
   render: ({props,size:resize}) => h(ElButton, {
     type: props.type,
     size: props.size,
@@ -88,10 +108,14 @@ registerConfig.register({
 });
 registerConfig.register({
   label: "输入框",
+  category:[1],
   resize:{
     width:true, // 可以更改横向大小
   },
-  preview: () => h(ElInput, { placeholder: "请输入内容" }, ()=>"我是预览输入框"),
+  preview: () => h(ElInput, { 
+    placeholder: "输入框",
+    size:'small'
+  }, ()=>"我是预览输入框"),
   render: ({size:resize}) =>  h(ElInput, { 
     placeholder: "请输入内容",
     style:{
@@ -106,9 +130,10 @@ registerConfig.register({
 
 registerConfig.register({
   label:'下拉框',
+    category:[1],
   preview:()=>h(ElSelect,{
-    placeholder:'请选择内容',
-    
+    placeholder:'下拉框',
+    size:'small'
   },()=>'预览下拉框'),
   render:({props})=>h(ElSelect,{
       placeholder: props.text || '请设置下拉框预览内容',
