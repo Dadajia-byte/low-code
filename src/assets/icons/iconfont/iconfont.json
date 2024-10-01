@@ -55,6 +55,13 @@
       "unicode_decimal": 58921
     },
     {
+      "icon_id": "14401714",
+      "name": "github",
+      "font_class": "github",
+      "unicode": "e66f",
+      "unicode_decimal": 58991
+    },
+    {
       "icon_id": "29657619",
       "name": "删除",
       "font_class": "shanchu",

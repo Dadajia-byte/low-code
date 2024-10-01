@@ -1,6 +1,6 @@
 @font-face {
   font-family: "iconfont"; /* Project id  */
-  src: url('iconfont.ttf?t=1726501346729') format('truetype');
+  src: url('iconfont.ttf?t=1727803383379') format('truetype');
 }
 
 .iconfont {
@@ -37,6 +37,10 @@
 
 .icon-bianji:before {
   content: "\e629";
+}
+
+.icon-github:before {
+  content: "\e66f";
 }
 
 .icon-shanchu:before {
