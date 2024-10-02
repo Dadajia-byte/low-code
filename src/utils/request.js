@@ -66,10 +66,23 @@ class AxiosService {
                     return Promise.resolve(this.cache.get(config.url))
                 }
 
-                /* 后续使用双token判断 */
-                const token = localStorage.getItem('token');
-                if (token) {
-                    config.headers['Authorization'] = `Bearer ${token}`;
+                /* 使用双token判断 */
+                const accessToken = localStorage.getItem('accessToken');
+                const refreshToken = localStorage.getItem('refreshToken');
+                
+                if(accessToken) {
+                    config.headers['Authorization'] = `Bearer ${accessToken}`
+                }
+                if(refreshToken && !accessToken) { // 存在刷新token但是访问token不存在，则使用刷新token获取访问token
+                    return this.refreshToken().then(accessToken=>{
+                        localStorage.setItem('accessToken',accessToken);
+                        config.headers['Authorization'] = `Bearer ${accessToken}`
+                        return config
+                    }).catch(err=>{
+                        localStorage.removeItem('refreshToken');
+                        localStorage.removeItem('accessToken');
+                        return Promise.reject(err);
+                    })
                 }
                 this.activeRequestsCount++;
                 return config
@@ -77,6 +90,18 @@ class AxiosService {
             err=> Promise.reject(err)
         )
         
+        // 在实例上挂载refresh获取access的请求
+        this.instance.refreshToken= ()=>{
+            const refreshToken = localStorage.getItem('refreshToken');
+            return axios.post('/api/user/getAccessToken',{refreshToken}).then(response=>{
+                const accessToken = response.data.data.accessToken;
+                return accessToken
+            }).catch(err=>{
+                console.log(err);
+                throw err;
+            })
+        }
+
         // 相应拦截器
         this.instance.interceptors.response.use(
             response=>{
@@ -119,7 +144,7 @@ class AxiosService {
 }
 
 const options = {
-    baseURL:'http://localhost:3000',
+    baseURL:'/api',
     timeout:5000,
     // capacity:50, // 开启缓存后，缓存数量
     // maxAge:1000*60*5 // 开启缓存后，缓存生命周期
