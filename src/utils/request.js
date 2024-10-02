@@ -11,7 +11,10 @@ class LRUCache {
     }
     get(key) {
         const item = this.#map.get(key);
-        if(!item || Date.now() - item.timestamp > this.#maxAge) {
+        if(!item) {
+            return undefined;
+        }
+        if(Date.now() - item.timestamp > this.#maxAge) {
             this.#map.delete(key);
             return undefined;
         }
@@ -68,15 +71,19 @@ class AxiosService {
 
                 /* 使用双token判断 */
                 const accessToken = localStorage.getItem('accessToken');
-                const refreshToken = localStorage.getItem('refreshToken');
+                
                 
                 if(accessToken) {
                     config.headers['Authorization'] = `Bearer ${accessToken}`
+                    this.activeRequestsCount++;
+                    return config;
                 }
-                if(refreshToken && !accessToken) { // 存在刷新token但是访问token不存在，则使用刷新token获取访问token
+                const refreshToken = localStorage.getItem('refreshToken');
+                if(refreshToken) { // 存在刷新token但是访问token不存在，则使用刷新token获取访问token
                     return this.refreshToken().then(accessToken=>{
                         localStorage.setItem('accessToken',accessToken);
                         config.headers['Authorization'] = `Bearer ${accessToken}`
+                        this.activeRequestsCount++;
                         return config
                     }).catch(err=>{
                         localStorage.removeItem('refreshToken');
@@ -91,15 +98,16 @@ class AxiosService {
         )
         
         // 在实例上挂载refresh获取access的请求
-        this.instance.refreshToken= ()=>{
+        this.instance.refreshToken=async ()=>{
             const refreshToken = localStorage.getItem('refreshToken');
-            return axios.post('/api/user/getAccessToken',{refreshToken}).then(response=>{
+            try {
+                const response = await axios.post('/api/user/getAccessToken', { refreshToken });
                 const accessToken = response.data.data.accessToken;
-                return accessToken
-            }).catch(err=>{
+                return accessToken;
+            } catch (err) {
                 console.log(err);
                 throw err;
-            })
+            }
         }
 
         // 相应拦截器
@@ -150,7 +158,8 @@ const options = {
     // maxAge:1000*60*5 // 开启缓存后，缓存生命周期
     // maxRequestsCount:5, // 最大同时发送接口数
 }
+const createRequest =(options) =>{
+    return new AxiosService(options)
+}
+export const request = createRequest(options).instance;
 
-const request =  new AxiosService(options)
-
-export default request;

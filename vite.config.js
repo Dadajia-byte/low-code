@@ -9,7 +9,7 @@ import Icons from "unplugin-icons/vite"
 
 export default defineConfig({
   server:{
-    https: true,
+    // https: true,
     proxy:{
       '/api':{
         target:'http://118.178.138.32:8010',

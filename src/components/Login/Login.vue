@@ -8,16 +8,16 @@
             <span style="padding-left:8px;">Continue with Github</span>
         </div>
         <span class="login-content-span">or</span>
-        <div class="login-content-form ">
-            <el-form-item>
+        <el-form class="login-content-form" ref="loginForm" :model="login" :rules="rules">
+            <el-form-item prop="email">
                 <el-input size="large" placeholder="Email" v-model="login.email"></el-input>
             </el-form-item>
-            <el-form-item style="margin-bottom: 0;">
-                <el-input show-password size="large" placeholder="Password" v-model="login.pwd"></el-input>
-                <span class="login-content-span-link">重置密码</span>
-            </el-form-item>
-            <button class="login-content-form-btn">登录</button>
-        </div>
+            <el-form-item prop=password style="margin-bottom: 0;">
+                <el-input show-password size="large" placeholder="Password" v-model="login.password"></el-input>
+                <span class="login-content-span-link" style="position: absolute;right: 0;top: 76%;">重置密码</span>
+            </el-form-item >
+            <el-button class="login-content-form-btn" :loading="durLog" @click="handleLogin">登录</el-button>
+        </el-form>
         <span class="login-content-span-other">
             其他登录方式
             <div class="login-content-span-other-set">
@@ -33,9 +33,71 @@
 </template>
 
 <script setup>
-const {login} = defineProps({
-    login:{type:Object}
+import {postLogin} from '@/apis/user'
+const {login,hide} = defineProps({
+    login:{type:Object},
+    hide:{type:Function}
 })
+const durLog = ref(false);
+const loginForm = ref(null);
+
+
+const rules = {
+    email: [
+        { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+        { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+    ],
+/*     password: [
+        { required: true, message: '请输入密码', trigger: 'change' },
+        { min: 6, max: 15, message: '密码长度需在6到15个字符之间', trigger: 'change' },
+        {
+            validator: (rule, value, callback) => {
+                const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,15}$/;
+                if (!passwordRegex.test(value)) {
+                    callback(new Error('密码必须包含字母和数字'));
+                } else {
+                    callback();
+                }
+            },
+            trigger: 'blur'
+        }
+    ] */
+}; 
+const handleLogin = async ()=>{
+    try {
+        // 验证表单
+        const valid = await validateForm();
+        if (!valid) return;
+        durLog.value = true;
+        const res = await postLogin(login);
+        durLog.value = false;
+        if (res.code === 10000) {
+            const {access_token:accessToken,refresh_token:refreshToken} = res.data;
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken);
+            hide();
+            ElNotification.success({
+                title: '欢迎回来',
+                message: h('i', { style: 'color: #6965db' }, '111'),
+            });
+        } else if (res.code === 10006) {
+            ElNotification.error({
+                message: '账号不存在或密码错误',
+            });
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+// 验证表单
+const validateForm = () => {
+    return new Promise((resolve) => {
+        loginForm.value.validate((valid) => {
+            resolve(valid);
+        });
+    });
+};
+
 </script>
 
 <style lang="scss" scoped>
@@ -78,6 +140,7 @@ const {login} = defineProps({
             margin-top: 15px;
             margin-bottom: 10px;
             &-btn {
+                margin-top: 24px;
                 color: #fff;
                 border-radius: 10px;
                 height: 42px;
