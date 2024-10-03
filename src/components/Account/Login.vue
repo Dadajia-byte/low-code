@@ -28,16 +28,18 @@
             </div>
         </span>
         
-        <span class="login-content-span-link">没有账号?点击注册</span>
+        <span class="login-content-span-link" @click="checkStatus('Register')">没有账号?点击注册</span>
     </div>
 </template>
 
 <script setup>
 import {postLogin} from '@/apis/user'
-const {login,hide} = defineProps({
+const {login,methods} = defineProps({
     login:{type:Object},
-    hide:{type:Function}
+
+    methods:{type:Object}
 })
+const {hide,checkStatus} = methods
 const durLog = ref(false);
 const loginForm = ref(null);
 
@@ -102,9 +104,9 @@ const validateForm = () => {
 
 <style lang="scss" scoped>
 .login {
-    width: 480px;
     &-content {
         width: 100%;
+        height: 410px;
         display: flex;
         margin-top: 20px;
         flex-direction: column;
