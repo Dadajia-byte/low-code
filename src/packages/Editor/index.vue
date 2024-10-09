@@ -24,7 +24,6 @@
               </div>
               <div class="editor-left-menu-content-item-label">{{ item.label }}</div>
             </div>
-
           </div>
         </el-collapse-item>
       </el-collapse>

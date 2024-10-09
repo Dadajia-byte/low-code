@@ -127,7 +127,7 @@ registerConfig.register({
     default:'绑定字段'
   }
 });
-
+//下拉框
 registerConfig.register({
   label:'下拉框',
     category:[1],
