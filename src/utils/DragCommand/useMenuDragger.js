@@ -1,7 +1,7 @@
 // 拖拽相关
 
-import { events } from "./event";
-import { useEditorDataStore } from "../store/module/editorData";
+import { events } from "../event";
+import { useEditorDataStore } from "../../store/module/editorData";
 /*
 1. dragenter 进入元素 增加移动标识
 2. dragover 经过目标元素，必须阻止默认行为，否则无法触发drop
