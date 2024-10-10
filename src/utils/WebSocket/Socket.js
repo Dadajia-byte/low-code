@@ -1,4 +1,4 @@
-import {event} from './event'
+import {event} from '../event'
 /* export interface HeaderBeatProps {
   //心跳发送时间
   time: number;

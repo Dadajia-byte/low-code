@@ -1,6 +1,6 @@
-import { events } from "./event";
+import { events } from "../event";
 import { cloneDeep } from "lodash";
-import { useEditorDataStore } from "../store/module/editorData";
+import { useEditorDataStore } from "../../store/module/editorData";
 import { setActivePinia, getActivePinia } from 'pinia';
 
 
