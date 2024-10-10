@@ -8,6 +8,17 @@ import IconsResolver from "unplugin-icons/resolver"
 import Icons from "unplugin-icons/vite"
 
 export default defineConfig({
+  server:{
+    // https: true,
+    proxy:{
+      '/api':{
+        target:'http://118.178.138.32:8010',
+        changeOrigin: true,
+        ws:true,
+        rewrite: path => path.replace(/^\/api/, '')
+      }
+    }
+  },
   plugins: [
     vue(),
     Components({
@@ -42,7 +53,6 @@ export default defineConfig({
       }
     ]
   },
-  
   css: {
     preprocessorOptions: {
       scss: { // 解决scss 报警

@@ -86,7 +86,7 @@ import {
   useMenuDragger,
   useBlockDragger,
   useCommand
-} from "@/utils"
+} from "@/utils/DragCommand"
 import { $dropdown } from "@/components/Dropdown";
 import DropdownItem from "@/components/Dropdown/components/DropdownItem/index.vue";
 import { $dialog } from '@/components/Dialog';
