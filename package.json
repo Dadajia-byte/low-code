@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "prepare": "husky"
+    "prepare": "husky",
+    "openapi":"node scripts/generatedApi.js"
   },
   "dependencies": {
     "axios": "^1.7.7",
@@ -25,6 +26,7 @@
     "@iconify-json/ep": "^1.2.0",
     "@vitejs/plugin-vue": "^5.1.4",
     "husky": "^9.1.6",
+    "minimist": "^1.2.8",
     "sass": "^1.79.4",
     "unplugin-auto-import": "^0.18.3",
     "unplugin-icons": "^0.19.3",
