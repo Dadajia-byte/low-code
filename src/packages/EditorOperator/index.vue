@@ -88,8 +88,7 @@ const state = reactive({
 const reset = () => {
     // 重置表单
     if (!props.block) { // 绑定的是容器的宽度和高度
-         // 解除响应式关系后再进行深拷贝
-         
+        
          state.editData = cloneDeep(props.data.container);
 
     } else {
