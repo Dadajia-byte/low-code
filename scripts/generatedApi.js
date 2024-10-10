@@ -5,6 +5,7 @@
  * 2. 目前仅支持生成js文件，未实现ts文件生成（可以生成，但是没有interface和type定义）
  * 3. 目前没有对openapi规范进行校验，只支持部分规范（例如版本等等）
  * 4. 目前都是生成在一个文件中，希望后续能单独分开，最好支持文件夹等形式 
+ * 5. 不兼容各种请求参数（post/get等里的query/params/body）
  * */  
 
 import fs from 'fs';
@@ -28,7 +29,7 @@ function loadOpenApiSpec(filePath) {
  * @param {string} fileType - 文件类型（js 或 ts）
  */
 function generateApiFile(spec, outputPath, fileType) {
-    let content = `// Auto-generated API file\n\n`;
+    let content = `//自动生成的API文件\n\n`;
     content += `import {request} from './src/utils/request.${fileType}';\n\n`;
 
     // 遍历 OpenAPI 规范生成函数
