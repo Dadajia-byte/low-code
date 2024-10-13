@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import {postLogin} from '@/apis/user'
+import {postLogin} from '@/apis/modules/user'
 const {login,methods} = defineProps({
     login:{type:Object},
 

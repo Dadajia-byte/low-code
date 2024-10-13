@@ -160,7 +160,7 @@ const onContextMenu = (e, block) => {
       }
     }),
     h(DropdownItem, { label: '删除', shortCut: "Delete", onClick: commands.delete }),
-  ])
+  ]);
   $dropdown({
     el: e.target,// 以哪个元素作为基准
     content: () => contentVnode

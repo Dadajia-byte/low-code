@@ -1,5 +1,5 @@
 <template>
-    <ElDialog v-model="state.isShow" :title="state.option.title">
+    <ElDialog v-model="state.isShow" class="custom1-color" :title="state.option.title">
         <!-- 可以在这里添加对话框的内容 -->
         <template v-slot:default>
             <ElInput type="textarea" :autosize="{ minRows: 16, maxRows: 24 }" v-model="state.option.content"></ElInput>

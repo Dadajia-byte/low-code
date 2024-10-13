@@ -117,7 +117,7 @@ export class WebSocketClient extends EventDispatcher {
         if(this.stopWs) return;
         if(this.heartbeatTimer) {
             this.closeHeartbeat();
-        }
+        };
         this.heartbeatTimer = setInterval(()=>{
             if(this.socket) {
                 this.send({
