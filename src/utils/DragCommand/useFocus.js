@@ -1,3 +1,5 @@
+import { computed } from "vue";
+
 export function useFocus(data, previewRef, callback) {
   // console.log(data.blocks);
 
@@ -16,6 +18,28 @@ export function useFocus(data, previewRef, callback) {
     });
     return { focus, unfocused };
   });
+  // 计算选中元素的边界
+  const calculateSelectionBounds = computed(()=>{
+    if(focusData.value.focus.length<=1) return null;
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    focusData.value.focus.forEach(item=>{
+      const {left,top,width,height} = item;
+      minX = Math.min(minX,left);
+      minY = Math.min(minY,top);
+      maxX = Math.max(maxX,left+width);
+      maxY = Math.max(maxY,top+height);
+    });
+    
+    return {
+      left:minX-4,
+      top:minY-4,
+      width:maxX-minX+6,
+      height:maxY-minY+6
+    }
+  })
   const clearBlockFocus = () => {
     data.blocks.forEach((item) => {
       item.focus = false;
@@ -53,5 +77,6 @@ export function useFocus(data, previewRef, callback) {
     containerMouseDown,
     lastSelectBlock,
     clearBlockFocus,
+    selectionBounds:calculateSelectionBounds,
   };
 }

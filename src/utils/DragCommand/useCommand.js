@@ -76,6 +76,39 @@ export const useCommand = (data, focusData) => {
       };
     },
   });
+  // 拖曳缩放
+  registry({
+    name:'resize',
+    pushQueue: true,
+    init() {
+      this.before = null;
+      const start = ()=> (this.before = cloneDeep(data.blocks));
+      const end = () => state.commands.resize();
+      events.on("resizeStart", start);
+      events.on("resizeEnd", end);
+      return () => {
+        events.off("resizeStart");
+        events.off("resizeEnd");
+      };
+    },
+    execute() {
+      let before = data.blocks;
+      let after = data.blocks;
+      return {
+        redo() {
+          // data = { ...data, blocks: after };
+          editorDataStore.updateData({ ...data, blocks: after })
+
+        },
+        undo() {
+          // data = { ...data, blocks: before };
+          editorDataStore.updateData({ ...data, blocks: before })
+
+        },
+      };
+    }
+  })
+  // 拖曳
   registry({
     name: "drag",
     pushQueue: true,// 如果将希望操作放到队列里 可以增加一个属性用于标识

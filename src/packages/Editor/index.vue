@@ -52,6 +52,7 @@
               :key="item.id" 
               :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
               :block="item" @mousedown="(e) => blockMouseDown(e, item, index)"
+              :focusBlocksNum = "focusData.focus.length"
               @Contextmenu="(e) => onContextMenu(e, item)"
               :formData="EditorDataStore.formData"
               >
@@ -59,6 +60,15 @@
           <!-- 辅助线 -->
           <div v-show="markline.x" class="line-x" :style="{ left: markline.x + 'px' }"></div>
           <div v-show="markline.y" class="line-y" :style="{ top: markline.y + 'px' }"></div>
+          <!-- 选中的边界框 -->
+           <div v-if="selectionBounds" class="selectionBounds" :style="{
+             top: selectionBounds.top + 'px',
+             left: selectionBounds.left + 'px',
+             width: selectionBounds.width + 'px',
+             height: selectionBounds.height + 'px'
+           }">
+           
+          </div>
         </div> 
       </div>
     </div>
@@ -117,9 +127,11 @@ let {
   containerMouseDown,
   lastSelectBlock, // 最后一个选中的节点
   clearBlockFocus, // 清除所有选中
+  selectionBounds,
 } = useFocus(EditorDataStore.data, previewRef, (e) => {
   mousedown(e);
 });
+
 // 3. 实现组件拖拽
 let { mousedown, markline } = useBlockDragger(focusData, lastSelectBlock, EditorDataStore.data)
 
@@ -431,5 +443,10 @@ onMounted(()=>{
   left: 0;
   right: 0;
   border-top: 1px dashed #6965db;
+}
+
+.selectionBounds {
+  position: absolute;
+  border: #6965db dashed 1px;
 }
 </style>

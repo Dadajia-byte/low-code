@@ -4,6 +4,7 @@
         <BlockResize 
             v-if="props.block.focus && (width||height)" 
             :block="props.block"
+            :focusBlocksNum="props.focusBlocksNum"
             :component="component"
         ></BlockResize>
     </div>
@@ -14,7 +15,8 @@ import BlockResize from "./BlockResize/index.vue"
 /* 单个物料组件 */
 const props = defineProps({
     block: { type: Object },
-    formData:{type:Object}
+    formData:{type:Object},
+    focusBlocksNum:{type:Number}
 })
 
 const config = inject('config')

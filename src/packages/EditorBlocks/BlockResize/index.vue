@@ -1,13 +1,13 @@
 <template>
-    <template v-if="width">
+    <template v-if="width && focusBlocksNum<2">
         <div class="block-resize block-resize-left" @mousedown="e=>onMouseDown(e,{horizontal:'start',verical:'center'})"></div>
         <div class="block-resize block-resize-right" @mousedown="e=>onMouseDown(e,{horizontal:'end',verical:'center'})"></div>
     </template>
-    <template v-if="height">
+    <template v-if="height && focusBlocksNum<2">
         <div class="block-resize block-resize-top" @mousedown="e=>onMouseDown(e,{horizontal:'center',verical:'start'})"></div>
         <div class="block-resize block-resize-bottom" @mousedown="e=>onMouseDown(e,{horizontal:'center',verical:'end'})"></div>
     </template>
-        <template v-if="height && width">
+        <template v-if="height && width && focusBlocksNum<2">
         <div class="block-resize block-resize-top-left" @mousedown="e=>onMouseDown(e,{horizontal:'start',verical:'start'})"></div>
         <div class="block-resize block-resize-top-right" @mousedown="e=>onMouseDown(e,{horizontal:'end',verical:'start'})"></div>
         <div class="block-resize block-resize-bottom-left" @mousedown="e=>onMouseDown(e,{horizontal:'start',verical:'end'})"></div>
@@ -17,18 +17,20 @@
 
 <script setup>
 import { useEditorDataStore } from '../../../store/module/editorData';
+import { events } from '../../../utils/event';
 const EditorDataStore = useEditorDataStore();
-const {block,component} = defineProps({
+const {block,component,focusBlocksNum} = defineProps({
     block:{type:Object},
-    component:{type:Object}
+    component:{type:Object},
+    focusBlocksNum:{type:Number}
 })
 const {width,height} = component.resize || {}
-let data ={}
+let data =ref({})
 const onMouseMove = (e)=>{
     console.log(111);
     
     let {clientX,clientY} = e;
-    let {startX,startY,startWidth,startHeight,startLeft,startTop,direction} = data;
+    let {startX,startY,startWidth,startHeight,startLeft,startTop,direction} = data.value;
 
     if(direction.horizontal ==='center') {
         clientX = startX;
@@ -58,12 +60,14 @@ const onMouseMove = (e)=>{
     EditorDataStore.updateBlocks(block);
 }
 const onMouseUp = ()=>{
+    events.emit('resizeEnd')
     document.body.removeEventListener('mousemove',onMouseMove)
     document.body.removeEventListener('mouseup',onMouseUp)
 }
 const onMouseDown = (e,direction)=>{
+    events.emit('resizeStart')
     e.stopPropagation();
-    data = {
+    data.value = {
         startX:e.clientX,
         startY:e.clientY,
         startWidth:block.width,
