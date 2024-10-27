@@ -27,7 +27,6 @@ const {block,component,focusBlocksNum} = defineProps({
 const {width,height} = component.resize || {}
 let data =ref({})
 const onMouseMove = (e)=>{
-    console.log(111);
     
     let {clientX,clientY} = e;
     let {startX,startY,startWidth,startHeight,startLeft,startTop,direction} = data.value;

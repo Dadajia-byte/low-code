@@ -71,10 +71,15 @@ export function useFocus(data, previewRef, callback) {
     clearBlockFocus();
     selectIndex.value = -1;
   };
+  const selectionBoundsMouseDown = (e)=>{
+    e.stopPropagation();
+    callback(e);
+  }
   return {
     blockMouseDown,
     focusData,
     containerMouseDown,
+    selectionBoundsMouseDown,
     lastSelectBlock,
     clearBlockFocus,
     selectionBounds:calculateSelectionBounds,
