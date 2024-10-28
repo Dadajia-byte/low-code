@@ -49,11 +49,12 @@
           @mousedown="containerMouseDown">
             <EditorBlocks 
               v-for="(item, index) in EditorDataStore.data.blocks" 
-              :key="item.id" 
+              :key="`${EditorDataStore.focusUpdate}${item.id}`" 
               :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
               :block="item" @mousedown="(e) => blockMouseDown(e, item, index)"
               :focusBlocksNum = "focusData.focus.length"
               @Contextmenu="(e) => onContextMenu(e, item)"
+              :blockReizeMousedown="onMouseDown"
               :formData="EditorDataStore.formData"
               >
             </EditorBlocks>
@@ -70,8 +71,15 @@
               }"
             @mousedown="(e) =>selectionBoundsMouseDown(e)"
            >
-           
-          </div>
+              <div class="block-resize block-resize-left" @mousedown="e=>onMouseDown(e,{horizontal:'start',vertical:'center'})"></div>
+              <div class="block-resize block-resize-right" @mousedown="e=>onMouseDown(e,{horizontal:'end',vertical:'center'})"></div>
+              <div class="block-resize block-resize-top" @mousedown="e=>onMouseDown(e,{horizontal:'center',vertical:'start'})"></div>
+              <div class="block-resize block-resize-bottom" @mousedown="e=>onMouseDown(e,{horizontal:'center',vertical:'end'})"></div>
+              <div class="block-resize block-resize-top-left" @mousedown="e=>onMouseDown(e,{horizontal:'start',vertical:'start'})"></div>
+              <div class="block-resize block-resize-top-right" @mousedown="e=>onMouseDown(e,{horizontal:'end',vertical:'start'})"></div>
+              <div class="block-resize block-resize-bottom-left" @mousedown="e=>onMouseDown(e,{horizontal:'start',vertical:'end'})"></div>
+              <div class="block-resize block-resize-bottom-right" @mousedown="e=>onMouseDown(e,{horizontal:'end',vertical:'end'})"></div>
+            </div>
         </div> 
       </div>
     </div>
@@ -98,6 +106,7 @@ import {
   useFocus,
   useMenuDragger,
   useBlockDragger,
+  useBlockResize,
   useCommand
 } from "@/utils/DragCommand"
 import { $dropdown } from "@/components/Dropdown";
@@ -123,6 +132,7 @@ const containerRef = ref(null)
 // 1. 实现物料堆拖拽
 const { dragStart, dragEnd } = useMenuDragger(containerRef, EditorDataStore.data)
 
+
 // 2.获取焦点后即可直接拖拽
 let {
   blockMouseDown,
@@ -138,6 +148,8 @@ let {
 
 // 3. 实现组件拖拽
 let { mousedown, markline } = useBlockDragger(focusData,lastSelectBlock, EditorDataStore.data,selectionBounds)
+// 4. 实现组件缩放
+let {onMouseDown} = useBlockResize(focusData,selectionBounds,EditorDataStore.data)
 
 // 用于保存可能使用的所有指令(操作)
 const { commands } = useCommand(EditorDataStore.data, focusData);
@@ -453,5 +465,64 @@ onMounted(()=>{
 .selectionBounds {
   position: absolute;
   border: #6965db dashed 1px;
+}
+$pre:"block-resize";
+.#{$pre} {
+    position: absolute;
+    width:6px;
+    height: 6px;
+    background-color: #fff;
+    border:1px solid #6965db;
+    z-index: 1000;
+    border-radius: 2px;
+    user-select: none;
+    
+}
+.#{$pre}-top {
+    top: -4px;
+    left: calc(50% - 3px);
+    cursor: n-resize; /* 设置为向上箭头光标 */
+}
+
+.#{$pre}-bottom {
+    bottom: -4px;
+    left: calc(50% - 3px);
+    cursor: s-resize; /* 设置为向下箭头光标 */
+}
+
+.#{$pre}-left {
+    left: -4px;
+    top: calc(50% - 3px);
+    cursor: w-resize; /* 设置为向左箭头光标 */
+}
+
+.#{$pre}-right {
+    right: -4px;
+    top: calc(50% - 3px);
+    cursor: e-resize; /* 设置为向右箭头光标 */
+}
+
+.#{$pre}-top-left {
+    top: -4px;
+    left: -4px;
+    cursor: nw-resize; /* 设置为西北箭头光标 */
+}
+
+.#{$pre}-top-right {
+    top: -4px;
+    right: -4px;
+    cursor: ne-resize; /* 设置为东北箭头光标 */
+}
+
+.#{$pre}-bottom-left {
+    bottom: -4px;
+    left: -4px;
+    cursor: sw-resize; /* 设置为西南箭头光标 */
+}
+
+.#{$pre}-bottom-right {
+    bottom: -4px;
+    right: -4px;
+    cursor: se-resize; /* 设置为东南箭头光标 */
 }
 </style>

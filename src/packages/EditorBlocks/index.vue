@@ -3,9 +3,9 @@
         <component :is="renderComponent" v-model="_value"></component>
         <BlockResize 
             v-if="props.block.focus && (width||height)" 
-            :block="props.block"
             :focusBlocksNum="props.focusBlocksNum"
             :component="component"
+            :onMouseDown = "props.blockReizeMousedown"
         ></BlockResize>
     </div>
 </template>
@@ -16,7 +16,8 @@ import BlockResize from "./BlockResize/index.vue"
 const props = defineProps({
     block: { type: Object },
     formData:{type:Object},
-    focusBlocksNum:{type:Number}
+    focusBlocksNum:{type:Number},
+    blockReizeMousedown:{type:Function}
 })
 
 const config = inject('config')
