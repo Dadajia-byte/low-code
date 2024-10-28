@@ -140,7 +140,7 @@ registerConfig.register({
     style: "width: 200px"
   },
     () => (props.options || []).map((opt, index) => {
-      return h(ElOption, { label: opt.label, value: opt.value, key: index })
+      return h(ElOption, { label: opt.label, value: opt.value })
     }
     )),
   key: 'select',
@@ -172,17 +172,57 @@ registerConfig.register({
   }, () => '单选框'),
   render: ({ props }) => h(ElRadioGroup, {},
     () => (props.options || [{ label: "默认选项1", value: "1" }]).map((opt, index) => {
-      return h(ElRadio, { value: opt.value, key: index, size: props.size }, () => opt.label);
+      return h(ElRadio, { value: opt.value, size: props.size }, () => opt.label);
     })
   ),
   
   key: 'radio',
   model: {
-    default: '绑定字段'
+ 
   },
   props: {
     options: createTableProp(
       '单选选项',
+      {
+        options: [
+          { label: '绑定值', field: 'value' },
+          { label: '显示值', field: 'label' }
+        ],
+        key: 'label',
+      },
+    ),
+    size: createSelectProp('选项大小', [
+      { label: '小', value: 'small' },
+      { label: '中等', value: 'medium' },
+      { label: '大', value: 'large' },
+    ]),
+  }
+})
+
+//多选框
+
+registerConfig.register({
+  label: '多选框',
+  category: [1],
+  preview: () => h(ElCheckbox, {
+    label: '多选框',
+    size: 'small',
+    
+  }, () => '多选框'),
+  render: ({ props }) => h(ElCheckboxGroup, {
+
+  },
+  () => (props.options || [{ label: "默认选项1", value: "1" }]).map((opt, index) => {
+    return h(ElCheckbox, { value: opt.value, key: index, size: props.size ,label:opt.label}, );
+  })
+  ),
+  key:'checkbox',
+  model:{
+
+  },
+  props:{
+    options: createTableProp(
+      '多选选项',
       {
         options: [
           { label: '绑定值', field: 'value' },
@@ -247,7 +287,7 @@ registerConfig.register({
       { label: '中等', value: 'medium' },
       { label: '大', value: 'large' },
     ]),
-    activeText:createInputProp('文字'),
+    activeText:createInputProp('按钮提示'),
   },
   model:{
 
