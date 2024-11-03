@@ -71,14 +71,20 @@
               }"
             @mousedown="(e) =>selectionBoundsMouseDown(e)"
            >
-              <div class="block-resize block-resize-left" @mousedown="e=>onMouseDown(e,{horizontal:'start',vertical:'center'})"></div>
-              <div class="block-resize block-resize-right" @mousedown="e=>onMouseDown(e,{horizontal:'end',vertical:'center'})"></div>
-              <div class="block-resize block-resize-top" @mousedown="e=>onMouseDown(e,{horizontal:'center',vertical:'start'})"></div>
-              <div class="block-resize block-resize-bottom" @mousedown="e=>onMouseDown(e,{horizontal:'center',vertical:'end'})"></div>
-              <div class="block-resize block-resize-top-left" @mousedown="e=>onMouseDown(e,{horizontal:'start',vertical:'start'})"></div>
-              <div class="block-resize block-resize-top-right" @mousedown="e=>onMouseDown(e,{horizontal:'end',vertical:'start'})"></div>
-              <div class="block-resize block-resize-bottom-left" @mousedown="e=>onMouseDown(e,{horizontal:'start',vertical:'end'})"></div>
-              <div class="block-resize block-resize-bottom-right" @mousedown="e=>onMouseDown(e,{horizontal:'end',vertical:'end'})"></div>
+              <template v-if="focusData.focus.map(item=>config.componentMap[item.key]).reduce((pre,cur)=>pre+cur.resize?.width,0)">
+                  <div class="block-resize block-resize-left" @mousedown="e=>onMouseDown(e,{horizontal:'start',vertical:'center'})"></div>
+                  <div class="block-resize block-resize-right" @mousedown="e=>onMouseDown(e,{horizontal:'end',vertical:'center'})"></div>
+              </template>
+              <template v-if="focusData.focus.map(item=>config.componentMap[item.key]).reduce((pre,cur)=>pre+cur.resize?.height,0)">
+                  <div class="block-resize block-resize-top" @mousedown="e=>onMouseDown(e,{horizontal:'center',vertical:'start'})"></div>
+                  <div class="block-resize block-resize-bottom" @mousedown="e=>onMouseDown(e,{horizontal:'center',vertical:'end'})"></div>
+              </template>
+              <template v-if="focusData.focus.map(item=>config.componentMap[item.key]).reduce((pre,cur)=>pre+cur.resize?.height,0) && focusData.focus.map(item=>config.componentMap[item.key]).reduce((pre,cur)=>pre+cur.resize?.width,0)">
+                  <div class="block-resize block-resize-top-left" @mousedown="e=>onMouseDown(e,{horizontal:'start',vertical:'start'})"></div>
+                  <div class="block-resize block-resize-top-right" @mousedown="e=>onMouseDown(e,{horizontal:'end',vertical:'start'})"></div>
+                  <div class="block-resize block-resize-bottom-left" @mousedown="e=>onMouseDown(e,{horizontal:'start',vertical:'end'})"></div>
+                  <div class="block-resize block-resize-bottom-right" @mousedown="e=>onMouseDown(e,{horizontal:'end',vertical:'end'})"></div>
+              </template>
             </div>
         </div> 
       </div>
@@ -246,13 +252,6 @@ const buttons = [
 ]
 onMounted(()=>{
     events.on('block-updated',(newBlock)=>{
-      // 假设 data.value.blocks 是一个数组，通过 newBlock 的某个唯一标识来查找并替换
-        // const index = EditorDataStore.data.blocks.findIndex(block => block.id === newBlock.id);
-        
-        // if (index !== -1) {
-        //   console.log(newBlock);
-        //   EditorDataStore.data.blocks.splice(index, 1, newBlock);
-        // }
         EditorDataStore.updateBlocks(newBlock)
   })
 })

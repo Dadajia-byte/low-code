@@ -53,7 +53,6 @@ registerConfig.register({
         fontSize:props.size
       },
       size:"small"
-
     }, 
     props.text || '请设置文本内容'),
   key: "text",
