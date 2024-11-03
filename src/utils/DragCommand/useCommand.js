@@ -2,6 +2,7 @@ import { events } from "../event";
 import { cloneDeep } from "lodash";
 import { useEditorDataStore } from "../../store/module/editorData";
 import { setActivePinia, getActivePinia } from 'pinia';
+import { history,historyIndex,setHistoryIndex } from "./useBlockResize";
 
 
 export const useCommand = (data, focusData) => {
@@ -82,7 +83,7 @@ export const useCommand = (data, focusData) => {
     pushQueue: true,
     init() {
       this.before = null;
-      const start = ()=> (this.before = cloneDeep(data.blocks));
+      const start = ()=> (this.before = cloneDeep(history[historyIndex]));
       const end = () => state.commands.resize();
       events.on("resizeStart", start);
       events.on("resizeEnd", end);
@@ -92,17 +93,25 @@ export const useCommand = (data, focusData) => {
       };
     },
     execute() {
-      let before = data.blocks;
-      let after = data.blocks;
+      let before = this.before;
+      let after = history[historyIndex];
       return {
         redo() {
-          // data = { ...data, blocks: after };
-          editorDataStore.updateData({ ...data, blocks: after })
-
+          if(historyIndex<history.length-1) {
+            setHistoryIndex(historyIndex+1)
+            after = history[historyIndex]
+            editorDataStore.updateData({ ...data, blocks: after })
+          }
         },
         undo() {
           // data = { ...data, blocks: before };
-          editorDataStore.updateData({ ...data, blocks: before })
+          if(historyIndex>0) {
+            console.log(111);
+            
+            setHistoryIndex(historyIndex-1)
+            editorDataStore.updateData({ ...data, blocks: before })
+          }
+ 
 
         },
       };

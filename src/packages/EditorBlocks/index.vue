@@ -5,7 +5,7 @@
             v-if="props.block.focus && (width||height)" 
             :focusBlocksNum="props.focusBlocksNum"
             :component="component"
-            :onMouseDown = "props.blockReizeMousedown"
+            :blockResizeMousedown = "props.blockReizeMousedown"
         ></BlockResize>
     </div>
 </template>
@@ -19,7 +19,6 @@ const props = defineProps({
     focusBlocksNum:{type:Number},
     blockReizeMousedown:{type:Function}
 })
-
 const config = inject('config')
 // 从组件利用映射拿到对应组件
 const component = config.componentMap[props.block.key];

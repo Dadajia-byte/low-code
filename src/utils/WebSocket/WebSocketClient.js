@@ -42,7 +42,6 @@ export class WebSocketClient extends EventDispatcher {
             ...dataPrefix
         }
     }
-
     // 消息发送
     send(message) {
         if(this.socket&&this.socket.readyState===WebSocket.OPEN) {

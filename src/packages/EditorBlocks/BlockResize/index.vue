@@ -16,12 +16,11 @@
 </template>
 
 <script setup>
-const {component,focusBlocksNum,blockReizeMousedown:onMouseDown} = defineProps({
+const {component,focusBlocksNum,blockResizeMousedown:onMouseDown} = defineProps({
     component:{type:Object},
     focusBlocksNum:{type:Number},
-    blockReizeMousedown:{type:Function}
+    blockResizeMousedown:{type:Function}
 })
-console.log(blockReizeMousedown);
 
 const {width,height} = component.resize || {}
 </script>
