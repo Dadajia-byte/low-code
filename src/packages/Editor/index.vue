@@ -511,12 +511,11 @@ onMounted(() => {
 
         &::after {
           content: "";
+          z-index: 999;
           position: absolute;
           top: 0;
           left: 0;
           right: 0;
-          // background-color: #ccc;
-          opacity: 0.2;
           bottom: 0;
         }
       }
@@ -582,6 +581,7 @@ onMounted(() => {
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 99;
   }
 }
 

@@ -209,10 +209,8 @@ registerConfig.register({
     
   }, () => '多选框'),
   render: ({ props }) => h(ElCheckboxGroup, {
-
-  },
-  () => (props.options || [{ label: "默认选项1", value: "1" }]).map((opt, index) => {
-    return h(ElCheckbox, { value: opt.value, key: index, size: props.size ,label:opt.label}, );
+  },() => (props.options || [{ label: "默认选项1", value: "1" }]).map(opt => {
+    return h(ElCheckbox, { value: opt.value,  size: props.size ,label:opt.label}, );
   })
   ),
   key:'checkbox',
