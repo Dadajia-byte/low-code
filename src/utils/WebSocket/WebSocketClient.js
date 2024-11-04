@@ -42,7 +42,6 @@ export class WebSocketClient extends EventDispatcher {
             ...dataPrefix
         }
     }
-
     // 消息发送
     send(message) {
         if(this.socket&&this.socket.readyState===WebSocket.OPEN) {
@@ -117,7 +116,7 @@ export class WebSocketClient extends EventDispatcher {
         if(this.stopWs) return;
         if(this.heartbeatTimer) {
             this.closeHeartbeat();
-        }
+        };
         this.heartbeatTimer = setInterval(()=>{
             if(this.socket) {
                 this.send({

@@ -11,6 +11,9 @@
                     <el-form-item label="容器高度">
                         <el-input-number v-model="state.editData.height"></el-input-number>
                     </el-form-item>
+                    <el-form-item label="背景网格">
+                        <el-switch v-model="state.editData.grid" />
+                    </el-form-item>
                     <el-form-item >
                         <el-button color="#626aef" @click="() => apply()">应用</el-button>
                         <el-button @click="reset">重置</el-button>
@@ -88,8 +91,7 @@ const state = reactive({
 const reset = () => {
     // 重置表单
     if (!props.block) { // 绑定的是容器的宽度和高度
-         // 解除响应式关系后再进行深拷贝
-         
+        
          state.editData = cloneDeep(props.data.container);
 
     } else {

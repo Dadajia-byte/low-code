@@ -60,7 +60,7 @@ class AxiosService {
                 if(this.activeRequestsCount>=this.maxRequestsCount) {
                     return Promise.reject(`同时请求过多请稍后再试`)
                 }
-                
+        
                 this.removePendingRequest(config); // 移除重复请求
                 this.addPendingRequest(config); // 添加请求至pengding队列
                 
@@ -84,7 +84,7 @@ class AxiosService {
                         localStorage.setItem('accessToken',accessToken);
                         config.headers['Authorization'] = `Bearer ${accessToken}`
                         this.activeRequestsCount++;
-                        return config
+                        return config;
                     }).catch(err=>{
                         localStorage.removeItem('refreshToken');
                         localStorage.removeItem('accessToken');
@@ -158,7 +158,8 @@ const options = {
     // maxAge:1000*60*5 // 开启缓存后，缓存生命周期
     // maxRequestsCount:5, // 最大同时发送接口数
 }
-const createRequest =(options) =>{
+
+export const createRequest =(options) =>{
     return new AxiosService(options)
 }
 export const request = createRequest(options).instance;

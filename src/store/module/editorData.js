@@ -5,22 +5,24 @@ export const useEditorDataStore = defineStore("editorDataStore", () => {
         container: {
             height: 800,
             width: 1000,
+            grid:true,
         },
         blocks: [],
 
     });
+    let focusUpdate = ref(0);
     const formData = reactive({
         username: 'admin',
         password: '123456',
     })
 
     const updateData = (newValue) => {
+        focusUpdate.value++;
         data.container = cloneDeep(newValue.container);
         data.blocks = newValue.blocks;
     }
     const updateBlocks = (newBlock) => {
-        console.log(11111);
-        
+        focusUpdate.value++;
         const index = data.blocks.findIndex(block => block.id === newBlock.id);
         if (index !== -1) {
             // 使用 splice 保证响应式
@@ -34,5 +36,6 @@ export const useEditorDataStore = defineStore("editorDataStore", () => {
     formData,
     updateData,
     updateBlocks,
+    focusUpdate
 }
 });

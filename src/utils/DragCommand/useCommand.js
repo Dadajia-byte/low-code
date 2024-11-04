@@ -2,6 +2,7 @@ import { events } from "../event";
 import { cloneDeep } from "lodash";
 import { useEditorDataStore } from "../../store/module/editorData";
 import { setActivePinia, getActivePinia } from 'pinia';
+import { history,historyIndex,setHistoryIndex } from "./useBlockResize";
 
 
 export const useCommand = (data, focusData) => {
@@ -76,6 +77,47 @@ export const useCommand = (data, focusData) => {
       };
     },
   });
+  // 拖曳缩放
+  registry({
+    name:'resize',
+    pushQueue: true,
+    init() {
+      this.before = null;
+      const start = ()=> (this.before = cloneDeep(history[historyIndex]));
+      const end = () => state.commands.resize();
+      events.on("resizeStart", start);
+      events.on("resizeEnd", end);
+      return () => {
+        events.off("resizeStart");
+        events.off("resizeEnd");
+      };
+    },
+    execute() {
+      let before = this.before;
+      let after = history[historyIndex];
+      return {
+        redo() {
+          if(historyIndex<history.length-1) {
+            setHistoryIndex(historyIndex+1)
+            after = history[historyIndex]
+            editorDataStore.updateData({ ...data, blocks: after })
+          }
+        },
+        undo() {
+          // data = { ...data, blocks: before };
+          if(historyIndex>0) {
+            console.log(111);
+            
+            setHistoryIndex(historyIndex-1)
+            editorDataStore.updateData({ ...data, blocks: before })
+          }
+ 
+
+        },
+      };
+    }
+  })
+  // 拖曳
   registry({
     name: "drag",
     pushQueue: true,// 如果将希望操作放到队列里 可以增加一个属性用于标识

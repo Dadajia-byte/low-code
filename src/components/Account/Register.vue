@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import {getVerifyCode,postRegister} from "@/apis/user"
+import {getVerifyCode,postRegister} from "@/apis/modules/user"
 const registerForm =ref(null);
 const {register,methods} = defineProps({
     register:{type:Object},

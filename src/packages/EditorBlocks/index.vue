@@ -3,8 +3,9 @@
         <component :is="renderComponent" v-model="_value"></component>
         <BlockResize 
             v-if="props.block.focus && (width||height)" 
-            :block="props.block"
+            :focusBlocksNum="props.focusBlocksNum"
             :component="component"
+            :blockResizeMousedown = "props.blockReizeMousedown"
         ></BlockResize>
     </div>
 </template>
@@ -14,9 +15,10 @@ import BlockResize from "./BlockResize/index.vue"
 /* 单个物料组件 */
 const props = defineProps({
     block: { type: Object },
-    formData:{type:Object}
+    formData:{type:Object},
+    focusBlocksNum:{type:Number},
+    blockReizeMousedown:{type:Function}
 })
-
 const config = inject('config')
 // 从组件利用映射拿到对应组件
 const component = config.componentMap[props.block.key];

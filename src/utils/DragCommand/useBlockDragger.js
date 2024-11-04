@@ -1,7 +1,7 @@
 
 import { events } from "../event";
 
-export function useBlockDragger(focusData, lastSelectBlock, data) {
+export function useBlockDragger(focusData, lastSelectBlock, data,selectionBounds) {
   let dragState = {
     startX: 0,
     startY: 0,
@@ -12,13 +12,14 @@ export function useBlockDragger(focusData, lastSelectBlock, data) {
     dragging: false, // 当前是否正在拖拽
   });
   const mousedown = (e) => {
-    const { width: BWidth, height: BHeight } = lastSelectBlock.value; // 最后一个拖拽的元素作为移动物
+    
+    const { width: BWidth, height: BHeight } = (selectionBounds.value || lastSelectBlock.value); // 最后一个拖拽的元素作为移动物
 
     dragState = {
       startX: e.clientX,
       startY: e.clientY,
-      startLeft: lastSelectBlock.value.left, // 拖拽前的位置，用于比较是否产生辅助线
-      startTop: lastSelectBlock.value.top,
+      startLeft: (selectionBounds.value || lastSelectBlock.value).left, // 拖拽前的位置，用于比较是否产生辅助线
+      startTop: (selectionBounds.value || lastSelectBlock.value).top,
       startPos: focusData.value.focus.map(({ top, left }) => ({ top, left })),
       dragging: false,
       lines: (() => {
@@ -82,6 +83,15 @@ export function useBlockDragger(focusData, lastSelectBlock, data) {
     let left = dragState.startLeft + (moveX - dragState.startX);
     let top = dragState.startTop + (moveY - dragState.startY);
 
+    // 获取容器的边界
+    const containerRect = data.container;
+    const BWidth = (selectionBounds.value || lastSelectBlock.value).width;
+    const BHeight = (selectionBounds.value || lastSelectBlock.value).height;
+
+    // 限制边界框不超出容器
+    left = Math.max(0, Math.min(left, containerRect.width - BWidth));
+    top = Math.max(0, Math.min(top, containerRect.height - BHeight));
+    
     // 先计算横线 距离参照物元素还有5px时显示辅助线
     let y = null;
     let x = null;
