@@ -12,48 +12,63 @@ function useBlockResize(focusData,selectionBounds,data) {
     let stateData = {}
     // 获取容器边界
     const containerRect = data.container;    
-    const onMouseMove = (e)=>{
-        let {clientX,clientY} = e;
-        let {startX,startY,blocks,direction,dragging} = stateData;
+    const onMouseMove = (e) => {
+    let { clientX, clientY } = e;
+    let { startX, startY, blocks, direction, dragging } = stateData;
 
-        blocks.forEach((block) => {
-            let { startWidth, startHeight, startLeft, startTop } = block;
-            let durX = clientX - startX;
-            let durY = clientY - startY;
-            if (direction.horizontal === 'center') {
-                clientX = startX;
-            }
-            if (direction.vertical === 'center') {
-                clientY = startY;
-            }
-            if (direction.vertical === 'start') {
-                durY = durY * -1;
-                startTop -= durY;
-            }
-            if (direction.horizontal === 'start') {
-                durX = durX * -1;
-                startLeft -= durX;
-            }
-            const width = startWidth + durX;
-            const height = startHeight + durY;
-            // 获取容器的边界
-            const maxLeft = containerRect.width - width;
-            const maxTop = containerRect.height - height;
-            // 限制缩放后的尺寸不超出容器
-            startLeft = Math.max(0, Math.min(startLeft, maxLeft));
-            startTop = Math.max(0, Math.min(startTop, maxTop));
-            block.item.width = width;
-            block.item.height = height;
-            block.item.left = startLeft;
-            block.item.top = startTop;
-            block.item.hasResize = true;
-            editorDataStore.updateBlocks(block);
-        });
-        if(!dragging) {
-            data.dragging = true;
-            events.emit('resizeStart')
+    blocks.forEach((block) => {
+        let { startWidth, startHeight, startLeft, startTop } = block;
+        let durX = clientX - startX;
+        let durY = clientY - startY;
+
+        if (direction.horizontal === 'center') {
+            clientX = startX;
         }
+        if (direction.vertical === 'center') {
+            clientY = startY;
+        }
+        if (direction.vertical === 'start') {
+            durY = durY * -1;
+            startTop -= durY;
+        }
+        if (direction.horizontal === 'start') {
+            durX = durX * -1;
+            startLeft -= durX;
+        }
+
+        const width = startWidth + durX;
+        const height = startHeight + durY;
+
+        // 设置宽度和高度的最小值和最大值
+        const minWidth = 20; // 最小宽度
+        const maxWidth = 300; // 最大宽度
+        const minHeight = 20; // 最小高度
+        const maxHeight = 200; // 最大高度
+
+        const finalWidth = Math.max(minWidth, Math.min(width, maxWidth));
+        const finalHeight = Math.max(minHeight, Math.min(height, maxHeight));
+
+        // 获取容器的边界
+        const maxLeft = containerRect.width - finalWidth;
+        const maxTop = containerRect.height - finalHeight;
+
+        // 限制缩放后的尺寸不超出容器
+        startLeft = Math.max(0, Math.min(startLeft, maxLeft));
+        startTop = Math.max(0, Math.min(startTop, maxTop));
+
+        block.item.width = finalWidth;
+        block.item.height = finalHeight;
+        block.item.left = startLeft;
+        block.item.top = startTop;
+        block.item.hasResize = true;
+        editorDataStore.updateBlocks(block);
+    });
+
+    if (!dragging) {
+        data.dragging = true;
+        events.emit('resizeStart');
     }
+}
     
     const onMouseDown = (e,direction)=>{
         e.stopPropagation();
