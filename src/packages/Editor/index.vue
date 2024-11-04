@@ -310,12 +310,12 @@ const onContextBlock = (e, block) => {
     h(DropdownItem, {
       label: "下移一层",
       shortCut: "Ctrl+[",
-      onClick: () => console.log("上移一层"),
+      onClick: commands.placeDown,
     }),
     h(DropdownItem, {
       label: "上移一层",
       shortCut: "Ctrl+]",
-      onClick: () => console.log("下移一层"),
+      onClick: commands.placeUp,
     }),
     h(DropdownItem, {
       label: "置顶",

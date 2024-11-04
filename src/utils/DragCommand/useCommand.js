@@ -61,7 +61,6 @@ export const useCommand = (data, focusData) => {
   });
   // 撤销
   registry({
-
     name: "undo",
     keyboard: "ctrl+z",
     execute() {
@@ -212,6 +211,7 @@ export const useCommand = (data, focusData) => {
   registry({
     name: "placeTop",
     pushQueue: true,
+    keyboard: "ctrl+shift+[",
     execute() {
       let before = cloneDeep(data.blocks);
       let after = (() => {
@@ -226,12 +226,10 @@ export const useCommand = (data, focusData) => {
           // 如果当前blocks前后一致，则不会更新
           // data = { ...data, blocks: before };
           editorDataStore.updateData({ ...data, blocks: before })
-
         },
         redo: () => {
           // data = { ...data, blocks: after };
           editorDataStore.updateData({ ...data, blocks: after })
-
         },
       };
     },
@@ -240,6 +238,7 @@ export const useCommand = (data, focusData) => {
   registry({
     name: "placeBottom",
     pushQueue: true,
+    keyboard: "ctrl+shift+]",
     execute() {
       let before = cloneDeep(data.blocks);
       let after = (() => {
@@ -268,10 +267,59 @@ export const useCommand = (data, focusData) => {
       };
     },
   });
+  // 上移一层
+  registry({
+    name: "placeUp",
+    pushQueue: true,
+    keyboard: "ctrl+[",
+    execute() {
+      let before = cloneDeep(data.blocks);
+      let after =(()=>{
+        let {focus} = focusData.value
+        focus.forEach(block=>block.zIndex++)
+        console.log(data.blocks);
+        
+        return data.blocks
+      })()
+      return {
+        undo: () => {
+          editorDataStore.updateData({ ...data, blocks: before })
+        },
+        redo: () => {
+          editorDataStore.updateData({ ...data, blocks: after })
+        },
+      }
+    }
+
+  })
+  // 下移一层
+  registry({
+    name: "placeDown",
+    pushQueue: true,
+    keyboard: "ctrl+]",
+    execute() {
+      let before = cloneDeep(data.blocks);
+      // 本来应该是让选中block下移一层，但考虑<0情况，让所有unfocused+1即可
+      let after = (() => {
+        let {unfocused} = focusData.value
+        unfocused.forEach(block=>block.zIndex++)
+        return data.blocks
+      })()
+      return {
+        undo: () => {
+         editorDataStore.updateData({ ...data, blocks: before })
+        },
+        redo: () => {
+          editorDataStore.updateData({ ...data, blocks: after })
+        },
+      }
+    }
+  })
   // 删除
   registry({
     name: "delete",
     pushQueue: true,
+    keyboard:'delete',
     execute() {
       let state = {
         before: cloneDeep(data.blocks), // 保证唯一
@@ -298,11 +346,15 @@ export const useCommand = (data, focusData) => {
     const keyCodes = {
       90: "z",
       89: "y",
+      46:'delete',
+      219:'[',
+      221:']',
     };
     const onKeydown = (e) => {
-      const { ctrlKey, keyCode } = e;
+      const { ctrlKey, keyCode,shiftKey } = e;
       let keyString = [];
       if (ctrlKey) keyString.push("ctrl");
+      if (shiftKey) keyString.push("shift");
       keyString.push(keyCodes[keyCode]);
       keyString = keyString.join("+");
       // 根据键盘按键调用对应的事件
