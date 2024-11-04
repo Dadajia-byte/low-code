@@ -65,7 +65,7 @@ export const useCommand = (data, focusData) => {
     keyboard: "ctrl+z",
     execute() {
       return {
-        redo() {
+        redo() {      
           if (state.current === -1) return; // 没有可以撤销的操作
           let item = state.queue[state.current];
           if (item) {
@@ -76,7 +76,7 @@ export const useCommand = (data, focusData) => {
       };
     },
   });
-  // 拖曳缩放
+  // 缩放
   registry({
     name:'resize',
     pushQueue: true,
@@ -96,6 +96,8 @@ export const useCommand = (data, focusData) => {
       let after = history[historyIndex];
       return {
         redo() {
+          console.log(111);
+          
           if(historyIndex<history.length-1) {
             setHistoryIndex(historyIndex+1)
             after = history[historyIndex]
@@ -104,14 +106,13 @@ export const useCommand = (data, focusData) => {
         },
         undo() {
           // data = { ...data, blocks: before };
+          
           if(historyIndex>0) {
             console.log(111);
-            
-            setHistoryIndex(historyIndex-1)
+            setHistoryIndex(historyIndex-1);
+            before = history[historyIndex];
             editorDataStore.updateData({ ...data, blocks: before })
           }
- 
-
         },
       };
     }

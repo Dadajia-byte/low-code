@@ -38,7 +38,7 @@ const toggleExpand = () => {
     border: #e3e3e3 1px solid;
     box-shadow: 6px 4px 10px rgba(0, 0, 0, 0.1);
     transition: all .5s;
-    
+    z-index: 999;
 
     &-button {
         width: 50px;
