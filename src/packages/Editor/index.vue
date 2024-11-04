@@ -73,19 +73,33 @@
       <!-- 产生滚动条 -->
       <div class="editor-container-canvas">
         <!-- 产生内容区域 -->
-        <div class="editor-container-canvas-content" ref="containerRef" :style="containerStyles"
-          @mousedown="containerMouseDown">
-            <EditorBlocks 
-              v-for="(item, index) in EditorDataStore.data.blocks" 
-              :key="`${EditorDataStore.focusUpdate}${item.id}`" 
-              :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
-              :block="item" @mousedown="(e) => blockMouseDown(e, item, index)"
-              :focusBlocksNum = "focusData.focus.length"
-              @Contextmenu="(e) => onContextMenu(e, item)"
-              :blockReizeMousedown="onMouseDown"
-              :formData="EditorDataStore.formData"
-              >
-            </EditorBlocks>
+        <div
+          class="editor-container-canvas-content"
+          ref="containerRef"
+          :style="containerStyles"
+          @mousedown="containerMouseDown"
+          @contextmenu.prevent="(e) => onContextMenu(e, null)"
+        >
+          <canvas
+            ref="canvasRef"
+            :width="containerStyles.width"
+            :height="containerStyles.height"
+            class="grid-canvas"
+          ></canvas>
+
+          <EditorBlocks
+            v-for="(item, index) in EditorDataStore.data.blocks"
+            :key="item.id"
+            :class="{
+              'editor-block-focus': item.focus,
+              'editor-block-preview': previewRef,
+            }"
+            :block="item"
+            @mousedown="(e) => blockMouseDown(e, item, index)"
+            @contextmenu.stop.prevent="(e) => onContextBlock(e, item)"
+            :formData="EditorDataStore.formData"
+          >
+          </EditorBlocks>
           <!-- 辅助线 -->
           <div v-show="markline.x" class="line-x" :style="{ left: markline.x + 'px' }"></div>
           <div v-show="markline.y" class="line-y" :style="{ top: markline.y + 'px' }"></div>
@@ -169,32 +183,30 @@ const containerStyles = computed(() => ({
 }));
 
 const containerRef = ref(null);
-const gridCanvas = ref(null);
-const canvasInit = () => {
-  // 画布初始化
-  if (gridCanvas.value) {
-    const ctx = gridCanvas.value.getContext("2d");
-    const width = gridCanvas.value.clientWidth; // 直接从元素获取宽度
-    const height = gridCanvas.value.clientHeight; // 直接从元素获取高度
-    drawGrid(ctx, width, height);
+//画板背景
+const canvasRef = ref(null);
+const canvas = async () => {
+  await nextTick();
+  let ctx = canvasRef.value;
+  if (canvasRef.value) {
+    ctx = canvasRef.value.getContext("2d");
+  } else {
+    return;
   }
-};
-const canvas = () => {
-  if (gridCanvas.value) {
-    
-
-    const ctx = gridCanvas.value.getContext("2d");
-    drawGrid(ctx, containerStyles.width, containerStyles.height);
+  const width = EditorDataStore.data.container.width;
+  const height = EditorDataStore.data.container.height;
+  ctx.clearRect(0, 0, width, height);
+  if (EditorDataStore.data.container.grid) {
+    drawGrid(width, height);
   }
 
-  function drawGrid(ctx, width, height) {
-    const gridSize = 20; // 网格大小
-    const dotSize = 2; // 圆点半径
-    ctx.fillStyle = "rgba(0, 0, 0, 0.5)"; // 圆点颜色和透明度
-    console.log(111);
+  function drawGrid(width, height) {
+    const gridSize = 5; // 网格大小
+    const dotSize = 0.5 ; // 圆点半径
+    ctx.fillStyle = "rgba(0, 0, 0, 0.2)"; // 圆点颜色和透明度
 
-    for (let x = 0; x <= width; x += gridSize) {
-      for (let y = 0; y <= height; y += gridSize) {
+    for (let x = gridSize; x < width; x += gridSize) {
+      for (let y = gridSize; y < height; y += gridSize) {
         ctx.beginPath();
         ctx.arc(x, y, dotSize, 0, Math.PI * 2);
         ctx.fill();
@@ -202,6 +214,22 @@ const canvas = () => {
     }
   }
 };
+
+const containerSize = computed(() => {
+  return {
+    width: EditorDataStore.data.container.width,
+    height: EditorDataStore.data.container.height,
+  };
+});
+
+// 使用 watch 监听 containerSize 的变化
+watch(
+  [() => containerSize.value,()=> EditorDataStore.data.container.grid],
+  () => {
+    canvas();
+  },
+  { deep: true }
+);
 
 // 1. 实现物料堆拖拽
 const { dragStart, dragEnd } = useMenuDragger(containerRef, EditorDataStore.data);
@@ -388,16 +416,19 @@ const buttons = [
     },
   },
   {
-    label: '关闭', icon: 'icon-guanbi', handler: () => {
-      editorRef.value = false
-    }
-  }
-]
-onMounted(()=>{
-    events.on('block-updated',(newBlock)=>{
-        EditorDataStore.updateBlocks(newBlock)
-  })
-})
+    label: "关闭",
+    icon: "icon-guanbi",
+    handler: () => {
+      editorRef.value = false;
+    },
+  },
+];
+onMounted(() => {
+  canvas();
+  events.on("block-updated", (newBlock) => {
+    EditorDataStore.updateBlocks(newBlock);
+  });
+});
 </script>
 
 <style scoped lang="scss">
@@ -541,7 +572,7 @@ onMounted(()=>{
         margin: 40px auto;
         // background-color: #f1f1f1;
         position: relative;
-        border-radius: 40px;
+        border-radius: 10px;
         border: #e3e3e3 2px dashed;
       }
     }
