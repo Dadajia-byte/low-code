@@ -196,16 +196,17 @@ const canvas = () => {
     drawGrid(width, height);
   }
   function drawGrid(width, height) {
-    const gridSize = 5; // 网格大小
-    const dotSize = 0.5 ; // 圆点半径
+    const gridSize = 6; // 网格大小
+    const dotSize = 1; // 圆点半径
+    
     ctx.fillStyle = "rgba(0, 0, 0, 0.2)"; // 圆点颜色和透明度
 
-    for (let x = gridSize; x < width; x += gridSize) {
-      for (let y = gridSize; y < height; y += gridSize) {
+    for (let x = 0; x < width; x += gridSize) {
+     
         ctx.beginPath();
         ctx.arc(x, y, dotSize, 0, Math.PI * 2);
         ctx.fill();
-      }
+      
     }
   }
 };
@@ -566,6 +567,7 @@ onMounted(() => {
         position: relative;
         border-radius: 10px;
         border: #e3e3e3 2px dashed;
+        overflow: hidden;
       }
     }
   }
