@@ -75,38 +75,38 @@ defineExpose({
   &-left,
   &-right {
     position: absolute;
-    top: 30px;
+    top: .4286rem;
     bottom: 0;
     height: 100%;
   }
 
   &-left {
-    left: 5px;
-    border-radius: 20px;
-    width: 300px;
-    border: #e3e3e3 1px solid;
+    left: .0714rem;
+    border-radius: .2857rem;
+    width: 4.2857rem;
+    border: #e3e3e3 .0143rem solid;
     background-color: #fff;
-    height: 800px;
-    height: calc(100% - 100px);
-    box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.15);
+    height: 11.4286rem;
+    height: calc(100% - 1.4286rem);
+    box-shadow: .0714rem .0571rem .1143rem rgba(0, 0, 0, 0.15);
     transition: all 0.5s;
     &-title {
       display: flex;
-      margin-left: 35px;
-      margin-top: 20px;
-      font-size: 22px;
+      margin-left: .5rem;
+      margin-top: .2857rem;
+      font-size: .3143rem;
     }
     &-search {
-      margin-left: 20px;
+      margin-left: .2857rem;
       width: 90%;
     }
     &-menu {
-      margin-left: 29px;
+      margin-left: .4143rem;
       width: 89%;
-      margin-top: 10px;
+      margin-top: .1429rem;
       overflow-y: auto;
       height: 85%;
-      padding-right: 4px;
+      padding-right: .0571rem;
       scrollbar-gutter: stable;
     }
     &-menu-content {
@@ -120,9 +120,9 @@ defineExpose({
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-top: 5px;
-        margin-right: 5px;
-        // border-bottom: #e0dfff 1px solid;
+        margin-top: .0714rem;
+        margin-right: .0714rem;
+        // border-bottom: #e0dfff .0143rem solid;
       }
       &-item {
         width: 100%;
@@ -133,20 +133,20 @@ defineExpose({
         box-sizing: border-box;
         cursor: move;
         user-select: none;
-        min-height: 40px;
+        min-height: .5714rem;
         position: relative;
-        border-radius: 5px;
-        border: 1px dashed #6965db;
-        padding: 0 4px;
+        border-radius: .0714rem;
+        border: .0143rem dashed #6965db;
+        padding: 0 .0571rem;
 
         &-label {
-          font-size: 12px;
+          font-size: .1714rem;
           color: #7d7d7d;
           width: 100%;
           text-align: center;
         }
         &:hover {
-          border: 1px solid #6965db;
+          border: .0143rem solid #6965db;
         }
 
         &::after {
@@ -168,13 +168,13 @@ defineExpose({
       align-items: center;
       z-index: 9999;
       position: absolute;
-      right: 10px;
-      top: 20px;
-      border: #e3e3e3 1px solid;
-      border-radius: 15px;
-      height: 30px;
-      width: 30px;
-      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+      right: .1429rem;
+      top: .2857rem;
+      border: #e3e3e3 .0143rem solid;
+      border-radius: .2143rem;
+      height: .4286rem;
+      width: .4286rem;
+      box-shadow: .0286rem .0286rem .0714rem rgba(0, 0, 0, 0.15);
       background-color: #ffffff;
       transition: transform 0.8s;
       cursor: pointer;
@@ -186,15 +186,15 @@ defineExpose({
   }
 
   &-right {
-    right: -310px;
+    right: -4.4286rem;
   }
 
   &-container {
-    padding: 40px 200px 0;
+    padding: .5714rem 2.8571rem 0;
     height: 95%;
-    margin-bottom: 40px;
+    margin-bottom: .5714rem;
     box-sizing: border-box;
-    border: #e3e3e3 1px solid;
+    border: #e3e3e3 .0143rem solid;
     z-index: 1;
 
     &-canvas {
@@ -202,11 +202,11 @@ defineExpose({
       overflow: scroll;
       
       &-content {
-        margin: 40px auto;
+        margin: .5714rem auto;
         // background-color: #f1f1f1;
         position: relative;
-        border-radius: 40px;
-      border: #e3e3e3 2px dashed;
+        border-radius: .5714rem;
+      border: #e3e3e3 .0286rem dashed;
       }
     }
   }
@@ -229,12 +229,12 @@ defineExpose({
   &::after {
     content: "";
     position: absolute;
-    top: -4px;
-    left: -4px;
-    width: calc(100% + 6px);
-    height: calc(100% + 6px);
-    border-radius: 2px;
-    border: 1px solid #6965db;
+    top: -0.0571rem;
+    left: -0.0571rem;
+    width: calc(100% + .0857rem);
+    height: calc(100% + .0857rem);
+    border-radius: .0286rem;
+    border: .0143rem solid #6965db;
   }
 }
 
@@ -248,13 +248,13 @@ defineExpose({
   position: absolute;
   top: 0;
   bottom: 0;
-  border-left: 1px dashed #6965db;
+  border-left: .0143rem dashed #6965db;
 }
 
 .line-y {
   position: absolute;
   left: 0;
   right: 0;
-  border-top: 1px dashed #6965db;
+  border-top: .0143rem dashed #6965db;
 }
 </style>

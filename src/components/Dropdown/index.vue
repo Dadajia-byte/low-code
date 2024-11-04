@@ -40,7 +40,7 @@ onMounted(() => {
     document.addEventListener('mousedown', onMousedownDocument, true)
 })
 onBeforeUnmount(() => {
-    document.removeEventListener('mousedown', onMousedownDocument)
+    documentNaNpxoveEventListener('mousedown', onMousedownDocument)
 })
 </script>
 
@@ -48,12 +48,12 @@ onBeforeUnmount(() => {
 .dropdown {
     display: none;
     position: absolute;
-    box-shadow: 3px 3px 8px rgba($color: #000000, $alpha: .1);
+    box-shadow: .0429rem .0429rem .1143rem rgba($color: #000000, $alpha: .1);
     background-color: #fff;
-    border-radius: 5px;
-    border: #adb5bd 1px solid;
-    width: 200px;
-    padding-bottom: 5px;
+    border-radius: .0714rem;
+    border: #adb5bd .0143rem solid;
+    width: 2.8571rem;
+    padding-bottom: .0714rem;
     overflow: hidden;
     z-index: 9999;
 }

@@ -4,7 +4,7 @@
             <div>{{ label }}</div>
             <div class="shortCut">{{ shortCut }}</div>
         </div>
-        <el-divider v-if="divider" style="margin-top: 5px;margin-bottom: 5px;"></el-divider>
+        <el-divider v-if="divider" style="margin-top: .0714rem;margin-bottom: .0714rem;"></el-divider>
     </div>
 </template>
 
@@ -23,16 +23,16 @@ const hide = inject('hide')
 .dropdown-item {
     display: flex;
     justify-content: space-between;
-    padding: 0px 12px;
-    line-height: 22px;
-    margin-top: 5px;
+    padding: 0rem .1714rem;
+    line-height: .3143rem;
+    margin-top: .0714rem;
     text-align: center;
-    font-size: 14px;
+    font-size: .2rem;
     font-family:'Times New Roman', Times, serif;
     cursor: pointer;
     .shortCut {
         color: #717273;
-        font-size: 12px;
+        font-size: .1714rem;
 
     }
     &:hover {

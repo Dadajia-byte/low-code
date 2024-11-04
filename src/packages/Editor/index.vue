@@ -1,10 +1,10 @@
 <template>
   <div class="editor" v-if="editorRef">
     <!-- 左侧物料堆 -->
-    <div class="editor-left" :style="{ left: isExpanded ? '-290px' : '5px' }">
+    <div class="editor-left" :style="{ left: isExpanded ? '-4.1429rem' : '.0714rem' }">
       <el-text class="mx-1 editor-left-title" size="large">物料堆</el-text>
       <el-divider
-        style="margin-left: 20px; width: 90%; margin-top: 15px; margin-bottom: 5px"
+        style="margin-left: .2857rem; width: 90%; margin-top: .2143rem; margin-bottom: .0714rem"
       />
       <el-select filterable placeholder="nodo搜索,树形更好？" class="editor-left-search">
         <template #prefix>
@@ -47,11 +47,11 @@
       <div
         class="editor-left-expand"
         @click="toggleExpand"
-        :style="{ right: !isExpanded ? '10px' : '-20px' }"
+        :style="{ right: !isExpanded ? '.1429rem' : '-0.2857rem' }"
       >
         <el-icon
           :style="{ transform: isExpanded ? 'rotate(180deg)' : 'none' }"
-          style="font-size: 22px"
+          style="font-size: .3143rem"
           ><i-ep-CaretLeft
         /></el-icon>
       </div>
@@ -435,38 +435,40 @@ onMounted(() => {
   &-left,
   &-right {
     position: absolute;
-    top: 30px;
+    top: .4286rem;
     bottom: 0;
     height: 100%;
+    z-index: 9999;
   }
 
   &-left {
-    left: 5px;
-    border-radius: 20px;
-    width: 300px;
-    border: #e3e3e3 1px solid;
+    left: .0714rem;
+    border-radius: .2857rem;
+    width: 4.2857rem;
+    border: #e3e3e3 .0143rem solid;
     background-color: #fff;
-    height: 800px;
-    height: calc(100% - 100px);
-    box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.15);
+    height: 11.4286rem;
+    height: calc(100% - 1.4286rem);
+    box-shadow: .0714rem .0571rem .1143rem rgba(0, 0, 0, 0.15);
     transition: all 0.5s;
+    overflow: hidden;
     &-title {
       display: flex;
-      margin-left: 35px;
-      margin-top: 20px;
-      font-size: 22px;
+      margin-left: .5rem;
+      margin-top: .2857rem;
+      font-size: .3143rem;
     }
     &-search {
-      margin-left: 20px;
+      margin-left: .2857rem;
       width: 90%;
     }
     &-menu {
-      margin-left: 29px;
+      margin-left: .4143rem;
       width: 89%;
-      margin-top: 10px;
+      margin-top: .1429rem;
       overflow-y: auto;
       height: 80%;
-      padding-right: 4px;
+      padding-right: .0571rem;
       scrollbar-gutter: stable;
     }
     &-menu-content {
@@ -480,9 +482,9 @@ onMounted(() => {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-top: 5px;
-        margin-right: 5px;
-        // border-bottom: #e0dfff 1px solid;
+        margin-top: .0714rem;
+        margin-right: .0714rem;
+        // border-bottom: #e0dfff .0143rem solid;
       }
       &-item {
         width: 100%;
@@ -493,20 +495,20 @@ onMounted(() => {
         box-sizing: border-box;
         cursor: move;
         user-select: none;
-        min-height: 40px;
+        min-height: .5714rem;
         position: relative;
-        border-radius: 5px;
-        border: 1px dashed #6965db;
-        padding: 0 4px;
+        border-radius: .0714rem;
+        border: .0143rem dashed #6965db;
+        padding: 0 .0571rem;
 
         &-label {
-          font-size: 12px;
+          font-size: .1714rem;
           color: #7d7d7d;
           width: 100%;
           text-align: center;
         }
         &:hover {
-          border: 1px solid #6965db;
+          border: .0143rem solid #6965db;
         }
 
         &::after {
@@ -527,13 +529,13 @@ onMounted(() => {
       align-items: center;
       z-index: 999;
       position: absolute;
-      right: 10px;
-      top: 20px;
-      border: #e3e3e3 1px solid;
-      border-radius: 15px;
-      height: 30px;
-      width: 30px;
-      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+      right: .1429rem;
+      top: .2857rem;
+      border: #e3e3e3 .0143rem solid;
+      border-radius: .2143rem;
+      height: .4286rem;
+      width: .4286rem;
+      box-shadow: .0286rem .0286rem .0714rem rgba(0, 0, 0, 0.15);
       background-color: #ffffff;
       transition: transform 0.8s;
       cursor: pointer;
@@ -545,15 +547,15 @@ onMounted(() => {
   }
 
   &-right {
-    right: -310px;
+    right: -4.4286rem;
   }
 
   &-container {
-    padding: 40px 200px 0;
+    padding: .5714rem 2.8571rem 0;
     height: 95%;
-    margin-bottom: 40px;
+    margin-bottom: .5714rem;
     box-sizing: border-box;
-    border: #e3e3e3 1px solid;
+    border: #e3e3e3 .0143rem solid;
     z-index: 1;
 
     &-canvas {
@@ -561,11 +563,11 @@ onMounted(() => {
       overflow: scroll;
 
       &-content {
-        margin: 40px auto;
+        margin: .5714rem auto;
         // background-color: #f1f1f1;
         position: relative;
-        border-radius: 10px;
-        border: #e3e3e3 2px dashed;
+        border-radius: .1429rem;
+        border: #e3e3e3 .0286rem dashed;
       }
     }
   }
@@ -589,12 +591,12 @@ onMounted(() => {
   &::after {
     content: "";
     position: absolute;
-    top: -4px;
-    left: -4px;
-    width: calc(100% + 6px);
-    height: calc(100% + 6px);
-    border-radius: 2px;
-    border: 1px solid #6965db;
+    top: -0.0571rem;
+    left: -0.0571rem;
+    width: calc(100% + .0857rem);
+    height: calc(100% + .0857rem);
+    border-radius: .0286rem;
+    border: .0143rem solid #6965db;
   }
 }
 
@@ -608,77 +610,77 @@ onMounted(() => {
   position: absolute;
   top: 0;
   bottom: 0;
-  border-left: 1px dashed #6965db;
+  border-left: .0143rem dashed #6965db;
 }
 
 .line-y {
   position: absolute;
   left: 0;
   right: 0;
-  border-top: 1px dashed #6965db;
+  border-top: .0143rem dashed #6965db;
 }
 
 .selectionBounds {
   position: absolute;
-  border: #6965db dashed 1px;
+  border: #6965db dashed .0143rem;
 }
 $pre:"block-resize";
 .#{$pre} {
     position: absolute;
-    width:6px;
-    height: 6px;
+    width:.0857rem;
+    height: .0857rem;
     background-color: #fff;
-    border:1px solid #6965db;
+    border:.0143rem solid #6965db;
     z-index: 1000;
-    border-radius: 2px;
+    border-radius: .0286rem;
     user-select: none;
     
 }
 .#{$pre}-top {
-    top: -4px;
-    left: calc(50% - 3px);
+    top: -0.0571rem;
+    left: calc(50% - .0429rem);
     cursor: n-resize; /* 设置为向上箭头光标 */
 }
 
 .#{$pre}-bottom {
-    bottom: -4px;
-    left: calc(50% - 3px);
+    bottom: -0.0571rem;
+    left: calc(50% - .0429rem);
     cursor: s-resize; /* 设置为向下箭头光标 */
 }
 
 .#{$pre}-left {
-    left: -4px;
-    top: calc(50% - 3px);
+    left: -0.0571rem;
+    top: calc(50% - .0429rem);
     cursor: w-resize; /* 设置为向左箭头光标 */
 }
 
 .#{$pre}-right {
-    right: -4px;
-    top: calc(50% - 3px);
+    right: -0.0571rem;
+    top: calc(50% - .0429rem);
     cursor: e-resize; /* 设置为向右箭头光标 */
 }
 
 .#{$pre}-top-left {
-    top: -4px;
-    left: -4px;
+    top: -0.0571rem;
+    left: -0.0571rem;
     cursor: nw-resize; /* 设置为西北箭头光标 */
 }
 
 .#{$pre}-top-right {
-    top: -4px;
-    right: -4px;
+    top: -0.0571rem;
+    right: -0.0571rem;
     cursor: ne-resize; /* 设置为东北箭头光标 */
 }
 
 .#{$pre}-bottom-left {
-    bottom: -4px;
-    left: -4px;
+    bottom: -0.0571rem;
+    left: -0.0571rem;
     cursor: sw-resize; /* 设置为西南箭头光标 */
 }
 
 .#{$pre}-bottom-right {
-    bottom: -4px;
-    right: -4px;
+    bottom: -0.0571rem;
+    right: -0.0571rem;
     cursor: se-resize; /* 设置为东南箭头光标 */
 }
 </style>

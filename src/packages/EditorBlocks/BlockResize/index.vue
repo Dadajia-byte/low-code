@@ -29,60 +29,60 @@ const {width,height} = component.resize || {}
 $pre:"block-resize";
 .#{$pre} {
     position: absolute;
-    width:6px;
-    height: 6px;
+    width:.0857rem;
+    height: .0857rem;
     background-color: #fff;
-    border:1px solid #6965db;
+    border:.0143rem solid #6965db;
     z-index: 1000;
-    border-radius: 2px;
+    border-radius: .0286rem;
     user-select: none;
     
 }
 .#{$pre}-top {
-    top: -7px;
-    left: calc(50% - 3px);
+    top: -0.1rem;
+    left: calc(50% - .0429rem);
     cursor: n-resize; /* 设置为向上箭头光标 */
 }
 
 .#{$pre}-bottom {
-    bottom: -8px;
-    left: calc(50% - 3px);
+    bottom: -0.1143rem;
+    left: calc(50% - .0429rem);
     cursor: s-resize; /* 设置为向下箭头光标 */
 }
 
 .#{$pre}-left {
-    left: -7px;
-    top: calc(50% - 3px);
+    left: -0.1rem;
+    top: calc(50% - .0429rem);
     cursor: w-resize; /* 设置为向左箭头光标 */
 }
 
 .#{$pre}-right {
-    right: -6px;
-    top: calc(50% - 3px);
+    right: -0.0857rem;
+    top: calc(50% - .0429rem);
     cursor: e-resize; /* 设置为向右箭头光标 */
 }
 
 .#{$pre}-top-left {
-    top: -7px;
-    left: -7px;
+    top: -0.1rem;
+    left: -0.1rem;
     cursor: nw-resize; /* 设置为西北箭头光标 */
 }
 
 .#{$pre}-top-right {
-    top: -7px;
-    right: -6px;
+    top: -0.1rem;
+    right: -0.0857rem;
     cursor: ne-resize; /* 设置为东北箭头光标 */
 }
 
 .#{$pre}-bottom-left {
-    bottom: -8px;
-    left: -7px;
+    bottom: -0.1143rem;
+    left: -0.1rem;
     cursor: sw-resize; /* 设置为西南箭头光标 */
 }
 
 .#{$pre}-bottom-right {
-    bottom: -8px;
-    right: -6px;
+    bottom: -0.1143rem;
+    right: -0.0857rem;
     cursor: se-resize; /* 设置为东南箭头光标 */
 }
 </style>
