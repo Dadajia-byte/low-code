@@ -86,14 +86,13 @@
             :height="containerStyles.height"
             class="grid-canvas"
           ></canvas>
-
           <EditorBlocks 
               v-for="(item, index) in EditorDataStore.data.blocks" 
               :key="`${EditorDataStore.focusUpdate}${item.id}`" 
               :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
               :block="item" @mousedown="(e) => blockMouseDown(e, item, index)"
               :focusBlocksNum = "focusData.focus.length"
-              @Contextmenu="(e) => onContextMenu(e, item)"
+              @Contextmenu="(e) => onContextBlock(e, item)"
               :blockReizeMousedown="onMouseDown"
               :formData="EditorDataStore.formData"
               >
@@ -183,8 +182,7 @@ const containerStyles = computed(() => ({
 const containerRef = ref(null);
 //画板背景
 const canvasRef = ref(null);
-const canvas = async () => {
-  await nextTick();
+const canvas = () => {
   let ctx = canvasRef.value;
   if (canvasRef.value) {
     ctx = canvasRef.value.getContext("2d");
@@ -197,7 +195,6 @@ const canvas = async () => {
   if (EditorDataStore.data.container.grid) {
     drawGrid(width, height);
   }
-
   function drawGrid(width, height) {
     const gridSize = 5; // 网格大小
     const dotSize = 0.5 ; // 圆点半径
@@ -255,8 +252,6 @@ let {onMouseDown} = useBlockResize(focusData,selectionBounds,EditorDataStore.dat
 const { commands } = useCommand(EditorDataStore.data, focusData);
 
 const onContextMenu = (e, block) => {
-  console.log(e);
-
   e.preventDefault();
   //添加返回位置函数
   e.getBoundingClientRect = () => {
@@ -282,7 +277,7 @@ const onContextMenu = (e, block) => {
 // 右键物块菜单
 const onContextBlock = (e, block) => {
   console.log(e);
-
+  e.stopPropagation();
   e.preventDefault();
   const contentVnode = h("div", {}, [
     h(DropdownItem, {
