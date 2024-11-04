@@ -249,7 +249,7 @@ let { mousedown, markline } = useBlockDragger(focusData,lastSelectBlock, EditorD
 let {onMouseDown} = useBlockResize(focusData,selectionBounds,EditorDataStore.data)
 
 // 用于保存可能使用的所有指令(操作)
-const { commands } = useCommand(EditorDataStore.data, focusData);
+const { commands } = useCommand(EditorDataStore.data, focusData,containerRef);
 
 const onContextMenu = (e, block) => {
   e.preventDefault();
@@ -266,7 +266,8 @@ const onContextMenu = (e, block) => {
     h(DropdownItem, {
       label: "粘贴",
       shortCut: "Ctrl+V",
-      onClick: () => console.log("粘贴"),
+      disabled:EditorDataStore.clipboard.blocks.length<1, // 剪切板没有就禁用
+      onClick: (e) => commands.paste(e),
     }),
   ]);
   $dropdown({
@@ -288,14 +289,15 @@ const onContextBlock = (e, block) => {
     h(DropdownItem, {
       label: "复制",
       shortCut: "Ctrl+C",
-      onClick: () => console.log("复制"),
+      divider: true,
+      onClick: commands.copy,
     }),
-    h(DropdownItem, {
+    /* h(DropdownItem, {
       label: "粘贴",
       shortCut: "Ctrl+V",
       divider: true,
       onClick: () => console.log("粘贴"),
-    }),
+    }), */
     h(DropdownItem, {
       label: "拷贝配置",
       shortCut: "Ctrl+Alt+C",
@@ -438,7 +440,7 @@ onMounted(() => {
     top: .4286rem;
     bottom: 0;
     height: 100%;
-    z-index: 9999;
+    z-index: 999;
   }
 
   &-left {

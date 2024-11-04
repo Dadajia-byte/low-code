@@ -5,7 +5,7 @@ import { setActivePinia, getActivePinia } from 'pinia';
 import { history,historyIndex,setHistoryIndex } from "./useBlockResize";
 
 
-export const useCommand = (data, focusData) => {
+export const useCommand = (data, focusData,containerRef) => {
   // 激活pinia
   if (!getActivePinia()) {
     const pinia = createPinia();
@@ -208,6 +208,94 @@ export const useCommand = (data, focusData) => {
       };
     },
   });
+  // 复制
+  registry({
+    name: "copy",
+    keyboard: "ctrl+c",
+    execute() {
+      // 可能是单个block，也可能是多选的所以传入的应该是一个数组
+      // 实际操作应该是将这几个block放到剪切板中
+      let {focus} = focusData.value;
+      
+      return {
+        redo() {
+          if(focus.length>0) {
+            
+            // 计算基准位置（选中块的最小 left 和 top）
+            const offsetX = Math.min(...focus.map(block => block.left));
+            const offsetY = Math.min(...focus.map(block => block.top));
+            
+            editorDataStore.clipboard = {
+              blocks: cloneDeep(focus),
+              offsetX,  // 保存偏移位置
+              offsetY
+            };
+            console.log(editorDataStore.clipboard);
+          }
+          
+        }
+      }
+    }
+  })
+  // 粘贴
+  registry({
+    name: "paste",
+    keyboard: "ctrl+v",
+    pushQueue: true,
+    init() {
+      this.before = cloneDeep(editorDataStore.data.blocks);
+    },
+    execute(e) {
+      let before = this.before;
+      let after = data.blocks;
+      console.log(before,'before');
+      
+
+      // 粘贴的时候，从剪切板中拿出blocks，push到data的blocks中，但是要注意以下几点：
+      // 1. 所有block的id都得重新生成
+      // 2. 所有block的left和top应该相较于鼠标位置和原先位置重新计算
+      // 3. 粘贴后，自动将focused转变为粘贴的blocks
+      // 画布位置，用于结合鼠标位置计算新位置
+      let { blocks,offsetX,offsetY } = editorDataStore.clipboard;
+      if(!blocks||blocks.length===0) return; // 虽然根本就进不来，但为了保险还是加一下
+      const containerRect = containerRef.value.getBoundingClientRect();
+
+      console.log(e);
+      let pastedBlocks = [];
+      // 生成新的 blocks
+      const generatePastedBlocks = () => {
+        const mouseX = e.clientX - containerRect.left; // 转换为相对于画布的位置
+        const mouseY = e.clientY - containerRect.top; // 转换为相对于画布的位置
+
+        
+
+        return blocks.map(block => {
+          const newBlock = {
+            ...cloneDeep(block),
+            id: String(new Date().getTime()) + String(Math.floor(Math.random() * 1000)), // 重新生成唯一id
+            left: block.left + (mouseX - offsetX)- block.width / 2,
+            top: block.top + (mouseY - offsetY)- block.height / 2,
+          };
+          return newBlock;
+        });
+      }
+      return {
+        
+        redo() {
+          pastedBlocks = generatePastedBlocks();
+          editorDataStore.data.blocks.push(...pastedBlocks);
+          after = [...editorDataStore.data.blocks];
+          // focusData.value.focus = pastedBlocks;
+        },
+        undo() {
+          // 删除刚刚插入的block
+          editorDataStore.data.blocks = before;
+          focusData.value.focus = [];
+          
+        }
+      };
+    }
+  })
   // 置顶
   registry({
     name: "placeTop",
@@ -345,6 +433,8 @@ export const useCommand = (data, focusData) => {
   // 键盘事件
   const keyboardEvent = (() => {
     const keyCodes = {
+      67:"c",
+      86:'v',
       90: "z",
       89: "y",
       46:'delete',
@@ -362,7 +452,7 @@ export const useCommand = (data, focusData) => {
       state.commandArray.forEach(({ keyboard, name }) => {
         if (!keyboard) return; // 没有对应的键盘事件
         if (keyboard === keyString) {
-          state.commands[name]();
+          state.commands[name](e);
           e.preventDefault();
         }
       });
