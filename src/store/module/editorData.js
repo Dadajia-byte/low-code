@@ -5,6 +5,7 @@ export const useEditorDataStore = defineStore("editorDataStore", () => {
         container: {
             height: 800,
             width: 1000,
+            grid:true,
         },
         blocks: [],
 

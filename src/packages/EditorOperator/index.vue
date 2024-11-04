@@ -11,6 +11,9 @@
                     <el-form-item label="容器高度">
                         <el-input-number v-model="state.editData.height"></el-input-number>
                     </el-form-item>
+                    <el-form-item label="背景网格">
+                        <el-switch v-model="state.editData.grid" />
+                    </el-form-item>
                     <el-form-item >
                         <el-button color="#626aef" @click="() => apply()">应用</el-button>
                         <el-button @click="reset">重置</el-button>
