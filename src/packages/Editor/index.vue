@@ -87,19 +87,17 @@
             class="grid-canvas"
           ></canvas>
 
-          <EditorBlocks
-            v-for="(item, index) in EditorDataStore.data.blocks"
-            :key="item.id"
-            :class="{
-              'editor-block-focus': item.focus,
-              'editor-block-preview': previewRef,
-            }"
-            :block="item"
-            @mousedown="(e) => blockMouseDown(e, item, index)"
-            @contextmenu.stop.prevent="(e) => onContextBlock(e, item)"
-            :formData="EditorDataStore.formData"
-          >
-          </EditorBlocks>
+          <EditorBlocks 
+              v-for="(item, index) in EditorDataStore.data.blocks" 
+              :key="`${EditorDataStore.focusUpdate}${item.id}`" 
+              :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
+              :block="item" @mousedown="(e) => blockMouseDown(e, item, index)"
+              :focusBlocksNum = "focusData.focus.length"
+              @Contextmenu="(e) => onContextMenu(e, item)"
+              :blockReizeMousedown="onMouseDown"
+              :formData="EditorDataStore.formData"
+              >
+            </EditorBlocks>
           <!-- 辅助线 -->
           <div v-show="markline.x" class="line-x" :style="{ left: markline.x + 'px' }"></div>
           <div v-show="markline.y" class="line-y" :style="{ top: markline.y + 'px' }"></div>
