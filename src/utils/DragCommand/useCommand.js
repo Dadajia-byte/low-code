@@ -237,18 +237,32 @@ export const useCommand = (data, focusData,containerRef=null) => {
       }
     }
   })
+  // 剪切
+  registry({
+    name:'cut',
+    keyboard:'ctrl+x',
+    execute() {
+    // 剪切实际上就是：
+    // 1. 执行复制操作
+    // 2. 将剪切的blocks从原本的data中删除
+      return {
+        redo() {
+
+        },
+        undo() {
+
+        }
+      }
+    }
+  })
   // 粘贴
   registry({
     name: "paste",
     keyboard: "ctrl+v",
     pushQueue: true,
-    init() {
-      this.before = cloneDeep(editorDataStore.data.blocks);
-    },
     execute(e) {
-      let before = this.before;
+      let before = cloneDeep(data.blocks);
       let after = data.blocks;
-
       // 粘贴的时候，从剪切板中拿出blocks，push到data的blocks中，但是要注意以下几点：
       // 1. 所有block的id都得重新生成
       // 2. 所有block的left和top应该相较于鼠标位置和原先位置重新计算
@@ -258,8 +272,6 @@ export const useCommand = (data, focusData,containerRef=null) => {
       let { blocks,offsetX,offsetY } = editorDataStore.clipboard;
       if(!blocks||blocks.length===0) return; // 虽然根本就进不来，但为了保险还是加一下
       const containerRect = containerRef.value.getBoundingClientRect();
-
-      console.log(e);
       let pastedBlocks = [];
       // 生成新的 blocks
       const generatePastedBlocks = () => {
@@ -275,22 +287,18 @@ export const useCommand = (data, focusData,containerRef=null) => {
           return newBlock;
         });
       }
-      return {
-        
+      return {        
         redo() {
           pastedBlocks = generatePastedBlocks();
           editorDataStore.data.blocks.push(...pastedBlocks);
-          console.log(before,'before');
-          
           after = [...editorDataStore.data.blocks];
-          // focusData.value.focus = pastedBlocks;
+          focusData.value.focus = pastedBlocks;
         },
         undo() {
           // 删除刚刚插入的block
           editorDataStore.data.blocks = before;
-          focusData.value.focus = [];
           console.log(after,'after');
-          
+          focusData.value.focus = [];
         }
       };
     }
