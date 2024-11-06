@@ -5,7 +5,7 @@ import { setActivePinia, getActivePinia } from 'pinia';
 import { history,historyIndex,setHistoryIndex } from "./useBlockResize";
 
 
-export const useCommand = (data, focusData,containerRef) => {
+export const useCommand = (data, focusData,containerRef=null) => {
   // 激活pinia
   if (!getActivePinia()) {
     const pinia = createPinia();
@@ -22,6 +22,7 @@ export const useCommand = (data, focusData,containerRef) => {
     destroyedList: [], // 销毁列表
   };
 
+  // 注册指令函数
   const registry = (command) => {
     state.commandArray.push(command);
     state.commands[command.name] = (...args) => {
@@ -44,7 +45,6 @@ export const useCommand = (data, focusData,containerRef) => {
   };
   // 重做
   registry({
-
     name: "redo",
     keyboard: "ctrl+y",
     execute() {
@@ -248,13 +248,12 @@ export const useCommand = (data, focusData,containerRef) => {
     execute(e) {
       let before = this.before;
       let after = data.blocks;
-      console.log(before,'before');
-      
 
       // 粘贴的时候，从剪切板中拿出blocks，push到data的blocks中，但是要注意以下几点：
       // 1. 所有block的id都得重新生成
       // 2. 所有block的left和top应该相较于鼠标位置和原先位置重新计算
       // 3. 粘贴后，自动将focused转变为粘贴的blocks
+      // 4. 考虑到键盘触发传入的e是键盘事件，无法获取鼠标位置以计算新位置，需要重新考量
       // 画布位置，用于结合鼠标位置计算新位置
       let { blocks,offsetX,offsetY } = editorDataStore.clipboard;
       if(!blocks||blocks.length===0) return; // 虽然根本就进不来，但为了保险还是加一下
@@ -266,9 +265,6 @@ export const useCommand = (data, focusData,containerRef) => {
       const generatePastedBlocks = () => {
         const mouseX = e.clientX - containerRect.left; // 转换为相对于画布的位置
         const mouseY = e.clientY - containerRect.top; // 转换为相对于画布的位置
-
-        
-
         return blocks.map(block => {
           const newBlock = {
             ...cloneDeep(block),
@@ -284,6 +280,8 @@ export const useCommand = (data, focusData,containerRef) => {
         redo() {
           pastedBlocks = generatePastedBlocks();
           editorDataStore.data.blocks.push(...pastedBlocks);
+          console.log(before,'before');
+          
           after = [...editorDataStore.data.blocks];
           // focusData.value.focus = pastedBlocks;
         },
@@ -291,6 +289,7 @@ export const useCommand = (data, focusData,containerRef) => {
           // 删除刚刚插入的block
           editorDataStore.data.blocks = before;
           focusData.value.focus = [];
+          console.log(after,'after');
           
         }
       };

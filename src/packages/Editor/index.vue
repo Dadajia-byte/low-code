@@ -453,7 +453,7 @@ onMounted(() => {
     height: calc(100% - 1.4286rem);
     box-shadow: .0714rem .0571rem .1143rem rgba(0, 0, 0, 0.15);
     transition: all 0.5s;
-    overflow: hidden;
+    // overflow: hidden;
     &-title {
       display: flex;
       margin-left: .5rem;
@@ -529,7 +529,7 @@ onMounted(() => {
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 999;
+      z-index: 1000;
       position: absolute;
       right: .1429rem;
       top: .2857rem;
