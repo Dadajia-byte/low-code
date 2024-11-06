@@ -237,18 +237,32 @@ export const useCommand = (data, focusData,containerRef=null) => {
       }
     }
   })
+  // 剪切
+  registry({
+    name:'cut',
+    keyboard:'ctrl+x',
+    execute() {
+    // 剪切实际上就是：
+    // 1. 执行复制操作
+    // 2. 将剪切的blocks从原本的data中删除
+      return {
+        redo() {
+
+        },
+        undo() {
+
+        }
+      }
+    }
+  })
   // 粘贴
   registry({
     name: "paste",
     keyboard: "ctrl+v",
     pushQueue: true,
-    init() {
-      this.before = cloneDeep(editorDataStore.data.blocks);
-    },
     execute(e) {
-      let before = this.before;
+      let before = cloneDeep(data.blocks);
       let after = data.blocks;
-
       // 粘贴的时候，从剪切板中拿出blocks，push到data的blocks中，但是要注意以下几点：
       // 1. 所有block的id都得重新生成
       // 2. 所有block的left和top应该相较于鼠标位置和原先位置重新计算
@@ -258,39 +272,49 @@ export const useCommand = (data, focusData,containerRef=null) => {
       let { blocks,offsetX,offsetY } = editorDataStore.clipboard;
       if(!blocks||blocks.length===0) return; // 虽然根本就进不来，但为了保险还是加一下
       const containerRect = containerRef.value.getBoundingClientRect();
-
-      console.log(e);
       let pastedBlocks = [];
-      // 生成新的 blocks
-      const generatePastedBlocks = () => {
-        const mouseX = e.clientX - containerRect.left; // 转换为相对于画布的位置
-        const mouseY = e.clientY - containerRect.top; // 转换为相对于画布的位置
-        return blocks.map(block => {
-          const newBlock = {
-            ...cloneDeep(block),
-            id: String(new Date().getTime()) + String(Math.floor(Math.random() * 1000)), // 重新生成唯一id
-            left: block.left + (mouseX - offsetX)- block.width / 2,
-            top: block.top + (mouseY - offsetY)- block.height / 2,
-          };
-          return newBlock;
-        });
+      
+      
+      // 获取粘贴位置，优先使用鼠标事件的位置
+    const getPastePosition = () => {
+      if (e.clientX !== undefined && e.clientY !== undefined) {
+        // 使用鼠标事件的位置
+        return { x: e.clientX, y: e.clientY };
+      } else {
+        // 使用记录的最后一次鼠标位置
+        return lastMousePosition;
       }
-      return {
-        
+    };
+    // 生成新的 blocks
+    const generatePastedBlocks = () => {
+      const { x: mouseX, y: mouseY } = getPastePosition();
+      const containerRect = containerRef.value.getBoundingClientRect();
+
+      return blocks.map((block) => {
+        const newBlock = {
+          ...cloneDeep(block),
+          id: String(new Date().getTime()) + String(Math.floor(Math.random() * 1000)), // 重新生成唯一id
+          left: block.left + (mouseX - offsetX) - block.width / 2 - containerRect.left,
+          top: block.top + (mouseY - offsetY) - block.height / 2 - containerRect.top,
+        };
+        return newBlock;
+      });
+    };
+      return {        
         redo() {
+          console.log(111);
+          console.log(e);
+          
           pastedBlocks = generatePastedBlocks();
           editorDataStore.data.blocks.push(...pastedBlocks);
-          console.log(before,'before');
-          
           after = [...editorDataStore.data.blocks];
-          // focusData.value.focus = pastedBlocks;
+          focusData.value.focus = pastedBlocks;
         },
         undo() {
           // 删除刚刚插入的block
           editorDataStore.data.blocks = before;
-          focusData.value.focus = [];
           console.log(after,'after');
-          
+          focusData.value.focus = [];
         }
       };
     }
@@ -447,6 +471,11 @@ export const useCommand = (data, focusData,containerRef=null) => {
       if (shiftKey) keyString.push("shift");
       keyString.push(keyCodes[keyCode]);
       keyString = keyString.join("+");
+
+      // 判断是否启用鼠标监听（因为很耗费性能所以只在按下ctrl键时开始监控）
+      if(ctrlKey) enableMouseMonitoring();
+      else disableMouseMonitoring();
+
       // 根据键盘按键调用对应的事件
       state.commandArray.forEach(({ keyboard, name }) => {
         if (!keyboard) return; // 没有对应的键盘事件
@@ -459,9 +488,15 @@ export const useCommand = (data, focusData,containerRef=null) => {
     const init = () => {
       // 初始化事件
       window.addEventListener("keydown", onKeydown);
+      window.addEventListener("keyup", (e) => {
+        if (e.ctrlKey) disableMouseMonitoring();
+      });
       return () => {
         // 销毁事件
         window.removeEventListener("keydown", onKeydown);
+        window.removeEventListener("keyup", (e) => {
+          if (e.ctrlKey) disableMouseMonitoring();
+        });
       };
     };
     return init;
@@ -479,3 +514,36 @@ export const useCommand = (data, focusData,containerRef=null) => {
   });
   return state;
 };
+
+
+/* 鼠标监听相关 */
+let lastMousePosition = { x: 0, y: 0 };
+let isMonitoringMouse = false;
+
+
+// 启用鼠标位置监听
+function enableMouseMonitoring() {
+  if (!isMonitoringMouse) {
+    window.addEventListener("mousemove", (e) => {
+      lastMousePosition = {
+        x: e.clientX,
+        y: e.clientY,
+      }}
+    );
+    isMonitoringMouse = true;
+    
+  }
+}
+
+// 禁用鼠标位置监听
+function disableMouseMonitoring() {
+  if (isMonitoringMouse) {
+    window.removeEventListener("mousemove", (e) => {
+      lastMousePosition = {
+        x: e.clientX,
+        y: e.clientY,
+      }}
+    );
+    isMonitoringMouse = false;
+  }
+}
