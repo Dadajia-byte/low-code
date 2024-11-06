@@ -485,18 +485,18 @@ export const useCommand = (data, focusData,containerRef=null) => {
         }
       });
     };
+    const onKeyup = (e) => {
+      // 松开 Ctrl 键后禁用监听
+      if (!e.ctrlKey) disableMouseMonitoring();
+    };
     const init = () => {
       // 初始化事件
       window.addEventListener("keydown", onKeydown);
-      window.addEventListener("keyup", (e) => {
-        if (e.ctrlKey) disableMouseMonitoring();
-      });
+      window.addEventListener("keyup", onKeyup);
       return () => {
         // 销毁事件
         window.removeEventListener("keydown", onKeydown);
-        window.removeEventListener("keyup", (e) => {
-          if (e.ctrlKey) disableMouseMonitoring();
-        });
+        window.removeEventListener("keyup", onKeyup);
       };
     };
     return init;
@@ -520,30 +520,24 @@ export const useCommand = (data, focusData,containerRef=null) => {
 let lastMousePosition = { x: 0, y: 0 };
 let isMonitoringMouse = false;
 
-
+function handleMouseMove(e) {
+  lastMousePosition = {
+    x: e.clientX,
+    y: e.clientY,
+  };
+}
 // 启用鼠标位置监听
 function enableMouseMonitoring() {
   if (!isMonitoringMouse) {
-    window.addEventListener("mousemove", (e) => {
-      lastMousePosition = {
-        x: e.clientX,
-        y: e.clientY,
-      }}
-    );
+    window.addEventListener("mousemove", handleMouseMove);
     isMonitoringMouse = true;
-    
   }
 }
 
 // 禁用鼠标位置监听
 function disableMouseMonitoring() {
   if (isMonitoringMouse) {
-    window.removeEventListener("mousemove", (e) => {
-      lastMousePosition = {
-        x: e.clientX,
-        y: e.clientY,
-      }}
-    );
+    window.removeEventListener("mousemove",handleMouseMove);
     isMonitoringMouse = false;
   }
 }
