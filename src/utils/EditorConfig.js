@@ -84,7 +84,7 @@ registerConfig.register({
       width: resize.width + 'px',
       height: resize.height + 'px'
     }
-  }, () => props.text || '渲染按钮'),
+  }, () => props.text || '按钮'),
   key: "button",
   props: {
     text: createInputProp('按钮内容'),

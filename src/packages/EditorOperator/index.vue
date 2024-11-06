@@ -1,7 +1,7 @@
 <template>
     <el-form labelPosition="top" class="editor-operator" >
-            <div class="container-operator" :style="{left:props.block?'300px':'-20px'}">
-                <el-text class="mx-1" size="large" style="margin-left: 5px;">容器配置</el-text>
+            <div class="container-operator" :style="{left:props.block?'4.2857rem':'-0.2857rem'}">
+                <el-text class="mx-1" size="large" style="margin-left: .0714rem;">容器配置</el-text>
                 <el-divider />
                 <div class="container-operator-content">
 
@@ -21,9 +21,9 @@
                 </div>
 
             </div>
-            <div class="block-operator" :style="{left:props.block?'-300px':'300px'}">
-                <el-text class="mx-1" size="large" style="margin-left: 5px;">{{config.componentMap[props.block?.key]?.label}}</el-text>
-                <el-divider style="margin-bottom: 5px;margin-top: 10px;"/>
+            <div class="block-operator" :style="{left:props.block?'-4.2857rem':'4.2857rem'}">
+                <el-text class="mx-1" size="large" style="margin-left: .0714rem;">{{config.componentMap[props.block?.key]?.label}}</el-text>
+                <el-divider style="margin-bottom: .0714rem;margin-top: .1429rem;"/>
                 <div class="custom-style">
                     <el-segmented v-model="value" :options="options" />
                 </div>
@@ -122,33 +122,33 @@ const options = ['属性', '动画', '事件']
     .container-operator,
     .block-operator {
         position: relative;
-        min-height: 800px;
-        width: 210px;
+        min-height: 11.4286rem;
+        width: 3rem;
         left: 0;
-        padding-left: 30px;
-        padding-top: 30px;
-        padding-right: 20px;
+        padding-left: .4286rem;
+        padding-top: .4286rem;
+        padding-right: .2857rem;
         background-color: white;
-        border-radius: 40px 0 0 40px;
-        border: #e3e3e3 1px solid;
-        box-shadow: 1px 4px 10px rgba(0, 0, 0, 0.15);
+        border-radius: .5714rem 0 0 .5714rem;
+        border: #e3e3e3 .0143rem solid;
+        box-shadow: .0143rem .0571rem .1429rem rgba(0, 0, 0, 0.15);
         transition: all .5s;
     }
     .container-operator {
         
         &-content {
-            margin-left: 10px;
+            margin-left: .1429rem;
         }
     }
     .block-operator {
         &-content {
-            margin: 20px 15px;
+            margin: .2857rem .2143rem;
         }
         .custom-style .el-segmented {
-            width: 210px;
+            width: 3rem;
             --el-segmented-item-selected-color: white;
             --el-segmented-item-selected-bg-color: #6965db;
-            --el-border-radius-base: 24px;
+            --el-border-radius-base: .3429rem;
         }
     }
 }

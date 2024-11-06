@@ -5,7 +5,7 @@
         </div>
         <div class="login-content-github">
             <i class="iconfont icon-github"></i>
-            <span style="padding-left:8px;">Continue with Github</span>
+            <span style="padding-left:.1143rem;">Continue with Github</span>
         </div>
         <span class="login-content-span">or</span>
         <el-form class="login-content-form" ref="loginForm" :model="login" :rules="rules">
@@ -106,14 +106,14 @@ const validateForm = () => {
 .login {
     &-content {
         width: 100%;
-        height: 410px;
+        height: 5.8571rem;
         display: flex;
-        margin-top: 20px;
+        margin-top: .2857rem;
         flex-direction: column;
         align-items: center;
-        margin-bottom: 8px;
+        margin-bottom: .1143rem;
         &-title {
-            font-size: 26px;
+            font-size: .3714rem;
             font-weight: 600;
             font-family: Helvetica Arial, Helvetica, sans-serif;
             color: #333;
@@ -122,39 +122,39 @@ const validateForm = () => {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 35px 0 15px;
+            margin: .5rem 0 .2143rem;
             
-            border-radius: 12px;
-            height: 45px;
-            font-size: 16px;
+            border-radius: .1714rem;
+            height: .6429rem;
+            font-size: .2286rem;
             color: #000000;
-            border: 1.5px #474747 solid;
+            border: .0214rem #474747 solid;
             width: 68%;
             transition: all .5s;
             cursor: pointer;
             .iconfont {
-                font-size: 24px;
-                padding-left: 10px;
+                font-size: .3429rem;
+                padding-left: .1429rem;
             }
         }
         &-form {
             width: 68%;
-            margin-top: 15px;
-            margin-bottom: 10px;
+            margin-top: .2143rem;
+            margin-bottom: .1429rem;
             &-btn {
-                margin-top: 24px;
+                margin-top: .3429rem;
                 color: #fff;
-                border-radius: 10px;
-                height: 42px;
+                border-radius: .1429rem;
+                height: .6rem;
                 border: 0;
                 background-color:#6965db;
                 width: 100%;
-                font-size: 15px;
+                font-size: .2143rem;
                 transition: all .3s;
                 cursor: pointer;
                 &:hover {
                     background-color: #5753d0;
-                    border-radius: 5px;
+                    border-radius: .0714rem;
 
                 }
             }
@@ -168,20 +168,20 @@ const validateForm = () => {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                height: 35px;
+                height: .5rem;
                 width: 60%;
-                margin-top: 2px;
+                margin-top: .0286rem;
                 .iconfont {
-                    font-size: 20px;
+                    font-size: .2857rem;
                     color: #6965db;
-                    margin: 0 5px;
+                    margin: 0 .0714rem;
                     cursor: pointer;
                 }
             }
         }
         &-span-link {
-            font-size: 12px;
-            margin-top: 4px;
+            font-size: .1714rem;
+            margin-top: .0571rem;
             cursor: pointer;
             &:hover {
                 color: #6965db;

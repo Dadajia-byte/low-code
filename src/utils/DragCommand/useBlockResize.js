@@ -12,14 +12,15 @@ function useBlockResize(focusData,selectionBounds,data) {
     let stateData = {}
     // 获取容器边界
     const containerRect = data.container;    
-    const onMouseMove = (e)=>{
-        let {clientX,clientY} = e;
-        let {startX,startY,blocks,direction,dragging} = stateData;
+    const onMouseMove = (e) => {
+        let { clientX, clientY } = e;
+        let { startX, startY, blocks, direction, dragging } = stateData;
 
         blocks.forEach((block) => {
             let { startWidth, startHeight, startLeft, startTop } = block;
             let durX = clientX - startX;
             let durY = clientY - startY;
+
             if (direction.horizontal === 'center') {
                 clientX = startX;
             }
@@ -34,24 +35,38 @@ function useBlockResize(focusData,selectionBounds,data) {
                 durX = durX * -1;
                 startLeft -= durX;
             }
+
             const width = startWidth + durX;
             const height = startHeight + durY;
+
+            // 设置宽度和高度的最小值和最大值
+            const minWidth = 20; // 最小宽度
+            const maxWidth = 300; // 最大宽度
+            const minHeight = 20; // 最小高度
+            const maxHeight = 150; // 最大高度
+
+            const finalWidth = Math.max(minWidth, Math.min(width, maxWidth));
+            const finalHeight = Math.max(minHeight, Math.min(height, maxHeight));
+
             // 获取容器的边界
-            const maxLeft = containerRect.width - width;
-            const maxTop = containerRect.height - height;
+            const maxLeft = containerRect.width - finalWidth;
+            const maxTop = containerRect.height - finalHeight;
+
             // 限制缩放后的尺寸不超出容器
             startLeft = Math.max(0, Math.min(startLeft, maxLeft));
             startTop = Math.max(0, Math.min(startTop, maxTop));
-            block.item.width = width;
-            block.item.height = height;
+
+            block.item.width = finalWidth;
+            block.item.height = finalHeight;
             block.item.left = startLeft;
             block.item.top = startTop;
             block.item.hasResize = true;
             editorDataStore.updateBlocks(block);
         });
-        if(!dragging) {
-            data.dragging = true;
-            events.emit('resizeStart')
+
+        if (!dragging) {
+            stateData.dragging = true;
+            events.emit('resizeStart');
         }
     }
     
@@ -75,29 +90,32 @@ function useBlockResize(focusData,selectionBounds,data) {
             direction,
             dragging: false,
         };
+        // 记录当前状态到 history
+        if (historyIndex < history.length - 1) {
+            history = history.slice(0, historyIndex + 1);
+        }
+        history.push(cloneDeep(editorDataStore.data.blocks));
+        setHistoryIndex(history.length - 1);
+        console.log(history,'before');
+        
         document.body.addEventListener('mousemove',onMouseMove)
         document.body.addEventListener('mouseup',onMouseUp)
     }
-    const onMouseUp = ()=>{
-        if(data.dragging) {
-            events.emit('resizeEnd')
-            data.dragging = false;
-            console.log(111);
-            
-             // 记录状态便于回退
-            if(historyIndex<history.length-1) {
-                history = history.slice(0,historyIndex+1);
-            }
-            history.push(cloneDeep(editorDataStore.data.blocks))
-            console.log(history);
-            
-            historyIndex++;
-            console.log(historyIndex)
+    const onMouseUp = () => {
+        if (stateData.dragging) {
+            events.emit('resizeEnd');
+            stateData.dragging = false;
+
+            // 记录缩放结束时的状态
+            history.push(cloneDeep(editorDataStore.data.blocks));
+            setHistoryIndex(history.length - 1);
+            console.log(history,'after');
             
         }
-        document.body.removeEventListener('mousemove',onMouseMove)
-        document.body.removeEventListener('mouseup',onMouseUp)
-    }
+
+        document.body.removeEventListener('mousemove', onMouseMove);
+        document.body.removeEventListener('mouseup', onMouseUp);
+    };
 
     return {
         onMouseDown

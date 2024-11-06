@@ -5,7 +5,7 @@ import { setActivePinia, getActivePinia } from 'pinia';
 import { history,historyIndex,setHistoryIndex } from "./useBlockResize";
 
 
-export const useCommand = (data, focusData) => {
+export const useCommand = (data, focusData,containerRef=null) => {
   // 激活pinia
   if (!getActivePinia()) {
     const pinia = createPinia();
@@ -22,6 +22,7 @@ export const useCommand = (data, focusData) => {
     destroyedList: [], // 销毁列表
   };
 
+  // 注册指令函数
   const registry = (command) => {
     state.commandArray.push(command);
     state.commands[command.name] = (...args) => {
@@ -44,7 +45,6 @@ export const useCommand = (data, focusData) => {
   };
   // 重做
   registry({
-
     name: "redo",
     keyboard: "ctrl+y",
     execute() {
@@ -61,12 +61,11 @@ export const useCommand = (data, focusData) => {
   });
   // 撤销
   registry({
-
     name: "undo",
     keyboard: "ctrl+z",
     execute() {
       return {
-        redo() {
+        redo() {      
           if (state.current === -1) return; // 没有可以撤销的操作
           let item = state.queue[state.current];
           if (item) {
@@ -77,7 +76,7 @@ export const useCommand = (data, focusData) => {
       };
     },
   });
-  // 拖曳缩放
+  // 缩放
   registry({
     name:'resize',
     pushQueue: true,
@@ -97,6 +96,8 @@ export const useCommand = (data, focusData) => {
       let after = history[historyIndex];
       return {
         redo() {
+          console.log(111);
+          
           if(historyIndex<history.length-1) {
             setHistoryIndex(historyIndex+1)
             after = history[historyIndex]
@@ -105,14 +106,13 @@ export const useCommand = (data, focusData) => {
         },
         undo() {
           // data = { ...data, blocks: before };
+          
           if(historyIndex>0) {
             console.log(111);
-            
-            setHistoryIndex(historyIndex-1)
+            setHistoryIndex(historyIndex-1);
+            before = history[historyIndex];
             editorDataStore.updateData({ ...data, blocks: before })
           }
- 
-
         },
       };
     }
@@ -208,10 +208,98 @@ export const useCommand = (data, focusData) => {
       };
     },
   });
+  // 复制
+  registry({
+    name: "copy",
+    keyboard: "ctrl+c",
+    execute() {
+      // 可能是单个block，也可能是多选的所以传入的应该是一个数组
+      // 实际操作应该是将这几个block放到剪切板中
+      let {focus} = focusData.value;
+      
+      return {
+        redo() {
+          if(focus.length>0) {
+            
+            // 计算基准位置（选中块的最小 left 和 top）
+            const offsetX = Math.min(...focus.map(block => block.left));
+            const offsetY = Math.min(...focus.map(block => block.top));
+            
+            editorDataStore.clipboard = {
+              blocks: cloneDeep(focus),
+              offsetX,  // 保存偏移位置
+              offsetY
+            };
+            console.log(editorDataStore.clipboard);
+          }
+          
+        }
+      }
+    }
+  })
+  // 粘贴
+  registry({
+    name: "paste",
+    keyboard: "ctrl+v",
+    pushQueue: true,
+    init() {
+      this.before = cloneDeep(editorDataStore.data.blocks);
+    },
+    execute(e) {
+      let before = this.before;
+      let after = data.blocks;
+
+      // 粘贴的时候，从剪切板中拿出blocks，push到data的blocks中，但是要注意以下几点：
+      // 1. 所有block的id都得重新生成
+      // 2. 所有block的left和top应该相较于鼠标位置和原先位置重新计算
+      // 3. 粘贴后，自动将focused转变为粘贴的blocks
+      // 4. 考虑到键盘触发传入的e是键盘事件，无法获取鼠标位置以计算新位置，需要重新考量
+      // 画布位置，用于结合鼠标位置计算新位置
+      let { blocks,offsetX,offsetY } = editorDataStore.clipboard;
+      if(!blocks||blocks.length===0) return; // 虽然根本就进不来，但为了保险还是加一下
+      const containerRect = containerRef.value.getBoundingClientRect();
+
+      console.log(e);
+      let pastedBlocks = [];
+      // 生成新的 blocks
+      const generatePastedBlocks = () => {
+        const mouseX = e.clientX - containerRect.left; // 转换为相对于画布的位置
+        const mouseY = e.clientY - containerRect.top; // 转换为相对于画布的位置
+        return blocks.map(block => {
+          const newBlock = {
+            ...cloneDeep(block),
+            id: String(new Date().getTime()) + String(Math.floor(Math.random() * 1000)), // 重新生成唯一id
+            left: block.left + (mouseX - offsetX)- block.width / 2,
+            top: block.top + (mouseY - offsetY)- block.height / 2,
+          };
+          return newBlock;
+        });
+      }
+      return {
+        
+        redo() {
+          pastedBlocks = generatePastedBlocks();
+          editorDataStore.data.blocks.push(...pastedBlocks);
+          console.log(before,'before');
+          
+          after = [...editorDataStore.data.blocks];
+          // focusData.value.focus = pastedBlocks;
+        },
+        undo() {
+          // 删除刚刚插入的block
+          editorDataStore.data.blocks = before;
+          focusData.value.focus = [];
+          console.log(after,'after');
+          
+        }
+      };
+    }
+  })
   // 置顶
   registry({
     name: "placeTop",
     pushQueue: true,
+    keyboard: "ctrl+shift+[",
     execute() {
       let before = cloneDeep(data.blocks);
       let after = (() => {
@@ -226,12 +314,10 @@ export const useCommand = (data, focusData) => {
           // 如果当前blocks前后一致，则不会更新
           // data = { ...data, blocks: before };
           editorDataStore.updateData({ ...data, blocks: before })
-
         },
         redo: () => {
           // data = { ...data, blocks: after };
           editorDataStore.updateData({ ...data, blocks: after })
-
         },
       };
     },
@@ -240,6 +326,7 @@ export const useCommand = (data, focusData) => {
   registry({
     name: "placeBottom",
     pushQueue: true,
+    keyboard: "ctrl+shift+]",
     execute() {
       let before = cloneDeep(data.blocks);
       let after = (() => {
@@ -268,10 +355,59 @@ export const useCommand = (data, focusData) => {
       };
     },
   });
+  // 上移一层
+  registry({
+    name: "placeUp",
+    pushQueue: true,
+    keyboard: "ctrl+[",
+    execute() {
+      let before = cloneDeep(data.blocks);
+      let after =(()=>{
+        let {focus} = focusData.value
+        focus.forEach(block=>block.zIndex++)
+        console.log(data.blocks);
+        
+        return data.blocks
+      })()
+      return {
+        undo: () => {
+          editorDataStore.updateData({ ...data, blocks: before })
+        },
+        redo: () => {
+          editorDataStore.updateData({ ...data, blocks: after })
+        },
+      }
+    }
+
+  })
+  // 下移一层
+  registry({
+    name: "placeDown",
+    pushQueue: true,
+    keyboard: "ctrl+]",
+    execute() {
+      let before = cloneDeep(data.blocks);
+      // 本来应该是让选中block下移一层，但考虑<0情况，让所有unfocused+1即可
+      let after = (() => {
+        let {unfocused} = focusData.value
+        unfocused.forEach(block=>block.zIndex++)
+        return data.blocks
+      })()
+      return {
+        undo: () => {
+         editorDataStore.updateData({ ...data, blocks: before })
+        },
+        redo: () => {
+          editorDataStore.updateData({ ...data, blocks: after })
+        },
+      }
+    }
+  })
   // 删除
   registry({
     name: "delete",
     pushQueue: true,
+    keyboard:'delete',
     execute() {
       let state = {
         before: cloneDeep(data.blocks), // 保证唯一
@@ -296,20 +432,26 @@ export const useCommand = (data, focusData) => {
   // 键盘事件
   const keyboardEvent = (() => {
     const keyCodes = {
+      67:"c",
+      86:'v',
       90: "z",
       89: "y",
+      46:'delete',
+      219:'[',
+      221:']',
     };
     const onKeydown = (e) => {
-      const { ctrlKey, keyCode } = e;
+      const { ctrlKey, keyCode,shiftKey } = e;
       let keyString = [];
       if (ctrlKey) keyString.push("ctrl");
+      if (shiftKey) keyString.push("shift");
       keyString.push(keyCodes[keyCode]);
       keyString = keyString.join("+");
       // 根据键盘按键调用对应的事件
       state.commandArray.forEach(({ keyboard, name }) => {
         if (!keyboard) return; // 没有对应的键盘事件
         if (keyboard === keyString) {
-          state.commands[name]();
+          state.commands[name](e);
           e.preventDefault();
         }
       });
