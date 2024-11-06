@@ -1,9 +1,7 @@
-
 /*
  *列表区可以显示所有物料，key对应所有组件的映射关系
  */
-
-
+// 11
 function createEditorConfig() {
   // 物料列表
   const componentList = [];
