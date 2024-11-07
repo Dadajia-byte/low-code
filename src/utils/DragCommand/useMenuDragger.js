@@ -36,24 +36,7 @@ export function useMenuDragger(containerRef, data) {
           props:{},
           model:{}
         },)
-    // let pre = data;
-    // data = {
-    //   ...pre,
-    //   blocks: [
-    //     ...pre.blocks,
-    //     // 拖拽元素
-    //     {
-    //       top: e.offsetY,
-    //       left: e.offsetX,
-    //       zIndex: 1,
-    //       key: currentComponent.key,
-    //       alignCenter: true, // 希望松手的时候可以居中
-    //       id:String(new Date().getTime()) + String(Math.floor(Math.random() * 1000)),// 这里用于生成id便于for的key，不然出现很多bug
-    //       props:{},
-    //       model:{}
-    //     },
-    //   ],
-    // };
+  
 
     currentComponent = null;
   };

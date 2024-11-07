@@ -1,7 +1,6 @@
 import { computed } from "vue";
 
-export function useFocus(data, previewRef, callback) {
-  // console.log(data.blocks);
+export function useFocus(data, previewRef,containerRef, callback) {
 
   const selectIndex = ref(-1); // 记录最后一个被点击的元素
   const lastSelectBlock = computed(() => data.blocks[selectIndex.value]);
@@ -19,27 +18,40 @@ export function useFocus(data, previewRef, callback) {
     return { focus, unfocused };
   });
   // 计算选中元素的边界
-  const calculateSelectionBounds = computed(()=>{
-    if(focusData.value.focus.length<=1) return null;
+  const calculateSelectionBounds = computed(() => {
+    if (focusData.value.focus.length <= 1) return null;
     let minX = Infinity;
     let minY = Infinity;
     let maxX = -Infinity;
     let maxY = -Infinity;
-    focusData.value.focus.forEach(item=>{
-      const {left,top,width,height} = item;
-      minX = Math.min(minX,left);
-      minY = Math.min(minY,top);
-      maxX = Math.max(maxX,left+width);
-      maxY = Math.max(maxY,top+height);
+    focusData.value.focus.forEach(item => {
+      const { left, top, width, height } = item;
+      minX = Math.min(minX, left);
+      minY = Math.min(minY, top);
+      maxX = Math.max(maxX, left + width);
+      maxY = Math.max(maxY, top + height);
     });
-    
+
     return {
-      left:minX-4,
-      top:minY-4,
-      width:maxX-minX+6,
-      height:maxY-minY+6
+      left: minX - 4,
+      top: minY - 4,
+      width: maxX - minX + 6,
+      height: maxY - minY + 6
     }
   })
+
+  const mouseDrag = ref({
+    dragging:false,
+    startX:0,
+    startY:0,
+  })
+  // 鼠标选取的范围
+  const mouseSelectArea = ref({
+    top: null,
+    left: null,
+    width: null,
+    height: null,
+  });
   const clearBlockFocus = () => {
     data.blocks.forEach((item) => {
       item.focus = false;
@@ -66,12 +78,41 @@ export function useFocus(data, previewRef, callback) {
     selectIndex.value = index;
     callback(e);
   };
-  const containerMouseDown = () => {
+
+
+  const containerMouseDown = (e) => {
     if (previewRef.value) return;
     clearBlockFocus();
+    mouseDrag.value.dragging = true
+    let { clientX, clientY } = callback(e)
+    let { left, top, width, height } = containerRef.value.getBoundingClientRect();
+
+    
+    mouseDrag.value.startX = e.clientX
+    mouseDrag.value.startY = e.clientY
+
+
+    document.addEventListener("mousemove", onMouseMoveSelect);
+    document.addEventListener("mouseup", onMouseUpSelect);
     selectIndex.value = -1;
   };
-  const selectionBoundsMouseDown = (e)=>{
+const onMouseMoveSelect = (e) => {
+  // 计算选取范围的宽高
+  mouseSelectArea.value.width = e.clientX - mouseSelectArea.value.startX;
+  mouseSelectArea.value.height = e.clientY - mouseSelectArea.value.startY;
+}
+
+const onMouseUpSelect = () => {
+  // 结束选取范围
+  mouseDrag.value = false;
+  
+  // 移除事件监听器
+  document.removeEventListener("mousemove", onMouseMoveSelect);
+  document.removeEventListener("mouseup", onMouseUpSelect);
+  
+  // 此处可以处理选取范围内的元素，如判断哪些元素被包含在选取范围内
+};
+  const selectionBoundsMouseDown = (e) => {
     e.stopPropagation();
     callback(e);
   }
@@ -82,6 +123,6 @@ export function useFocus(data, previewRef, callback) {
     selectionBoundsMouseDown,
     lastSelectBlock,
     clearBlockFocus,
-    selectionBounds:calculateSelectionBounds,
+    selectionBounds: calculateSelectionBounds,
   };
 }
