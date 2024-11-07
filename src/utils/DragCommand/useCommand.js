@@ -240,11 +240,14 @@ export const useCommand = (data, focusData,containerRef=null) => {
   registry({
     name:'cut',
     keyboard:'ctrl+x',
+    pushQueue:true,
     execute() {
     // 剪切实际上就是：
     // 1. 执行复制操作
-    // 2. 将剪切的blocks从原本的data中删除
-    let {focus} = focusData.value;
+    // 2. 将剪切的blocks(focus)从原本的data中删除,即替换为unfocused
+    let {focus,unfocused} = focusData.value;
+    let before = cloneDeep(data.blocks);
+    let clipboardBefore = cloneDeep(editorDataStore.clipboard)
       return {
         redo() {
           if(focus.length>0) {
@@ -258,12 +261,13 @@ export const useCommand = (data, focusData,containerRef=null) => {
               offsetY
             };
             // 2. 将剪切的 blocks 从原本的 data 中删除
-            editorDataStore.data.blocks = editorDataStore.data.blocks.filter(block => !focus.includes(block));
-
-            // 更新焦点
-            focusData.value.focus = [];
+            editorDataStore.updateData({...data,blocks:unfocused})
           }
         },
+        undo() {
+          editorDataStore.updateData({ ...data, blocks: before })
+          editorDataStore.clipboard = clipboardBefore
+        }
 
       }
     }
@@ -275,7 +279,6 @@ export const useCommand = (data, focusData,containerRef=null) => {
     pushQueue: true,
     execute(e) {
       let before = cloneDeep(data.blocks);
-      let after = data.blocks;
       // 粘贴的时候，从剪切板中拿出blocks，push到data的blocks中，但是要注意以下几点：
       // 1. 所有block的id都得重新生成
       // 2. 所有block的left和top应该相较于鼠标位置和原先位置重新计算
@@ -316,8 +319,6 @@ export const useCommand = (data, focusData,containerRef=null) => {
           editorDataStore.data.blocks.forEach(item=>item.focus = false)        
           pastedBlocks = generatePastedBlocks();
           editorDataStore.data.blocks.push(...pastedBlocks);
-          after = [...editorDataStore.data.blocks];
-
         },
         undo() {
           // 删除刚刚插入的block
@@ -468,13 +469,14 @@ export const useCommand = (data, focusData,containerRef=null) => {
   // 键盘事件
   const keyboardEvent = (() => {
     const keyCodes = {
-      67:"c",
-      86:'v',
-      90: "z",
-      89: "y",
-      46:'delete',
-      219:'[',
       221:']',
+      219:'[',
+      90:"z",
+      89:"y",
+      88:'x',
+      86:'v',
+      67:"c",
+      46:'delete',
     };
     const onKeydown = (e) => {
       const { ctrlKey, keyCode,shiftKey } = e;

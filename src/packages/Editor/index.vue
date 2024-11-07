@@ -379,7 +379,7 @@ const onContextBlock = (e, block) => {
     h(DropdownItem, {
       label: "剪切",
       shortCut: "Ctrl+X",
-      onClick: () => console.log("剪切"),
+      onClick: commands.cut,
     }),
     h(DropdownItem, {
       label: "复制",
