@@ -77,7 +77,7 @@
           class="editor-container-canvas-content"
           ref="containerRef"
           :style="containerStyles"
-          @mousedown="containerMouseDown"
+          @mousedown="(e) => containerMouseDown(e)"
           @contextmenu.prevent="(e) => onContextMenu(e, null)"
         >
           <canvas
@@ -199,7 +199,14 @@
             </template>
           </div>
           <!-- 鼠标选中区域 -->
-          <div v-if="mouseDrag" class="mouse-select-area"
+          <div v-if="mouseSelectArea" class="mouse-select-area"
+          :style="{
+            top: mouseSelectArea.top + 'px',
+            left: mouseSelectArea.left + 'px',
+            width: mouseSelectArea.width + 'px',
+            height: mouseSelectArea.height + 'px',
+          }
+          "
           
           ></div>
         </div>
@@ -320,6 +327,8 @@ let {
   clearBlockFocus, // 清除所有选中
   selectionBounds,
   selectionBoundsMouseDown,
+  mouseSelectArea,
+  
 } = useFocus(EditorDataStore.data, previewRef,containerRef, (e) => {
   mousedown(e);
 });
@@ -712,7 +721,7 @@ onMounted(() => {
 
 .mouse-select-area{
   position: absolute;
-  background-color: #6965db;
+  background-color: rgba(0, 0, 0, 0.15);
   border: #6965db dashed 1px;
 }
 $pre: "block-resize";
