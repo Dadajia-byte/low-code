@@ -199,7 +199,7 @@
             </template>
           </div>
           <!-- 鼠标选中区域 -->
-          <div v-if="mouseSelectArea" class="mouse-select-area"
+          <div v-if="mouseDrag.dragging"  class="mouse-select-area"
           :style="{
             top: mouseSelectArea.top + 'px',
             left: mouseSelectArea.left + 'px',
@@ -328,7 +328,7 @@ let {
   selectionBounds,
   selectionBoundsMouseDown,
   mouseSelectArea,
-  
+  mouseDrag
 } = useFocus(EditorDataStore.data, previewRef,containerRef, (e) => {
   mousedown(e);
 });
@@ -721,8 +721,8 @@ onMounted(() => {
 
 .mouse-select-area{
   position: absolute;
-  background-color: rgba(0, 0, 0, 0.15);
-  border: #6965db dashed 1px;
+  background-color: rgba(227,227,227,0.5);
+  border: #e3e3e3 dashed 1px;
 }
 $pre: "block-resize";
 .#{$pre} {

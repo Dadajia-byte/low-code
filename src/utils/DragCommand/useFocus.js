@@ -46,48 +46,15 @@ export function useFocus(data, previewRef, containerRef, callback) {
     currentX: 0,
     currentY: 0,
   });
-  // 鼠标选取的范围
-  const mouseSelectArea = computed(() => {
-    if(!mouseDrag.value.dragging) return null;
-    const width = mouseDrag.value.currentX - mouseDrag.value.startX;
-    const height = mouseDrag.value.currentY - mouseDrag.value.startY;
-    let { left, top } = containerRef.value.getBoundingClientRect();
-    let caclulateTop = null
-    let caclulateLeft = null
-    //下方两种
-    if(mouseDrag.value.currentY > mouseDrag.value.startY ){
-      if(mouseDrag.value.currentX > mouseDrag.value.startX){
-        caclulateTop = mouseDrag.value.startY - top
-        caclulateLeft = mouseDrag.value.startX - left
-      }else{
-        caclulateTop = mouseDrag.value.startY - top
-        caclulateLeft = mouseDrag.value.currentX - left
-      }
-      //上方两种
-    } else {
-      if(mouseDrag.value.currentX > mouseDrag.value.startX){
-        caclulateTop = mouseDrag.value.currentY - top
-        caclulateLeft = mouseDrag.value.startX - left
-      }else{
-        caclulateTop = mouseDrag.value.currentY - top
-        caclulateLeft = mouseDrag.value.currentX - left
-      }
-    }
-    return {
-      top: caclulateTop,
-      left: caclulateLeft,
-      width: Math.abs(width),
-      height: Math.abs(height),
-    };
-  });
+//鼠标选取范围
+  const mouseSelectArea = ref(null);
+
   const clearBlockFocus = () => {
 
     data.blocks.forEach((item) => {
       item.focus = false;
     });
   };
-
-
   const blockMouseDown = (e, block, index) => {
     if (previewRef.value) return;
     // 在block上规划一个属性 focus 获取焦点后将focus变为true
@@ -111,41 +78,77 @@ export function useFocus(data, previewRef, containerRef, callback) {
     selectIndex.value = index;
     callback(e);
   };
-
-
+  //鼠标点击画板
   const containerMouseDown = (e) => {
-
     if (previewRef.value) return;
     e.preventDefault();
     e.stopPropagation();
     clearBlockFocus();
-
-    // 初始化拖拽状态
-    if(!mouseDrag.value.dragging) return;
+    selectIndex.value = -1;
+    // 初始化
     mouseDrag.value.dragging = true;
     mouseDrag.value.startX = e.clientX;
     mouseDrag.value.startY = e.clientY;
 
-    document.addEventListener("mousemove", onMouseMoveSelect);
-    document.addEventListener("mouseup", onMouseUpSelect);
-    selectIndex.value = -1;
+    document.addEventListener('mousemove', onMouseMoveSelect);
+    document.addEventListener('mouseup', onMouseUpSelect);
   };
+//鼠标移动
   const onMouseMoveSelect = (e) => {
-    // 计算选取范围的宽高
     mouseDrag.value.currentX = e.clientX;
     mouseDrag.value.currentY = e.clientY;
-  }
 
+    const width = mouseDrag.value.currentX - mouseDrag.value.startX;
+    const height = mouseDrag.value.currentY - mouseDrag.value.startY;
+    const { left, top } = containerRef.value.getBoundingClientRect();
+
+    mouseSelectArea.value = {
+      top: Math.min(mouseDrag.value.startY, mouseDrag.value.currentY) - top,
+      left: Math.min(mouseDrag.value.startX, mouseDrag.value.currentX) - left,
+      width: Math.abs(width),
+      height: Math.abs(height),
+    };
+  };
+
+  const resetDragData = () => {
+    mouseDrag.value = {
+      dragging: false,
+      startX: 0,
+      startY: 0,
+      currentX: 0,
+      currentY: 0,
+    };
+  
+    mouseSelectArea.value = null;
+  };
+//鼠标抬起
   const onMouseUpSelect = () => {
-    // 结束选取范围
     mouseDrag.value.dragging = false;
 
-    // 移除事件监听器
-    document.removeEventListener("mousemove", onMouseMoveSelect);
-    document.removeEventListener("mouseup", onMouseUpSelect);
+    data.blocks.forEach((item) => {
+      const itemLeft = item.left;
+      const itemTop = item.top;
+      const itemRight = item.left + item.width;
+      const itemBottom = item.top + item.height;
 
-    // 此处可以处理选取范围内的元素，如判断哪些元素被包含在选取范围内
+      if (
+        itemTop >= mouseSelectArea.value.top &&
+        itemLeft >= mouseSelectArea.value.left &&
+        itemBottom <= mouseSelectArea.value.top + mouseSelectArea.value.height &&
+        itemRight <= mouseSelectArea.value.left + mouseSelectArea.value.width
+      ) {
+        item.focus = true;
+      } else {
+        item.focus = false;
+      }
+    });
+
+    document.removeEventListener('mousemove', onMouseMoveSelect);
+    document.removeEventListener('mouseup', onMouseUpSelect);
+    
+    resetDragData();
   };
+ 
   const selectionBoundsMouseDown = (e) => {
     e.stopPropagation();
     callback(e);
@@ -159,5 +162,6 @@ export function useFocus(data, previewRef, containerRef, callback) {
     clearBlockFocus,
     selectionBounds: calculateSelectionBounds,
     mouseSelectArea,
+    mouseDrag
   };
 }
