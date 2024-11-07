@@ -91,18 +91,14 @@ export function useFocus(data, previewRef, containerRef, callback) {
       currentX: e.clientX,
       currentY: e.clientY,
     };
-
-
     document.addEventListener('mousemove', onMouseMoveSelect);
     document.addEventListener('mouseup', onMouseUpSelect);
   };
-//鼠标移动
+  //鼠标移动
   const onMouseMoveSelect = (e) => {
     mouseDrag.value.currentX = e.clientX;
     mouseDrag.value.currentY = e.clientY;
-
     const { left: containerLeft, top: containerTop, width: containerWidth, height: containerHeight } = containerRef.value.getBoundingClientRect();
-
     const width = mouseDrag.value.currentX - mouseDrag.value.startX;
     const height = mouseDrag.value.currentY - mouseDrag.value.startY;
 
@@ -139,16 +135,17 @@ export function useFocus(data, previewRef, containerRef, callback) {
       const itemRight = left + width;
       const itemBottom = top + height;
 
-    item.focus = (
-      top >= mouseSelectArea.top &&
-      left >= mouseSelectArea.left &&
-      itemBottom <= mouseSelectArea.top + mouseSelectArea.height &&
-      itemRight <= mouseSelectArea.left + mouseSelectArea.width
-    );
-  });
+      item.focus = (
+        top >= mouseSelectArea.top &&
+        left >= mouseSelectArea.left &&
+        itemBottom <= mouseSelectArea.top + mouseSelectArea.height &&
+        itemRight <= mouseSelectArea.left + mouseSelectArea.width
+      );
+    });
+    resetDragData();
     document.removeEventListener('mousemove', onMouseMoveSelect);
     document.removeEventListener('mouseup', onMouseUpSelect);
-    resetDragData();
+    
   };
  
   const selectionBoundsMouseDown = (e) => {
