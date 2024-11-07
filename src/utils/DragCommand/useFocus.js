@@ -1,3 +1,4 @@
+import { reactive } from "vue";
 
 export function useFocus(data, previewRef, containerRef, callback) {
 
@@ -46,14 +47,16 @@ export function useFocus(data, previewRef, containerRef, callback) {
     currentX: 0,
     currentY: 0,
   });
-//鼠标选取范围
-  const mouseSelectArea = ref(null);
+  //鼠标选取范围
+  const mouseSelectArea = reactive({
+    top: 0,
+    left: 0,
+    width: 0,
+    height: 0,
+  });
 
   const clearBlockFocus = () => {
-
-    data.blocks.forEach((item) => {
-      item.focus = false;
-    });
+    data.blocks.forEach((item) => item.focus = false)
   };
   const blockMouseDown = (e, block, index) => {
     if (previewRef.value) return;
@@ -63,12 +66,7 @@ export function useFocus(data, previewRef, containerRef, callback) {
 
     if (e.shiftKey) {
       // 按住shift键
-
-      if (focusData.value.focus.length <= 1) {
-        block.focus = true; // 当前只有一个节点被选中时，按住shift键 也不会切换focous状态
-      } else {
-        block.focus = !block.focus;
-      }
+       block.focus = focusData.value.focus.length <= 1 || block.focus;
     } else {
       if (!block.focus) {
         clearBlockFocus(); // 一般情况只允许一个block被选中
@@ -86,9 +84,14 @@ export function useFocus(data, previewRef, containerRef, callback) {
     clearBlockFocus();
     selectIndex.value = -1;
     // 初始化
-    mouseDrag.value.dragging = true;
-    mouseDrag.value.startX = e.clientX;
-    mouseDrag.value.startY = e.clientY;
+    mouseDrag.value = {
+      dragging: true,
+      startX: e.clientX,
+      startY: e.clientY,
+      currentX: e.clientX,
+      currentY: e.clientY,
+    };
+
 
     document.addEventListener('mousemove', onMouseMoveSelect);
     document.addEventListener('mouseup', onMouseUpSelect);
@@ -98,16 +101,20 @@ export function useFocus(data, previewRef, containerRef, callback) {
     mouseDrag.value.currentX = e.clientX;
     mouseDrag.value.currentY = e.clientY;
 
+    const { left: containerLeft, top: containerTop, width: containerWidth, height: containerHeight } = containerRef.value.getBoundingClientRect();
+
     const width = mouseDrag.value.currentX - mouseDrag.value.startX;
     const height = mouseDrag.value.currentY - mouseDrag.value.startY;
-    const { left, top } = containerRef.value.getBoundingClientRect();
 
-    mouseSelectArea.value = {
-      top: Math.min(mouseDrag.value.startY, mouseDrag.value.currentY) - top,
-      left: Math.min(mouseDrag.value.startX, mouseDrag.value.currentX) - left,
-      width: Math.abs(width),
-      height: Math.abs(height),
-    };
+    const newLeft = Math.max(containerLeft, Math.min(mouseDrag.value.startX, mouseDrag.value.currentX));
+    const newTop = Math.max(containerTop, Math.min(mouseDrag.value.startY, mouseDrag.value.currentY));
+    const newWidth = Math.min(Math.abs(width), containerWidth - (newLeft - containerLeft));
+    const newHeight = Math.min(Math.abs(height), containerHeight - (newTop - containerTop));
+
+    mouseSelectArea.top = newTop - containerTop;
+    mouseSelectArea.left = newLeft - containerLeft;
+    mouseSelectArea.width = newWidth;
+    mouseSelectArea.height = newHeight;
   };
 
   const resetDragData = () => {
@@ -118,34 +125,29 @@ export function useFocus(data, previewRef, containerRef, callback) {
       currentX: 0,
       currentY: 0,
     };
-  
-    mouseSelectArea.value = null;
+    mouseSelectArea.top = 0;
+    mouseSelectArea.left = 0;
+    mouseSelectArea.width = 0;
+    mouseSelectArea.height = 0;
   };
 //鼠标抬起
   const onMouseUpSelect = () => {
     mouseDrag.value.dragging = false;
 
-    data.blocks.forEach((item) => {
-      const itemLeft = item.left;
-      const itemTop = item.top;
-      const itemRight = item.left + item.width;
-      const itemBottom = item.top + item.height;
+    data.blocks.forEach(item => {
+      const { left, top, width, height } = item;
+      const itemRight = left + width;
+      const itemBottom = top + height;
 
-      if (
-        itemTop >= mouseSelectArea.value.top &&
-        itemLeft >= mouseSelectArea.value.left &&
-        itemBottom <= mouseSelectArea.value.top + mouseSelectArea.value.height &&
-        itemRight <= mouseSelectArea.value.left + mouseSelectArea.value.width
-      ) {
-        item.focus = true;
-      } else {
-        item.focus = false;
-      }
-    });
-
+    item.focus = (
+      top >= mouseSelectArea.top &&
+      left >= mouseSelectArea.left &&
+      itemBottom <= mouseSelectArea.top + mouseSelectArea.height &&
+      itemRight <= mouseSelectArea.left + mouseSelectArea.width
+    );
+  });
     document.removeEventListener('mousemove', onMouseMoveSelect);
     document.removeEventListener('mouseup', onMouseUpSelect);
-    
     resetDragData();
   };
  

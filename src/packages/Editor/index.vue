@@ -724,8 +724,8 @@ onMounted(() => {
 
 .mouse-select-area{
   position: absolute;
-  background-color: rgba(227,227,227,0.5);
-  border: #e3e3e3 dashed 1px;
+  background-color: rgba(105, 101, 219,0.15);
+  border: #6965db solid 1px;
 }
 $pre: "block-resize";
 .#{$pre} {
