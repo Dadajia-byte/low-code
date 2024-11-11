@@ -66,7 +66,11 @@ export function useFocus(data, previewRef, containerRef, callback) {
 
     if (e.shiftKey) {
       // 按住shift键
-       block.focus = focusData.value.focus.length <= 1 || block.focus;
+      if (focusData.value.focus.length <= 1) {
+        block.focus = true; // 当前只有一个节点被选中时，按住shift键 也不会切换focous状态
+      } else {
+        block.focus = !block.focus;
+      }
     } else {
       if (!block.focus) {
         clearBlockFocus(); // 一般情况只允许一个block被选中
