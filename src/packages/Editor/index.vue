@@ -78,7 +78,7 @@
           ref="containerRef"
           :style="containerStyles"
           @mousedown="(e) => containerMouseDown(e)"
-          @contextmenu.prevent="(e) => onContextMenu(e, null)"
+          @contextmenu="(e) => onContextMenu(e, null)"
         >
           <canvas
             ref="canvasRef"
@@ -123,6 +123,7 @@
               height: selectionBounds.height + 'px',
             }"
             @mousedown="(e) => selectionBoundsMouseDown(e)"
+            @contextmenu="(e) => onContextBlock(e,focusData.focus)"
           >
             <template
               v-if="
@@ -206,8 +207,7 @@
             width: mouseSelectArea.width + 'px',
             height: mouseSelectArea.height + 'px',
           }
-          "
-          
+          "  
           ></div>
         </div>
       </div>
@@ -345,7 +345,7 @@ let { onMouseDown } = useBlockResize(focusData, selectionBounds, EditorDataStore
 // 用于保存可能使用的所有指令(操作)
 const { commands } = useCommand(EditorDataStore.data, focusData,containerRef);
 
-const onContextMenu = (e, block) => {
+const onContextMenu = (e) => {
   e.preventDefault();
   //添加返回位置函数
   e.getBoundingClientRect = () => {
@@ -371,9 +371,10 @@ const onContextMenu = (e, block) => {
 };
 // 右键物块菜单
 const onContextBlock = (e, block) => {
-  console.log(e);
   e.stopPropagation();
   e.preventDefault();
+  let ifBlocks = false;
+  if(Array.isArray(block)) ifBlocks = true
   const contentVnode = h("div", {}, [
     h(DropdownItem, {
       label: "剪切",
@@ -396,12 +397,14 @@ const onContextBlock = (e, block) => {
       label: "拷贝配置",
       shortCut: "Ctrl+Alt+C",
       onClick: () => console.log("拷贝样式"),
+      disabled:ifBlocks,
     }),
     h(DropdownItem, {
       label: "粘贴配置",
       shortCut: "Ctrl+Alt+V",
       divider: true,
       onClick: () => console.log("粘贴样式"),
+      disabled:ifBlocks,
     }),
     h(DropdownItem, {
       label: "下移一层",
@@ -433,6 +436,7 @@ const onContextBlock = (e, block) => {
           content: JSON.stringify(block),
         });
       },
+      disabled:ifBlocks,
     }),
     h(DropdownItem, {
       label: "导入",
@@ -448,6 +452,7 @@ const onContextBlock = (e, block) => {
           },
         });
       },
+      disabled:ifBlocks,
     }),
     h(DropdownItem, { label: "删除", shortCut: "Delete", onClick: commands.delete }),
   ]);
@@ -456,6 +461,7 @@ const onContextBlock = (e, block) => {
     content: () => contentVnode,
   });
 };
+
 
 /* 左侧物料栏相关，后续可能拉到单独文件夹中 */
 const isExpanded = ref(false);

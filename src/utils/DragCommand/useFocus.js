@@ -31,7 +31,8 @@ export function useFocus(data, previewRef, containerRef, callback) {
       maxX = Math.max(maxX, left + width);
       maxY = Math.max(maxY, top + height);
     });
-
+    console.log('selectionBounds', {left:minX-4, top:minY-4});
+    
     return {
       left: minX - 4,
       top: minY - 4,
