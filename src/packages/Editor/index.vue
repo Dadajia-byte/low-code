@@ -79,6 +79,7 @@
           :style="containerStyles"
           @mousedown="(e) => containerMouseDown(e)"
           @contextmenu.prevent="(e) => onContextMenu(e, null)"
+          @wheel="(e) =>handleMousewheel(e)"
         >
           <canvas
             ref="canvasRef"
@@ -243,12 +244,14 @@ import {
   useBlockDragger,
   useBlockResize,
   useCommand,
+  useMouseWheel,
 } from "@/utils/DragCommand";
 import { $dropdown } from "@/components/Dropdown";
 import DropdownItem from "@/components/Dropdown/components/DropdownItem/index.vue";
 import { $dialog } from "@/components/Dialog";
 import { $previewDialog } from "../../components/PreviewDialog";
 import { useEditorDataStore } from "@/store/index";
+
 const EditorDataStore = useEditorDataStore();
 const emit = defineEmits(["update:modelValue"]);
 // 预览时 内容不再能操作，可以点击输入内容，方便看效果
@@ -256,7 +259,6 @@ const previewRef = ref(false);
 const editorRef = ref(true);
 
 const config = inject("config");
-// const data = EditorDataStore.data
 // 获取data.json中的样式
 const containerStyles = computed(() => ({
   width: `${EditorDataStore.data.container.width}px`,
@@ -332,7 +334,10 @@ let {
 } = useFocus(EditorDataStore.data, previewRef,containerRef, (e) => {
   mousedown(e);
 });
-
+// 5. 实现滚轮缩放
+let{
+  handleMousewheel
+} = useMouseWheel(containerRef)
 // 3. 实现组件拖拽
 let { mousedown, markline } = useBlockDragger(
   focusData,
