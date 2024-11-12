@@ -4,16 +4,16 @@
     :style="{ top: isExpanded ? '-0.8571rem' : '.1429rem' }"
   >
     <div
-      v-for="(btn, index) in buttons"
-      :key="index"
+      v-for="btn in buttons"
+      :key="btn.label"
       @click="btn.handler"
       class="editor-top-button"
+      :class="{ 'editor-top-button-active': isActive(btn) }"
     >
       <i
         :class="typeof btn.icon == 'function' ? btn.icon() : btn.icon"
         class="iconfont"
       ></i>
-      <!-- <span>{{ typeof btn.label == 'function' ? btn.label() : btn.label }}</span> -->
     </div>
     <div class="editor-top-expand" @click="toggleExpand">
       <el-icon
@@ -26,13 +26,17 @@
 </template>
 
 <script setup>
-const { buttons } = defineProps({
+const { buttons, editorOperatorStatus: status } = defineProps({
   buttons: { type: Array },
+  editorOperatorStatus: { type: Boolean },
 });
 
 const isExpanded = ref(false);
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value;
+};
+const isActive = (btn) => {
+  return (status && btn.label === "鼠标") || (!status && btn.label === "抓手");
 };
 </script>
 
@@ -55,7 +59,8 @@ const toggleExpand = () => {
   transition: all 0.5s;
   z-index: 999;
 
-  &-button {
+  &-button,
+  &-button-active {
     width: 0.7143rem;
     height: 0.7143rem;
     display: flex;
@@ -69,19 +74,20 @@ const toggleExpand = () => {
     &:hover {
       background-color: #f1f0ff;
     }
-
     .iconfont {
       font-size: 0.3429rem;
       color: #606266;
     }
-
     span {
       font-size: 0.1714rem;
     }
-
     & + & {
       margin-left: 0.0429rem;
     }
+  }
+
+  &-button-active {
+    background-color: #f1f0ff;
   }
   &-expand {
     z-index: 99999;

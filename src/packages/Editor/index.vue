@@ -1,12 +1,24 @@
 <template>
   <div class="editor" v-if="editorRef">
     <!-- 左侧物料堆 -->
-    <div class="editor-left" :style="{ left: isExpanded ? '-4.1429rem' : '.0714rem' }">
+    <div
+      class="editor-left"
+      :style="{ left: isExpanded ? '-4.1429rem' : '.0714rem' }"
+    >
       <el-text class="mx-1 editor-left-title" size="large">物料堆</el-text>
       <el-divider
-        style="margin-left: .2857rem; width: 90%; margin-top: .2143rem; margin-bottom: .0714rem"
+        style="
+          margin-left: 0.2857rem;
+          width: 90%;
+          margin-top: 0.2143rem;
+          margin-bottom: 0.0714rem;
+        "
       />
-      <el-select filterable placeholder="nodo搜索,树形更好？" class="editor-left-search">
+      <el-select
+        filterable
+        placeholder="nodo搜索,树形更好？"
+        class="editor-left-search"
+      >
         <template #prefix>
           <el-icon><i-ep-Search /></el-icon>
         </template>
@@ -39,7 +51,9 @@
               >
                 <component :is="item.preview"></component>
               </div>
-              <div class="editor-left-menu-content-item-label">{{ item.label }}</div>
+              <div class="editor-left-menu-content-item-label">
+                {{ item.label }}
+              </div>
             </div>
           </div>
         </el-collapse-item>
@@ -51,13 +65,16 @@
       >
         <el-icon
           :style="{ transform: isExpanded ? 'rotate(180deg)' : 'none' }"
-          style="font-size: .3143rem"
+          style="font-size: 0.3143rem"
           ><i-ep-CaretLeft
         /></el-icon>
       </div>
     </div>
     <!-- 顶部菜单栏 -->
-    <EditorTop :buttons="buttons"></EditorTop>
+    <EditorTop
+      :buttons="buttons"
+      :editorOperatorStatus="editorOperatorStatus"
+    ></EditorTop>
     <!-- 右侧属性控制栏 -->
     <div class="editor-right">
       <EditorOperator
@@ -77,7 +94,7 @@
           class="editor-container-canvas-content"
           ref="containerRef"
           :style="containerStyles"
-          @mousedown="(e) => containerMouseDown(e)"
+          @mousedown="(e) => ContainerMouseDown(e)"
           @contextmenu="(e) => onContextMenu(e, null)"
         >
           <canvas
@@ -123,7 +140,7 @@
               height: selectionBounds.height + 'px',
             }"
             @mousedown="(e) => selectionBoundsMouseDown(e)"
-            @contextmenu="(e) => onContextBlock(e,focusData.focus)"
+            @contextmenu="(e) => onContextBlock(e, focusData.focus)"
           >
             <template
               v-if="
@@ -135,13 +152,15 @@
               <div
                 class="block-resize block-resize-left"
                 @mousedown="
-                  (e) => onMouseDown(e, { horizontal: 'start', vertical: 'center' })
+                  (e) =>
+                    onMouseDown(e, { horizontal: 'start', vertical: 'center' })
                 "
               ></div>
               <div
                 class="block-resize block-resize-right"
                 @mousedown="
-                  (e) => onMouseDown(e, { horizontal: 'end', vertical: 'center' })
+                  (e) =>
+                    onMouseDown(e, { horizontal: 'end', vertical: 'center' })
                 "
               ></div>
             </template>
@@ -155,13 +174,15 @@
               <div
                 class="block-resize block-resize-top"
                 @mousedown="
-                  (e) => onMouseDown(e, { horizontal: 'center', vertical: 'start' })
+                  (e) =>
+                    onMouseDown(e, { horizontal: 'center', vertical: 'start' })
                 "
               ></div>
               <div
                 class="block-resize block-resize-bottom"
                 @mousedown="
-                  (e) => onMouseDown(e, { horizontal: 'center', vertical: 'end' })
+                  (e) =>
+                    onMouseDown(e, { horizontal: 'center', vertical: 'end' })
                 "
               ></div>
             </template>
@@ -178,36 +199,42 @@
               <div
                 class="block-resize block-resize-top-left"
                 @mousedown="
-                  (e) => onMouseDown(e, { horizontal: 'start', vertical: 'start' })
+                  (e) =>
+                    onMouseDown(e, { horizontal: 'start', vertical: 'start' })
                 "
               ></div>
               <div
                 class="block-resize block-resize-top-right"
                 @mousedown="
-                  (e) => onMouseDown(e, { horizontal: 'end', vertical: 'start' })
+                  (e) =>
+                    onMouseDown(e, { horizontal: 'end', vertical: 'start' })
                 "
               ></div>
               <div
                 class="block-resize block-resize-bottom-left"
                 @mousedown="
-                  (e) => onMouseDown(e, { horizontal: 'start', vertical: 'end' })
+                  (e) =>
+                    onMouseDown(e, { horizontal: 'start', vertical: 'end' })
                 "
               ></div>
               <div
                 class="block-resize block-resize-bottom-right"
-                @mousedown="(e) => onMouseDown(e, { horizontal: 'end', vertical: 'end' })"
+                @mousedown="
+                  (e) => onMouseDown(e, { horizontal: 'end', vertical: 'end' })
+                "
               ></div>
             </template>
           </div>
           <!-- 鼠标选中区域 -->
-          <div v-if="mouseDrag.dragging"  class="mouse-select-area"
-          :style="{
-            top: mouseSelectArea.top + 'px',
-            left: mouseSelectArea.left + 'px',
-            width: mouseSelectArea.width + 'px',
-            height: mouseSelectArea.height + 'px',
-          }
-          "  
+          <div
+            v-if="mouseDrag.dragging"
+            class="mouse-select-area"
+            :style="{
+              top: mouseSelectArea.top + 'px',
+              left: mouseSelectArea.left + 'px',
+              width: mouseSelectArea.width + 'px',
+              height: mouseSelectArea.height + 'px',
+            }"
           ></div>
         </div>
       </div>
@@ -315,7 +342,10 @@ watch(
 );
 
 // 1. 实现物料堆拖拽
-const { dragStart, dragEnd } = useMenuDragger(containerRef, EditorDataStore.data);
+const { dragStart, dragEnd } = useMenuDragger(
+  containerRef,
+  EditorDataStore.data
+);
 
 // 2.获取焦点后即可直接拖拽
 let {
@@ -327,10 +357,15 @@ let {
   selectionBounds,
   selectionBoundsMouseDown,
   mouseSelectArea,
-  mouseDrag
-} = useFocus(EditorDataStore.data, previewRef,containerRef, (e) => {
+  mouseDrag,
+} = useFocus(EditorDataStore.data, previewRef, containerRef, (e) => {
   mousedown(e);
 });
+const ContainerMouseDown = (e) => {
+  if (editorOperatorStatus.value) {
+    containerMouseDown(e);
+  }
+};
 
 // 3. 实现组件拖拽
 let { mousedown, markline } = useBlockDragger(
@@ -340,10 +375,14 @@ let { mousedown, markline } = useBlockDragger(
   selectionBounds
 );
 // 4. 实现组件缩放
-let { onMouseDown } = useBlockResize(focusData, selectionBounds, EditorDataStore.data);
+let { onMouseDown } = useBlockResize(
+  focusData,
+  selectionBounds,
+  EditorDataStore.data
+);
 
 // 用于保存可能使用的所有指令(操作)
-const { commands } = useCommand(EditorDataStore.data, focusData,containerRef);
+const { commands } = useCommand(EditorDataStore.data, focusData, containerRef);
 
 const onContextMenu = (e) => {
   e.preventDefault();
@@ -360,7 +399,7 @@ const onContextMenu = (e) => {
     h(DropdownItem, {
       label: "粘贴",
       shortCut: "Ctrl+V",
-      disabled:EditorDataStore.clipboard.blocks.length<1, // 剪切板没有就禁用
+      disabled: EditorDataStore.clipboard.blocks.length < 1, // 剪切板没有就禁用
       onClick: (e) => commands.paste(e),
     }),
   ]);
@@ -374,7 +413,7 @@ const onContextBlock = (e, block) => {
   e.stopPropagation();
   e.preventDefault();
   let ifBlocks = false;
-  if(Array.isArray(block)) ifBlocks = true
+  if (Array.isArray(block)) ifBlocks = true;
   const contentVnode = h("div", {}, [
     h(DropdownItem, {
       label: "剪切",
@@ -397,14 +436,14 @@ const onContextBlock = (e, block) => {
       label: "拷贝配置",
       shortCut: "Ctrl+Alt+C",
       onClick: () => console.log("拷贝样式"),
-      disabled:ifBlocks,
+      disabled: ifBlocks,
     }),
     h(DropdownItem, {
       label: "粘贴配置",
       shortCut: "Ctrl+Alt+V",
       divider: true,
       onClick: () => console.log("粘贴样式"),
-      disabled:ifBlocks,
+      disabled: ifBlocks,
     }),
     h(DropdownItem, {
       label: "下移一层",
@@ -436,7 +475,7 @@ const onContextBlock = (e, block) => {
           content: JSON.stringify(block),
         });
       },
-      disabled:ifBlocks,
+      disabled: ifBlocks,
     }),
     h(DropdownItem, {
       label: "导入",
@@ -452,16 +491,19 @@ const onContextBlock = (e, block) => {
           },
         });
       },
-      disabled:ifBlocks,
+      disabled: ifBlocks,
     }),
-    h(DropdownItem, { label: "删除", shortCut: "Delete", onClick: commands.delete }),
+    h(DropdownItem, {
+      label: "删除",
+      shortCut: "Delete",
+      onClick: commands.delete,
+    }),
   ]);
   $dropdown({
     el: e.target, // 以哪个元素作为基准
     content: () => contentVnode,
   });
 };
-
 
 /* 左侧物料栏相关，后续可能拉到单独文件夹中 */
 const isExpanded = ref(false);
@@ -470,8 +512,20 @@ const toggleExpand = () => {
 };
 const activeNames = ref([1]);
 
+const editorOperatorStatus = ref(true);
+
 // 所有可能使用的按钮
 const buttons = [
+  {
+    label: "抓手",
+    icon: "icon-zhuashou",
+    handler: () => (editorOperatorStatus.value = false),
+  },
+  {
+    label: "鼠标",
+    icon: "icon-mouse",
+    handler: () => (editorOperatorStatus.value = true),
+  },
   { label: "撤销", icon: "icon-chehui", handler: commands.undo },
   { label: "重做", icon: "icon-zhongzuo", handler: commands.redo },
   {
@@ -537,40 +591,40 @@ onMounted(() => {
   &-left,
   &-right {
     position: absolute;
-    top: .4286rem;
+    top: 0.4286rem;
     bottom: 0;
     height: 100%;
     z-index: 999;
   }
 
   &-left {
-    left: .0714rem;
-    border-radius: .2857rem;
+    left: 0.0714rem;
+    border-radius: 0.2857rem;
     width: 4.2857rem;
-    border: #e3e3e3 .0143rem solid;
+    border: #e3e3e3 0.0143rem solid;
     background-color: #fff;
     height: 11.4286rem;
     height: calc(100% - 1.4286rem);
-    box-shadow: .0714rem .0571rem .1143rem rgba(0, 0, 0, 0.15);
+    box-shadow: 0.0714rem 0.0571rem 0.1143rem rgba(0, 0, 0, 0.15);
     transition: all 0.5s;
     // overflow: hidden;
     &-title {
       display: flex;
-      margin-left: .5rem;
-      margin-top: .2857rem;
-      font-size: .3143rem;
+      margin-left: 0.5rem;
+      margin-top: 0.2857rem;
+      font-size: 0.3143rem;
     }
     &-search {
-      margin-left: .2857rem;
+      margin-left: 0.2857rem;
       width: 90%;
     }
     &-menu {
-      margin-left: .4143rem;
+      margin-left: 0.4143rem;
       width: 89%;
-      margin-top: .1429rem;
+      margin-top: 0.1429rem;
       overflow-y: auto;
       height: 80%;
-      padding-right: .0571rem;
+      padding-right: 0.0571rem;
       scrollbar-gutter: stable;
     }
     &-menu-content {
@@ -584,8 +638,8 @@ onMounted(() => {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-top: .0714rem;
-        margin-right: .0714rem;
+        margin-top: 0.0714rem;
+        margin-right: 0.0714rem;
         // border-bottom: #e0dfff .0143rem solid;
       }
       &-item {
@@ -597,20 +651,20 @@ onMounted(() => {
         box-sizing: border-box;
         cursor: move;
         user-select: none;
-        min-height: .5714rem;
+        min-height: 0.5714rem;
         position: relative;
-        border-radius: .0714rem;
-        border: .0143rem dashed #6965db;
-        padding: 0 .0571rem;
+        border-radius: 0.0714rem;
+        border: 0.0143rem dashed #6965db;
+        padding: 0 0.0571rem;
 
         &-label {
-          font-size: .1714rem;
+          font-size: 0.1714rem;
           color: #7d7d7d;
           width: 100%;
           text-align: center;
         }
         &:hover {
-          border: .0143rem solid #6965db;
+          border: 0.0143rem solid #6965db;
         }
 
         &::after {
@@ -631,13 +685,13 @@ onMounted(() => {
       align-items: center;
       z-index: 1000;
       position: absolute;
-      right: .1429rem;
-      top: .2857rem;
-      border: #e3e3e3 .0143rem solid;
-      border-radius: .2143rem;
-      height: .4286rem;
-      width: .4286rem;
-      box-shadow: .0286rem .0286rem .0714rem rgba(0, 0, 0, 0.15);
+      right: 0.1429rem;
+      top: 0.2857rem;
+      border: #e3e3e3 0.0143rem solid;
+      border-radius: 0.2143rem;
+      height: 0.4286rem;
+      width: 0.4286rem;
+      box-shadow: 0.0286rem 0.0286rem 0.0714rem rgba(0, 0, 0, 0.15);
       background-color: #ffffff;
       transition: transform 0.8s;
       cursor: pointer;
@@ -653,11 +707,11 @@ onMounted(() => {
   }
 
   &-container {
-    padding: .5714rem 2.8571rem 0;
+    padding: 0.5714rem 2.8571rem 0;
     height: 95%;
-    margin-bottom: .5714rem;
+    margin-bottom: 0.5714rem;
     box-sizing: border-box;
-    border: #e3e3e3 .0143rem solid;
+    border: #e3e3e3 0.0143rem solid;
     z-index: 1;
 
     &-canvas {
@@ -665,11 +719,11 @@ onMounted(() => {
       overflow: scroll;
 
       &-content {
-        margin: .5714rem auto;
+        margin: 0.5714rem auto;
         // background-color: #f1f1f1;
         position: relative;
-        border-radius: .1429rem;
-        border: #e3e3e3 .0286rem dashed;
+        border-radius: 0.1429rem;
+        border: #e3e3e3 0.0286rem dashed;
       }
     }
   }
@@ -695,10 +749,10 @@ onMounted(() => {
     position: absolute;
     top: -0.0571rem;
     left: -0.0571rem;
-    width: calc(100% + .0857rem);
-    height: calc(100% + .0857rem);
-    border-radius: .0286rem;
-    border: .0143rem solid #6965db;
+    width: calc(100% + 0.0857rem);
+    height: calc(100% + 0.0857rem);
+    border-radius: 0.0286rem;
+    border: 0.0143rem solid #6965db;
   }
 }
 
@@ -712,83 +766,82 @@ onMounted(() => {
   position: absolute;
   top: 0;
   bottom: 0;
-  border-left: .0143rem dashed #6965db;
+  border-left: 0.0143rem dashed #6965db;
 }
 
 .line-y {
   position: absolute;
   left: 0;
   right: 0;
-  border-top: .0143rem dashed #6965db;
+  border-top: 0.0143rem dashed #6965db;
 }
 
 .selectionBounds {
   position: absolute;
-  border: #6965db dashed .0143rem;
+  border: #6965db dashed 0.0143rem;
 }
 
-.mouse-select-area{
+.mouse-select-area {
   position: absolute;
-  background-color: rgba(105, 101, 219,0.15);
+  background-color: rgba(105, 101, 219, 0.15);
   border: #6965db solid 1px;
 }
 $pre: "block-resize";
 .#{$pre} {
-    position: absolute;
-    width:.0857rem;
-    height: .0857rem;
-    background-color: #fff;
-    border:.0143rem solid #6965db;
-    z-index: 1000;
-    border-radius: .0286rem;
-    user-select: none;
-    
+  position: absolute;
+  width: 0.0857rem;
+  height: 0.0857rem;
+  background-color: #fff;
+  border: 0.0143rem solid #6965db;
+  z-index: 1000;
+  border-radius: 0.0286rem;
+  user-select: none;
 }
 .#{$pre}-top {
-    top: -0.0571rem;
-    left: calc(50% - .0429rem);
-    cursor: n-resize; /* 设置为向上箭头光标 */
+  top: -0.0571rem;
+  left: calc(50% - 0.0429rem);
+  cursor: n-resize; /* 设置为向上箭头光标 */
 }
 
 .#{$pre}-bottom {
-    bottom: -0.0571rem;
-    left: calc(50% - .0429rem);
-    cursor: s-resize; /* 设置为向下箭头光标 */
+  bottom: -0.0571rem;
+  left: calc(50% - 0.0429rem);
+  cursor: s-resize; /* 设置为向下箭头光标 */
 }
 
 .#{$pre}-left {
-    left: -0.0571rem;
-    top: calc(50% - .0429rem);
-    cursor: w-resize; /* 设置为向左箭头光标 */
+  left: -0.0571rem;
+  top: calc(50% - 0.0429rem);
+  cursor: w-resize; /* 设置为向左箭头光标 */
 }
 
 .#{$pre}-right {
-    right: -0.0571rem;
-    top: calc(50% - .0429rem);
-    cursor: e-resize; /* 设置为向右箭头光标 */
+  right: -0.0571rem;
+  top: calc(50% - 0.0429rem);
+  cursor: e-resize; /* 设置为向右箭头光标 */
 }
 
 .#{$pre}-top-left {
-    top: -0.0571rem;
-    left: -0.0571rem;
-    cursor: nw-resize; /* 设置为西北箭头光标 */
+  top: -0.0571rem;
+  left: -0.0571rem;
+  cursor: nw-resize; /* 设置为西北箭头光标 */
 }
 
 .#{$pre}-top-right {
-    top: -0.0571rem;
-    right: -0.0571rem;
-    cursor: ne-resize; /* 设置为东北箭头光标 */
+  top: -0.0571rem;
+  right: -0.0571rem;
+  cursor: ne-resize; /* 设置为东北箭头光标 */
 }
 
 .#{$pre}-bottom-left {
-    bottom: -0.0571rem;
-    left: -0.0571rem;
-    cursor: sw-resize; /* 设置为西南箭头光标 */
+  bottom: -0.0571rem;
+  left: -0.0571rem;
+  cursor: sw-resize; /* 设置为西南箭头光标 */
 }
 
 .#{$pre}-bottom-right {
-    bottom: -0.0571rem;
-    right: -0.0571rem;
-    cursor: se-resize; /* 设置为东南箭头光标 */
+  bottom: -0.0571rem;
+  right: -0.0571rem;
+  cursor: se-resize; /* 设置为东南箭头光标 */
 }
 </style>
