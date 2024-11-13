@@ -230,7 +230,6 @@ export const useCommand = (data, focusData,containerRef=null) => {
               offsetX,  // 保存偏移位置
               offsetY
             };
-            console.log(editorDataStore.clipboard);
           }
           
         }
@@ -241,17 +240,35 @@ export const useCommand = (data, focusData,containerRef=null) => {
   registry({
     name:'cut',
     keyboard:'ctrl+x',
+    pushQueue:true,
     execute() {
     // 剪切实际上就是：
     // 1. 执行复制操作
-    // 2. 将剪切的blocks从原本的data中删除
+    // 2. 将剪切的blocks(focus)从原本的data中删除,即替换为unfocused
+    let {focus,unfocused} = focusData.value;
+    let before = cloneDeep(data.blocks);
+    let clipboardBefore = cloneDeep(editorDataStore.clipboard)
       return {
         redo() {
-
+          if(focus.length>0) {
+            // 计算基准位置（选中块的最小 left 和 top）
+            const offsetX = Math.min(...focus.map(block => block.left));
+            const offsetY = Math.min(...focus.map(block => block.top));
+            
+            editorDataStore.clipboard = {
+              blocks: cloneDeep(focus),
+              offsetX,  // 保存偏移位置
+              offsetY
+            };
+            // 2. 将剪切的 blocks 从原本的 data 中删除
+            editorDataStore.updateData({...data,blocks:unfocused})
+          }
         },
         undo() {
-
+          editorDataStore.updateData({ ...data, blocks: before })
+          editorDataStore.clipboard = clipboardBefore
         }
+
       }
     }
   })
@@ -262,7 +279,6 @@ export const useCommand = (data, focusData,containerRef=null) => {
     pushQueue: true,
     execute(e) {
       let before = cloneDeep(data.blocks);
-      let after = data.blocks;
       // 粘贴的时候，从剪切板中拿出blocks，push到data的blocks中，但是要注意以下几点：
       // 1. 所有block的id都得重新生成
       // 2. 所有block的left和top应该相较于鼠标位置和原先位置重新计算
@@ -271,10 +287,7 @@ export const useCommand = (data, focusData,containerRef=null) => {
       // 画布位置，用于结合鼠标位置计算新位置
       let { blocks,offsetX,offsetY } = editorDataStore.clipboard;
       if(!blocks||blocks.length===0) return; // 虽然根本就进不来，但为了保险还是加一下
-      const containerRect = containerRef.value.getBoundingClientRect();
       let pastedBlocks = [];
-      
-      
       // 获取粘贴位置，优先使用鼠标事件的位置
     const getPastePosition = () => {
       if (e.clientX !== undefined && e.clientY !== undefined) {
@@ -296,25 +309,20 @@ export const useCommand = (data, focusData,containerRef=null) => {
           id: String(new Date().getTime()) + String(Math.floor(Math.random() * 1000)), // 重新生成唯一id
           left: block.left + (mouseX - offsetX) - block.width / 2 - containerRect.left,
           top: block.top + (mouseY - offsetY) - block.height / 2 - containerRect.top,
+          focus: true,
         };
         return newBlock;
       });
     };
       return {        
         redo() {
-          console.log(111);
-          console.log(e);
-          
+          editorDataStore.data.blocks.forEach(item=>item.focus = false)        
           pastedBlocks = generatePastedBlocks();
           editorDataStore.data.blocks.push(...pastedBlocks);
-          after = [...editorDataStore.data.blocks];
-          focusData.value.focus = pastedBlocks;
         },
         undo() {
           // 删除刚刚插入的block
-          editorDataStore.data.blocks = before;
-          console.log(after,'after');
-          focusData.value.focus = [];
+          editorDataStore.updateData({ ...data, blocks: before })
         }
       };
     }
@@ -440,29 +448,35 @@ export const useCommand = (data, focusData,containerRef=null) => {
       return {
         redo: () => {
           // data = { ...data, blocks: state.after };
-          
           editorDataStore.updateData({ ...data, blocks: state.after })
-
         },
         undo: () => {
           // data = { ...data, blocks: state.before };
-
           editorDataStore.updateData({ ...data, blocks: state.before })
-
         },
       };
     },
   });
+  /* 鼠标监听相关 */
+  let lastMousePosition = { x: 0, y: 0 };
+  let isMouseMoveEnabled = false;
+  function handleMouseMove(e) {
+    lastMousePosition ={
+      x: e.clientX,
+      y: e.clientY
+    }   
+  }
   // 键盘事件
   const keyboardEvent = (() => {
     const keyCodes = {
-      67:"c",
-      86:'v',
-      90: "z",
-      89: "y",
-      46:'delete',
-      219:'[',
       221:']',
+      219:'[',
+      90:"z",
+      89:"y",
+      88:'x',
+      86:'v',
+      67:"c",
+      46:'delete',
     };
     const onKeydown = (e) => {
       const { ctrlKey, keyCode,shiftKey } = e;
@@ -471,11 +485,11 @@ export const useCommand = (data, focusData,containerRef=null) => {
       if (shiftKey) keyString.push("shift");
       keyString.push(keyCodes[keyCode]);
       keyString = keyString.join("+");
-
       // 判断是否启用鼠标监听（因为很耗费性能所以只在按下ctrl键时开始监控）
-      if(ctrlKey) enableMouseMonitoring();
-      else disableMouseMonitoring();
-
+      if(ctrlKey && !isMouseMoveEnabled) {
+        document.addEventListener("mousemove", handleMouseMove);
+        isMouseMoveEnabled = true;
+      }
       // 根据键盘按键调用对应的事件
       state.commandArray.forEach(({ keyboard, name }) => {
         if (!keyboard) return; // 没有对应的键盘事件
@@ -485,18 +499,22 @@ export const useCommand = (data, focusData,containerRef=null) => {
         }
       });
     };
+    const onKeyup = (e) => {
+      if (e.key === 'Control') {
+        if (isMouseMoveEnabled) {
+          document.removeEventListener("mousemove", handleMouseMove);
+          isMouseMoveEnabled = false;
+        }
+      }
+    };
     const init = () => {
       // 初始化事件
-      window.addEventListener("keydown", onKeydown);
-      window.addEventListener("keyup", (e) => {
-        if (e.ctrlKey) disableMouseMonitoring();
-      });
+      document.addEventListener("keydown", onKeydown);
+      document.addEventListener("keyup", onKeyup);
       return () => {
         // 销毁事件
-        window.removeEventListener("keydown", onKeydown);
-        window.removeEventListener("keyup", (e) => {
-          if (e.ctrlKey) disableMouseMonitoring();
-        });
+        document.removeEventListener("keydown", onKeydown);
+        document.removeEventListener("keyup", onKeyup);
       };
     };
     return init;
@@ -516,34 +534,5 @@ export const useCommand = (data, focusData,containerRef=null) => {
 };
 
 
-/* 鼠标监听相关 */
-let lastMousePosition = { x: 0, y: 0 };
-let isMonitoringMouse = false;
 
 
-// 启用鼠标位置监听
-function enableMouseMonitoring() {
-  if (!isMonitoringMouse) {
-    window.addEventListener("mousemove", (e) => {
-      lastMousePosition = {
-        x: e.clientX,
-        y: e.clientY,
-      }}
-    );
-    isMonitoringMouse = true;
-    
-  }
-}
-
-// 禁用鼠标位置监听
-function disableMouseMonitoring() {
-  if (isMonitoringMouse) {
-    window.removeEventListener("mousemove", (e) => {
-      lastMousePosition = {
-        x: e.clientX,
-        y: e.clientY,
-      }}
-    );
-    isMonitoringMouse = false;
-  }
-}

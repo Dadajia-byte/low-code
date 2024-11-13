@@ -38,7 +38,6 @@ function useBlockResize(focusData,selectionBounds,data) {
 
             const width = startWidth + durX;
             const height = startHeight + durY;
-
             // 设置宽度和高度的最小值和最大值
             const minWidth = 20; // 最小宽度
             const maxWidth = 300; // 最大宽度
