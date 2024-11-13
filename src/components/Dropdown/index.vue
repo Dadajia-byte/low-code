@@ -40,7 +40,7 @@ onMounted(() => {
     document.addEventListener('mousedown', onMousedownDocument, true)
 })
 onBeforeUnmount(() => {
-    documentNaNpxoveEventListener('mousedown', onMousedownDocument)
+    document.removeEventListener('mousedown', onMousedownDocument)
 })
 </script>
 

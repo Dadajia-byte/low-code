@@ -136,7 +136,7 @@ registerConfig.register({
     placeholder: props.text || '请设置下拉框预览内容',
     style: "width: 200px"
   },
-    () => (props.options || []).map((opt, index) => {
+    () => (props.options || []).map((opt) => {
       return h(ElOption, { label: opt.label, value: opt.value })
     }
     )),
@@ -168,7 +168,7 @@ registerConfig.register({
     size: 'small'
   }, () => '单选框'),
   render: ({ props }) => h(ElRadioGroup, {},
-    () => (props.options || [{ label: "默认选项1", value: "1" }]).map((opt, index) => {
+    () => (props.options || [{ label: "默认选项1", value: "1" }]).map((opt) => {
       return h(ElRadio, { value: opt.value, size: props.size }, () => opt.label);
     })
   ),

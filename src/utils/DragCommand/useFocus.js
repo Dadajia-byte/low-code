@@ -1,4 +1,3 @@
-import { reactive } from "vue";
 /**
  * 
  * @param {*reactive} data 传入的data数据（就是editorStore那个，后期需要考虑二选一，现在混在一起）
@@ -73,7 +72,7 @@ export function useFocus(data,  editorOperatorStatus,containerRef, callback) {
     if (e.shiftKey) {
       // 按住shift键
       if (focusData.value.focus.length <= 1) {
-        block.focus = true; // 当前只有一个节点被选中时，按住shift键 也不会切换focous状态
+        block.focus = true; // 当前只有一个节点被选中时，按住shift键 也不会切换focus状态
       } else {
         block.focus = !block.focus;
       }

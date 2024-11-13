@@ -113,7 +113,7 @@
             @mousedown="(e) => blockMouseDown(e, item, index)"
             :focusBlocksNum="focusData.focus.length"
             @Contextmenu="(e) => onContextBlock(e, item)"
-            :blockReizeMousedown="onMouseDown"
+            :blockResizeMousedown="onMouseDown"
             :formData="EditorDataStore.formData"
           >
           </EditorBlocks>
@@ -245,19 +245,14 @@
 import EditorTop from "../EditorTop/index.vue";
 import EditorBlocks from "../EditorBlocks/index.vue";
 import EditorOperator from "../EditorOperator/index.vue";
-import { events } from "@/utils/event.js";
-import {
-  useFocus,
-  useMenuDragger,
-  useBlockDragger,
-  useBlockResize,
-  useCommand,
-} from "@/utils/DragCommand";
-import { $dropdown } from "@/components/Dropdown";
+import {events} from "@/utils/event.js";
+import {useBlockDragger, useBlockResize, useCommand, useFocus, useMenuDragger,} from "@/utils/DragCommand";
+import {$dropdown} from "@/components/Dropdown";
 import DropdownItem from "@/components/Dropdown/components/DropdownItem/index.vue";
-import { $dialog } from "@/components/Dialog";
-import { $previewDialog } from "../../components/PreviewDialog";
-import { useEditorDataStore } from "@/store/index";
+import {$dialog} from "@/components/Dialog";
+import {$previewDialog} from "../../components/PreviewDialog";
+import {useEditorDataStore} from "@/store/index";
+
 const EditorDataStore = useEditorDataStore();
 // 预览时 内容不再能操作，可以点击输入内容，方便看效果
 const previewRef = ref(false);

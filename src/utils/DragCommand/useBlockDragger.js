@@ -1,5 +1,4 @@
-
-import { events } from "../event";
+import {events} from "../event";
 
 export function useBlockDragger(focusData, lastSelectBlock, data,selectionBounds) {
   let dragState = {
@@ -123,7 +122,7 @@ export function useBlockDragger(focusData, lastSelectBlock, data,selectionBounds
       block.left = dragState.startPos[index].left + durX;
     });
   };
-  const mouseup = (e) => {
+  const mouseup = () => {
     document.removeEventListener("mousemove", mousemove);
     document.removeEventListener("mouseup", mouseup);
     markline.x = null;

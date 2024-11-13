@@ -1,8 +1,8 @@
-import { events } from "../event";
-import { cloneDeep } from "lodash";
-import { useEditorDataStore } from "../../store/module/editorData";
-import { setActivePinia, getActivePinia } from 'pinia';
-import { history,historyIndex,setHistoryIndex } from "./useBlockResize";
+import {events} from "../event";
+import {cloneDeep} from "lodash";
+import {useEditorDataStore} from "@/store/index.js";
+import {getActivePinia, setActivePinia} from 'pinia';
+import {history, historyIndex, setHistoryIndex} from "./useBlockResize";
 
 
 export const useCommand = (data, focusData,containerRef=null) => {
@@ -304,14 +304,13 @@ export const useCommand = (data, focusData,containerRef=null) => {
       const containerRect = containerRef.value.getBoundingClientRect();
 
       return blocks.map((block) => {
-        const newBlock = {
+        return {
           ...cloneDeep(block),
           id: String(new Date().getTime()) + String(Math.floor(Math.random() * 1000)), // 重新生成唯一id
           left: block.left + (mouseX - offsetX) - block.width / 2 - containerRect.left,
           top: block.top + (mouseY - offsetY) - block.height / 2 - containerRect.top,
           focus: true,
         };
-        return newBlock;
       });
     };
       return {        
@@ -507,7 +506,7 @@ export const useCommand = (data, focusData,containerRef=null) => {
         }
       }
     };
-    const init = () => {
+    return () => {
       // 初始化事件
       document.addEventListener("keydown", onKeydown);
       document.addEventListener("keyup", onKeyup);
@@ -517,7 +516,6 @@ export const useCommand = (data, focusData,containerRef=null) => {
         document.removeEventListener("keyup", onKeyup);
       };
     };
-    return init;
   })();
   // 检测该命令是否需要初始化
   (() => {

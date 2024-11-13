@@ -1,14 +1,15 @@
 // 拖拽相关
 
-import { events } from "../event";
-import { useEditorDataStore } from "../../store/module/editorData";
+import {events} from "../event";
+import {useEditorDataStore} from "@/store/index.js";
+
 /*
 1. dragenter 进入元素 增加移动标识
 2. dragover 经过目标元素，必须阻止默认行为，否则无法触发drop
 3. dragleave 离开元素 增加禁用标识
 4. drop 松手时 根据拖拽组件放置组件
  */
-export function useMenuDragger(containerRef, data) {
+export function useMenuDragger(containerRef) {
   // 引入Store
   const editorDataStore = useEditorDataStore();
   // 增设当前拖动元素
@@ -35,7 +36,7 @@ export function useMenuDragger(containerRef, data) {
           id:String(new Date().getTime()) + String(Math.floor(Math.random() * 1000)),// 这里用于生成id便于for的key，不然出现很多bug
           props:{},
           model:{}
-        },)
+        })
   
 
     currentComponent = null;
@@ -49,7 +50,7 @@ export function useMenuDragger(containerRef, data) {
     currentComponent = component;
     events.emit("start"); // 发布start
   };
-  const dragEnd = (e) => {
+  const dragEnd = () => {
     // 移除事件
     containerRef.value.removeEventListener("dragenter", dragenter);
     containerRef.value.removeEventListener("dragover", dragover);

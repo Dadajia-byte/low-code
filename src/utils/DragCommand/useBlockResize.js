@@ -1,7 +1,7 @@
+import {events} from "../event";
+import {useEditorDataStore} from "@/store/index.js";
+import {cloneDeep} from "lodash";
 
-import { events } from "../event";
-import { useEditorDataStore}  from "../../store/module/editorData";
-import { cloneDeep } from "lodash";
 let history = [];
 let historyIndex = -1;
 export const setHistoryIndex = (num)=>{
