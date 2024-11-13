@@ -1,6 +1,13 @@
 import { reactive } from "vue";
-
-export function useFocus(data, previewRef, containerRef, callback) {
+/**
+ * 
+ * @param {*reactive} data 传入的data数据（就是editorStore那个，后期需要考虑二选一，现在混在一起）
+ * @param {*ref} editorOperatorStatus 编辑操作栏中的状态，如果是true代表鼠标模式，false代表抓手模式应该禁用focus相关操作
+ * @param {*ref} containerRef 容器的ref
+ * @param {*function} callback 回调函数
+ * @returns 
+ */
+export function useFocus(data,  editorOperatorStatus,containerRef, callback) {
 
   const selectIndex = ref(-1); // 记录最后一个被点击的元素
   const lastSelectBlock = computed(() => data.blocks[selectIndex.value]);
@@ -30,9 +37,7 @@ export function useFocus(data, previewRef, containerRef, callback) {
       minY = Math.min(minY, top);
       maxX = Math.max(maxX, left + width);
       maxY = Math.max(maxY, top + height);
-    });
-    console.log('selectionBounds', {left:minX-4, top:minY-4});
-    
+    });  
     return {
       left: minX - 4,
       top: minY - 4,
@@ -60,7 +65,7 @@ export function useFocus(data, previewRef, containerRef, callback) {
     data.blocks.forEach((item) => item.focus = false)
   };
   const blockMouseDown = (e, block, index) => {
-    if (previewRef.value) return;
+    if (!editorOperatorStatus.value) return;
     // 在block上规划一个属性 focus 获取焦点后将focus变为true
     e.preventDefault();
     e.stopPropagation();
@@ -83,7 +88,7 @@ export function useFocus(data, previewRef, containerRef, callback) {
   };
   //鼠标点击画板
   const containerMouseDown = (e) => {
-    if (previewRef.value) return;
+    if(!editorOperatorStatus.value) return;
     e.preventDefault();
     e.stopPropagation();
     clearBlockFocus();
@@ -154,6 +159,7 @@ export function useFocus(data, previewRef, containerRef, callback) {
   };
  
   const selectionBoundsMouseDown = (e) => {
+    if (!editorOperatorStatus.value) return;
     e.stopPropagation();
     callback(e);
   }

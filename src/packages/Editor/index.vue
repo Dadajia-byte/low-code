@@ -1,5 +1,5 @@
 <template>
-  <div class="editor" v-if="editorRef">
+  <div class="editor">
     <!-- 左侧物料堆 -->
     <div
       class="editor-left"
@@ -94,7 +94,7 @@
           class="editor-container-canvas-content"
           ref="containerRef"
           :style="containerStyles"
-          @mousedown="(e) => ContainerMouseDown(e)"
+          @mousedown="(e) => containerMouseDown(e)"
           @contextmenu="(e) => onContextMenu(e, null)"
         >
           <canvas
@@ -108,7 +108,6 @@
             :key="`${EditorDataStore.focusUpdate}${item.id}`"
             :class="{
               'editor-block-focus': item.focus,
-              'editor-block-preview': previewRef,
             }"
             :block="item"
             @mousedown="(e) => blockMouseDown(e, item, index)"
@@ -240,23 +239,6 @@
       </div>
     </div>
   </div>
-  <div v-if="!editorRef">
-    <div
-      class="editor-container-canvas-content"
-      :style="containerStyles"
-      style="margin: 0"
-    >
-      <div v-for="item in EditorDataStore.data.blocks" :key="item.id">
-        <EditorBlocks
-          class="editor-block-preview"
-          :block="item"
-          :formData="EditorDataStore.formData"
-        />
-      </div>
-    </div>
-    {{ EditorDataStore.formData }}
-    <ElButton type="primary" @click="editorRef = true">继续编辑</ElButton>
-  </div>
 </template>
 <script setup>
 /* 编辑区 */
@@ -279,7 +261,8 @@ import { useEditorDataStore } from "@/store/index";
 const EditorDataStore = useEditorDataStore();
 // 预览时 内容不再能操作，可以点击输入内容，方便看效果
 const previewRef = ref(false);
-const editorRef = ref(true);
+// 一个变量用于记录当前是抓手还是鼠标模式 default: true 鼠标模式
+const editorOperatorStatus = ref(true);
 
 const config = inject("config");
 // const data = EditorDataStore.data
@@ -340,6 +323,12 @@ watch(
   },
   { deep: true }
 );
+// 性能是否有点差？本质上是想要实现副作用的效果，即editorOperatorStatus变量变成false时，清除选中的节点（抓手模式不需要选中）
+watch(editorOperatorStatus, () => {
+  if (!editorOperatorStatus.value) {
+    clearBlockFocus();
+  }
+});
 
 // 1. 实现物料堆拖拽
 const { dragStart, dragEnd } = useMenuDragger(
@@ -358,14 +347,9 @@ let {
   selectionBoundsMouseDown,
   mouseSelectArea,
   mouseDrag,
-} = useFocus(EditorDataStore.data, previewRef, containerRef, (e) => {
+} = useFocus(EditorDataStore.data, editorOperatorStatus, containerRef, (e) => {
   mousedown(e);
 });
-const ContainerMouseDown = (e) => {
-  if (editorOperatorStatus.value) {
-    containerMouseDown(e);
-  }
-};
 
 // 3. 实现组件拖拽
 let { mousedown, markline } = useBlockDragger(
@@ -385,6 +369,7 @@ let { onMouseDown } = useBlockResize(
 const { commands } = useCommand(EditorDataStore.data, focusData, containerRef);
 
 const onContextMenu = (e) => {
+  if (!editorOperatorStatus.value) return;
   e.preventDefault();
   //添加返回位置函数
   e.getBoundingClientRect = () => {
@@ -410,6 +395,7 @@ const onContextMenu = (e) => {
 };
 // 右键物块菜单
 const onContextBlock = (e, block) => {
+  if (!editorOperatorStatus.value) return; // 抓手模式不需要右键菜单
   e.stopPropagation();
   e.preventDefault();
   let ifBlocks = false;
@@ -512,8 +498,6 @@ const toggleExpand = () => {
 };
 const activeNames = ref([1]);
 
-const editorOperatorStatus = ref(true);
-
 // 所有可能使用的按钮
 const buttons = [
   {
@@ -562,13 +546,6 @@ const buttons = [
       previewRef.value = !previewRef.value;
       $previewDialog({});
       clearBlockFocus();
-    },
-  },
-  {
-    label: "关闭",
-    icon: "icon-guanbi",
-    handler: () => {
-      editorRef.value = false;
     },
   },
 ];
@@ -756,12 +733,6 @@ onMounted(() => {
   }
 }
 
-.editor-block-preview {
-  &::after {
-    display: none;
-  }
-}
-
 .line-x {
   position: absolute;
   top: 0;
@@ -793,7 +764,6 @@ $pre: "block-resize";
   height: 0.0857rem;
   background-color: #fff;
   border: 0.0143rem solid #6965db;
-  z-index: 1000;
   border-radius: 0.0286rem;
   user-select: none;
 }
