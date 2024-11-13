@@ -39,14 +39,14 @@
             <div
               class="editor-left-menu-content-row"
               v-for="item in config.componentList.filter(
-                (item) => item.category.indexOf(menu.id) !== -1
+                (i) => i.category.indexOf(menu.id) !== -1
               )"
               :key="item.key"
             >
               <div
                 draggable="true"
                 @dragstart="(e) => dragStart(e, item)"
-                @dragend="(e) => dragEnd(e, item)"
+                @dragend="(e) => dragEnd(e)"
                 class="editor-left-menu-content-item"
               >
                 <component :is="item.preview"></component>
@@ -95,7 +95,7 @@
           ref="containerRef"
           :style="containerStyles"
           @mousedown="(e) => containerMouseDown(e)"
-          @contextmenu="(e) => onContextMenu(e, null)"
+          @contextmenu="(e) => onContextMenu(e)"
         >
           <canvas
             ref="canvasRef"
@@ -245,7 +245,7 @@
 import EditorTop from "../EditorTop/index.vue";
 import EditorBlocks from "../EditorBlocks/index.vue";
 import EditorOperator from "../EditorOperator/index.vue";
-import { events } from "../../utils/event";
+import { events } from "@/utils/event.js";
 import {
   useFocus,
   useMenuDragger,
@@ -580,7 +580,6 @@ onMounted(() => {
     width: 4.2857rem;
     border: #e3e3e3 0.0143rem solid;
     background-color: #fff;
-    height: 11.4286rem;
     height: calc(100% - 1.4286rem);
     box-shadow: 0.0714rem 0.0571rem 0.1143rem rgba(0, 0, 0, 0.15);
     transition: all 0.5s;
