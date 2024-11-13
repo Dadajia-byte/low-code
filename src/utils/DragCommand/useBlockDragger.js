@@ -1,7 +1,7 @@
 
 import { events } from "../event";
 
-export function useBlockDragger(focusData, lastSelectBlock, data,selectionBounds) {
+export function useBlockDragger(focusData, lastSelectBlock,containerRef,scale, data,selectionBounds) {
   let dragState = {
     startX: 0,
     startY: 0,
@@ -11,13 +11,18 @@ export function useBlockDragger(focusData, lastSelectBlock, data,selectionBounds
     y: null,
     dragging: false, // 当前是否正在拖拽
   });
-  const mousedown = (e) => {
-    
+  function getCorrectedMousePosition(e) {
+    const rect = containerRef.value.getBoundingClientRect();
+    const correctedX = (e.clientX - rect.left) / scale.value;
+    const correctedY = (e.clientY - rect.top) / scale.value;
+    return { x: correctedX, y: correctedY };
+  }
+  const mousedown = (e) => { 
     const { width: BWidth, height: BHeight } = (selectionBounds.value || lastSelectBlock.value); // 最后一个拖拽的元素作为移动物
-
+    let {x,y} = getCorrectedMousePosition(e);
     dragState = {
-      startX: e.clientX,
-      startY: e.clientY,
+      startX: x,
+      startY: y,
       startLeft: (selectionBounds.value || lastSelectBlock.value).left, // 拖拽前的位置，用于比较是否产生辅助线
       startTop: (selectionBounds.value || lastSelectBlock.value).top,
       startPos: focusData.value.focus.map(({ top, left }) => ({ top, left })),
@@ -75,7 +80,7 @@ export function useBlockDragger(focusData, lastSelectBlock, data,selectionBounds
     document.addEventListener("mouseup", mouseup);
   };
   const mousemove = (e) => {
-    let { clientX: moveX, clientY: moveY } = e;
+    let { x: moveX, y: moveY } = getCorrectedMousePosition(e);
     if (!dragState.dragging) {
       dragState.dragging = true;
       events.emit("start");

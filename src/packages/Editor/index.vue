@@ -346,6 +346,8 @@ let {
 let { mousedown, markline } = useBlockDragger(
   focusData,
   lastSelectBlock,
+  containerRef,
+  scale,
   EditorDataStore.data,
   selectionBounds
 );

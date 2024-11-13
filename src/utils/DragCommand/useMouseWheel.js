@@ -26,7 +26,7 @@ export function useMouseWheel(containerRef) {
     function getNewScale(preScale, isZoomOut) {
         return isZoomOut ? preScale + 0.1 : preScale - 0.1;
     }
-
+    //处理缩放
     function handleZoom(newScale, oldScale, clientX, clientY) {
         let scaleRatio = newScale / oldScale;
         const container = containerRef.value;
