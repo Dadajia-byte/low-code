@@ -1,11 +1,15 @@
+import { reactive, ref } from "vue";
 
 
 
 export function useMouseWheel(containerRef) {
 
-    //缩放比例
-    let scale = ref(1);
-    let preScale = ref(1);
+    
+    let scale = ref(1);//缩放比例
+     const offsetWidth = reactive({
+        offsetX: 0,
+        offsetY: 0,
+     })
     const handleMousewheel = (e) => {
 
         if (e.ctrlKey) {
@@ -14,9 +18,9 @@ export function useMouseWheel(containerRef) {
             const clientX = e.clientX;
             const clientY = e.clientY;
             const isZoomOut = deltaY < 0;
-            const newScale = getNewScale(preScale.value, isZoomOut);
-            handleZoom(newScale, preScale.value, clientX, clientY);
-            preScale.value = newScale;
+            const newScale = getNewScale(scale.value, isZoomOut);
+            handleZoom(newScale, scale.value, clientX, clientY);
+            scale.value = newScale;
         }
     }
     function getNewScale(preScale, isZoomOut) {
@@ -26,15 +30,22 @@ export function useMouseWheel(containerRef) {
     function handleZoom(newScale, oldScale, clientX, clientY) {
         let scaleRatio = newScale / oldScale;
         const container = containerRef.value;
+        
         const rect = container.getBoundingClientRect();
+        console.log();
+
         let offsetX = (1 - scaleRatio) * (clientX - rect.left);
         let offsetY = (1 - scaleRatio) * (clientY - rect.top);
-
+        
         // 更新容器的变换样式以实现缩放和位置调整
         container.style.transform = `scale(${newScale})`;
         // container.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${newScale})`;
     }
+
+   
     return{
         handleMousewheel,
+        scale,
+        offsetWidth
     }
 }

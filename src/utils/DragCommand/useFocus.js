@@ -1,5 +1,5 @@
 
-export function useFocus(data, previewRef, containerRef, callback) {
+export function useFocus(data, previewRef, containerRef, scale, callback) {
 
   const selectIndex = ref(-1); // 记录最后一个被点击的元素
   const lastSelectBlock = computed(() => data.blocks[selectIndex.value]);
@@ -46,11 +46,19 @@ export function useFocus(data, previewRef, containerRef, callback) {
     currentX: 0,
     currentY: 0,
   });
-//鼠标选取范围
+
+
+  function getCorrectedMousePosition(e) {
+    const rect = containerRef.value.getBoundingClientRect();
+    // 校正鼠标位置，缩放对应的缩放比例
+    const correctedX = (e.clientX - rect.left) / scale.value;
+    const correctedY = (e.clientY - rect.top) / scale.value;
+    return { x: correctedX, y: correctedY };
+  }
+  //鼠标选取范围
   const mouseSelectArea = ref(null);
 
   const clearBlockFocus = () => {
-
     data.blocks.forEach((item) => {
       item.focus = false;
     });
@@ -86,27 +94,26 @@ export function useFocus(data, previewRef, containerRef, callback) {
     clearBlockFocus();
     selectIndex.value = -1;
     // 初始化
+    const { x, y } = getCorrectedMousePosition(e);  // 获取相对于画布的坐标
     mouseDrag.value.dragging = true;
-    mouseDrag.value.startX = e.clientX;
-    mouseDrag.value.startY = e.clientY;
+    mouseDrag.value.startX = x;
+    mouseDrag.value.startY = y;
 
     document.addEventListener('mousemove', onMouseMoveSelect);
     document.addEventListener('mouseup', onMouseUpSelect);
-  };
-//鼠标移动
-  const onMouseMoveSelect = (e) => {
-    mouseDrag.value.currentX = e.clientX;
-    mouseDrag.value.currentY = e.clientY;
 
-    const width = mouseDrag.value.currentX - mouseDrag.value.startX;
-    const height = mouseDrag.value.currentY - mouseDrag.value.startY;
-    const { left, top } = containerRef.value.getBoundingClientRect();
+  };
+  //鼠标移动
+  const onMouseMoveSelect = (e) => {
+    const { x, y } = getCorrectedMousePosition(e);
+    mouseDrag.value.currentX = x;
+    mouseDrag.value.currentY = y;
 
     mouseSelectArea.value = {
-      top: Math.min(mouseDrag.value.startY, mouseDrag.value.currentY) - top,
-      left: Math.min(mouseDrag.value.startX, mouseDrag.value.currentX) - left,
-      width: Math.abs(width),
-      height: Math.abs(height),
+      top: Math.min(mouseDrag.value.startY, mouseDrag.value.currentY),
+      left: Math.min(mouseDrag.value.startX, mouseDrag.value.currentX),
+      width: Math.abs(mouseDrag.value.currentX - mouseDrag.value.startX),
+      height: Math.abs(mouseDrag.value.currentY - mouseDrag.value.startY),
     };
   };
 
@@ -118,10 +125,10 @@ export function useFocus(data, previewRef, containerRef, callback) {
       currentX: 0,
       currentY: 0,
     };
-  
+
     mouseSelectArea.value = null;
   };
-//鼠标抬起
+  //鼠标抬起
   const onMouseUpSelect = () => {
     mouseDrag.value.dragging = false;
 
@@ -145,10 +152,10 @@ export function useFocus(data, previewRef, containerRef, callback) {
 
     document.removeEventListener('mousemove', onMouseMoveSelect);
     document.removeEventListener('mouseup', onMouseUpSelect);
-    
+
     resetDragData();
   };
- 
+
   const selectionBoundsMouseDown = (e) => {
     e.stopPropagation();
     callback(e);

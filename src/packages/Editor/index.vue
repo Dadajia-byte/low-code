@@ -320,6 +320,13 @@ watch(
 // 1. 实现物料堆拖拽
 const { dragStart, dragEnd } = useMenuDragger(containerRef, EditorDataStore.data);
 
+
+// 5. 实现滚轮缩放
+let{
+  handleMousewheel,
+  scale,
+} = useMouseWheel(containerRef)
+
 // 2.获取焦点后即可直接拖拽
 let {
   blockMouseDown,
@@ -331,13 +338,10 @@ let {
   selectionBoundsMouseDown,
   mouseSelectArea,
   mouseDrag
-} = useFocus(EditorDataStore.data, previewRef,containerRef, (e) => {
+} = useFocus(EditorDataStore.data, previewRef,containerRef,scale, (e) => {
   mousedown(e);
 });
-// 5. 实现滚轮缩放
-let{
-  handleMousewheel
-} = useMouseWheel(containerRef)
+
 // 3. 实现组件拖拽
 let { mousedown, markline } = useBlockDragger(
   focusData,
@@ -345,8 +349,11 @@ let { mousedown, markline } = useBlockDragger(
   EditorDataStore.data,
   selectionBounds
 );
+
 // 4. 实现组件缩放
 let { onMouseDown } = useBlockResize(focusData, selectionBounds, EditorDataStore.data);
+
+
 
 // 用于保存可能使用的所有指令(操作)
 const { commands } = useCommand(EditorDataStore.data, focusData,containerRef);
