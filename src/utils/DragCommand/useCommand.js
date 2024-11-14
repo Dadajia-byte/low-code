@@ -438,7 +438,7 @@ export const useCommand = (data, focusData,containerRef=null) => {
   registry({
     name: "delete",
     pushQueue: true,
-    keyboard:'delete',
+    keyboard:['delete','backspace'],
     execute() {
       let state = {
         before: cloneDeep(data.blocks), // 保证唯一
@@ -467,6 +467,7 @@ export const useCommand = (data, focusData,containerRef=null) => {
   }
   // 键盘事件
   const keyboardEvent = (() => {
+    // 按键映射表
     const keyCodes = {
       221:']',
       219:'[',
@@ -476,6 +477,7 @@ export const useCommand = (data, focusData,containerRef=null) => {
       86:'v',
       67:"c",
       46:'delete',
+      8:'backspace',
     };
     const onKeydown = (e) => {
       const { ctrlKey, keyCode,shiftKey } = e;
@@ -492,7 +494,7 @@ export const useCommand = (data, focusData,containerRef=null) => {
       // 根据键盘按键调用对应的事件
       state.commandArray.forEach(({ keyboard, name }) => {
         if (!keyboard) return; // 没有对应的键盘事件
-        if (keyboard === keyString) {
+        if (Array.isArray(keyboard)? keyboard.includes(keyString):keyboard === keyString) {
           state.commands[name](e);
           e.preventDefault();
         }
