@@ -4,19 +4,19 @@
       <div class="editor-container-canvas">
         <!-- 产生内容区域 -->
         <div
-          class="editor-container-canvas-content"
-          ref="containerRef"
-          :style="containerStyles"
+            class="editor-container-canvas-content"
+            ref="containerRef"
+            :style="containerStyles"
         >
-        <EditorBlocks 
-              v-for="(item, index) in state.blockData" 
-              :key="item.id" 
+          <EditorBlocks
+              v-for="(item, index) in state.blockData"
+              :key="item.id"
               :class="{ 'editor-block-focus': item.focus, 'editor-block-preview': previewRef }"
               :block="item" @mousedown="(e) => blockMouseDown(e, item, index)"
               @contextmenu.stop.prevent="(e) => onContextBlock(e, item)"
               :formData="EditorDataStore.formData"
-              >
-            </EditorBlocks>
+          >
+          </EditorBlocks>
         </div>
       </div>
     </template>
@@ -31,10 +31,11 @@
 
 <script setup>
 import EditorBlocks from "../../packages/EditorBlocks/index.vue";
-import { useEditorDataStore } from "../../store/module/editorData";
+import {useEditorDataStore} from "../../store/module/editorData";
+
 const EditorDataStore = useEditorDataStore();
 const props = defineProps({
-  option: { type: Object },
+  option: {type: Object},
 });
 const containerStyles = computed(() => ({
   width: `${EditorDataStore.data.container.width}px`,
@@ -43,9 +44,9 @@ const containerStyles = computed(() => ({
 const state = reactive({
   isShow: false,
   option: props.option, // 用户给组件的属性
-  blockData:props.data,
-  canvasData:props.canvas,
-  formData:props.formData
+  blockData: props.data,
+  canvasData: props.canvas,
+  formData: props.formData
 });
 // 取消
 const onCancel = () => {
@@ -55,6 +56,7 @@ const onCancel = () => {
 const onConfirm = () => {
   state.isShow = false;
 };
+
 function showDialog(option) {
   state.isShow = true;
 }
@@ -90,16 +92,19 @@ defineExpose({
     height: calc(100% - 1.4286rem);
     box-shadow: .0714rem .0571rem .1143rem rgba(0, 0, 0, 0.15);
     transition: all 0.5s;
+
     &-title {
       display: flex;
       margin-left: .5rem;
       margin-top: .2857rem;
       font-size: .3143rem;
     }
+
     &-search {
       margin-left: .2857rem;
       width: 90%;
     }
+
     &-menu {
       margin-left: .4143rem;
       width: 89%;
@@ -109,6 +114,7 @@ defineExpose({
       padding-right: .0571rem;
       scrollbar-gutter: stable;
     }
+
     &-menu-content {
       display: flex;
       justify-content: space-around;
@@ -124,6 +130,7 @@ defineExpose({
         margin-right: .0714rem;
         // border-bottom: #e0dfff .0143rem solid;
       }
+
       &-item {
         width: 100%;
         display: flex;
@@ -145,6 +152,7 @@ defineExpose({
           width: 100%;
           text-align: center;
         }
+
         &:hover {
           border: .0143rem solid #6965db;
         }
@@ -178,6 +186,7 @@ defineExpose({
       background-color: #ffffff;
       transition: transform 0.8s;
       cursor: pointer;
+
       &:hover {
         background-color: #e0dfff;
         color: white;
@@ -200,13 +209,13 @@ defineExpose({
     &-canvas {
       height: 100%;
       overflow: scroll;
-      
+
       &-content {
         margin: .5714rem auto;
         // background-color: #f1f1f1;
         position: relative;
         border-radius: .5714rem;
-      border: #e3e3e3 .0286rem dashed;
+        border: #e3e3e3 .0286rem dashed;
       }
     }
   }

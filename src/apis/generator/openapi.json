@@ -1,1 +1,371 @@
-{"openapi":"3.0.1","info":{"title":"lowcode","description":"","version":"1.0.0"},"tags":[],"paths":{"/user/sendEmail/register":{"post":{"summary":"发送邮箱验证码(注册)","deprecated":false,"description":"","tags":[],"parameters":[],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/UserSendEmailCodeDTO","description":""}}}},"responses":{"200":{"description":"","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Result","description":"后端统一返回结果"},"examples":{"1":{"summary":"成功示例","value":{"code":0,"msg":"","data":{}}}}}},"headers":{}}},"security":[]}},"/user/register":{"post":{"summary":"用户注册","deprecated":false,"description":"","tags":[],"parameters":[],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/UserRegisterByEmailDTO","description":""}}}},"responses":{"200":{"description":"","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Result","description":"后端统一返回结果"},"examples":{"1":{"summary":"成功示例","value":{"code":0,"msg":"","data":{}}}}}},"headers":{}}},"security":[]}},"/user/sendEmail/findPassword":{"post":{"summary":"发送邮箱验证码(找回密码)","deprecated":false,"description":"","tags":[],"parameters":[],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/UserSendEmailCodeDTO","description":""}}}},"responses":{"200":{"description":"","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Result","description":"后端统一返回结果"},"examples":{"1":{"summary":"成功示例","value":{"code":0,"msg":"","data":{}}}}}},"headers":{}}},"security":[]}},"/user/findPassword":{"post":{"summary":"找回密码","deprecated":false,"description":"","tags":[],"parameters":[],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/UserFindPasswordDTO","description":""}}}},"responses":{"200":{"description":"","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Result","description":"后端统一返回结果"},"examples":{"1":{"summary":"成功示例","value":{"code":0,"msg":"","data":{}}}}}},"headers":{}}},"security":[]}},"/user/login":{"post":{"summary":"用户登录","deprecated":false,"description":"","tags":[],"parameters":[],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/UserLoginByPasswordDTO","description":""}}}},"responses":{"200":{"description":"","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Result","description":"后端统一返回结果"},"examples":{"1":{"summary":"成功示例","value":{"code":10000,"msg":"成功","data":{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGFpbXMiOnsidXNlcklkIjoxfSwiZXhwIjoxNzMwMjk5NDQwfQ.iMc5hv0cxtsRdQPph7d1XNeNjWbPsf4aWAWhFUbNNQg","refresh_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGFpbXMiOnsidXNlcklkIjoxLCJ1c2VybmFtZSI6IuS8keWbveiKsyIsImVtYWlsIjoiMjk0NDM0NjI1NUBxcS5jb20ifSwiZXhwIjoxNzI3NzExMDQwfQ.5-dMg5NQZqaOQTY7aBpeKNGsn1uEM2gd6iIKWlbEjXQ"}}}}}},"headers":{}}},"security":[]}},"/user/getAccessToken":{"post":{"summary":"获取accessToken","deprecated":false,"description":"","tags":[],"parameters":[],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/RefreshTokenDTO","description":""}}}},"responses":{"200":{"description":"","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Result","description":"后端统一返回结果"},"examples":{"1":{"summary":"成功示例","value":{"code":0,"msg":"","data":{}}}}}},"headers":{}}},"security":[]}}},"components":{"schemas":{"Result":{"type":"object","properties":{"code":{"type":"integer","description":"编码"},"msg":{"type":"string","description":"错误信息"},"data":{"description":"数据","type":"object","properties":{}}}},"":{"type":"object","properties":{}},"UserSendEmailCodeDTO":{"type":"object","properties":{"email":{"type":"string","description":"用户邮箱"}}},"UserLoginByPasswordDTO":{"type":"object","properties":{"email":{"type":"string","description":"用户邮箱"},"password":{"type":"string","description":"用户密码"}}},"UserRegisterByEmailDTO":{"type":"object","properties":{"email":{"type":"string","description":"用户邮箱"},"password":{"type":"string","description":"密码"},"userVerifyCode":{"type":"string","description":"用户验证码"}}},"RefreshTokenDTO":{"type":"object","properties":{"refreshToken":{"type":"string","description":"refreshToken"}}},"UserFindPasswordDTO":{"type":"object","properties":{"email":{"type":"string","description":"用户邮箱"},"password":{"type":"string","description":"密码"},"userVerifyCode":{"type":"string","description":"用户验证码"}}}},"securitySchemes":{}},"servers":[]}
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "lowcode",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/user/sendEmail/register": {
+      "post": {
+        "summary": "发送邮箱验证码(注册)",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSendEmailCodeDTO",
+                "description": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result",
+                  "description": "后端统一返回结果"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "msg": "",
+                      "data": {}
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/user/register": {
+      "post": {
+        "summary": "用户注册",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegisterByEmailDTO",
+                "description": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result",
+                  "description": "后端统一返回结果"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "msg": "",
+                      "data": {}
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/user/sendEmail/findPassword": {
+      "post": {
+        "summary": "发送邮箱验证码(找回密码)",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSendEmailCodeDTO",
+                "description": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result",
+                  "description": "后端统一返回结果"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "msg": "",
+                      "data": {}
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/user/findPassword": {
+      "post": {
+        "summary": "找回密码",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserFindPasswordDTO",
+                "description": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result",
+                  "description": "后端统一返回结果"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "msg": "",
+                      "data": {}
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/user/login": {
+      "post": {
+        "summary": "用户登录",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginByPasswordDTO",
+                "description": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result",
+                  "description": "后端统一返回结果"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 10000,
+                      "msg": "成功",
+                      "data": {
+                        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGFpbXMiOnsidXNlcklkIjoxfSwiZXhwIjoxNzMwMjk5NDQwfQ.iMc5hv0cxtsRdQPph7d1XNeNjWbPsf4aWAWhFUbNNQg",
+                        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGFpbXMiOnsidXNlcklkIjoxLCJ1c2VybmFtZSI6IuS8keWbveiKsyIsImVtYWlsIjoiMjk0NDM0NjI1NUBxcS5jb20ifSwiZXhwIjoxNzI3NzExMDQwfQ.5-dMg5NQZqaOQTY7aBpeKNGsn1uEM2gd6iIKWlbEjXQ"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/user/getAccessToken": {
+      "post": {
+        "summary": "获取accessToken",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenDTO",
+                "description": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result",
+                  "description": "后端统一返回结果"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "msg": "",
+                      "data": {}
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Result": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "编码"
+          },
+          "msg": {
+            "type": "string",
+            "description": "错误信息"
+          },
+          "data": {
+            "description": "数据",
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      "": {
+        "type": "object",
+        "properties": {}
+      },
+      "UserSendEmailCodeDTO": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "用户邮箱"
+          }
+        }
+      },
+      "UserLoginByPasswordDTO": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "用户邮箱"
+          },
+          "password": {
+            "type": "string",
+            "description": "用户密码"
+          }
+        }
+      },
+      "UserRegisterByEmailDTO": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "用户邮箱"
+          },
+          "password": {
+            "type": "string",
+            "description": "密码"
+          },
+          "userVerifyCode": {
+            "type": "string",
+            "description": "用户验证码"
+          }
+        }
+      },
+      "RefreshTokenDTO": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "description": "refreshToken"
+          }
+        }
+      },
+      "UserFindPasswordDTO": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "用户邮箱"
+          },
+          "password": {
+            "type": "string",
+            "description": "密码"
+          },
+          "userVerifyCode": {
+            "type": "string",
+            "description": "用户验证码"
+          }
+        }
+      }
+    },
+    "securitySchemes": {}
+  },
+  "servers": []
+}

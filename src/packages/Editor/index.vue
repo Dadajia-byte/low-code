@@ -2,12 +2,12 @@
   <div class="editor">
     <!-- 左侧物料堆 -->
     <div
-      class="editor-left"
-      :style="{ left: isExpanded ? '-4.1429rem' : '.0714rem' }"
+        class="editor-left"
+        :style="{ left: isExpanded ? '-4.1429rem' : '.0714rem' }"
     >
       <el-text class="mx-1 editor-left-title" size="large">物料堆</el-text>
       <el-divider
-        style="
+          style="
           margin-left: 0.2857rem;
           width: 90%;
           margin-top: 0.2143rem;
@@ -15,39 +15,41 @@
         "
       />
       <el-select
-        filterable
-        placeholder="nodo搜索,树形更好？"
-        class="editor-left-search"
+          filterable
+          placeholder="nodo搜索,树形更好？"
+          class="editor-left-search"
       >
         <template #prefix>
-          <el-icon><i-ep-Search /></el-icon>
+          <el-icon>
+            <i-ep-Search/>
+          </el-icon>
         </template>
-        <el-option />
+        <el-option/>
       </el-select>
       <el-collapse
-        v-model="activeNames"
-        class="editor-left-menu"
-        style="border-bottom: none"
+          v-model="activeNames"
+          class="editor-left-menu"
+          style="border-bottom: none"
       >
         <el-collapse-item
-          v-for="menu in config.category"
-          :title="menu.title"
-          :name="menu.id"
-          :key="menu.id"
+            v-for="menu in config.category"
+            :title="menu.title"
+            :name="menu.id"
+            :key="menu.id"
         >
           <div class="editor-left-menu-content">
             <div
-              class="editor-left-menu-content-row"
-              v-for="item in config.componentList.filter(
+                class="editor-left-menu-content-row"
+                v-for="item in config.componentList.filter(
                 (item) => item.category.indexOf(menu.id) !== -1
               )"
-              :key="item.key"
+                :key="item.key"
             >
               <div
-                draggable="true"
-                @dragstart="(e) => dragStart(e, item)"
-                @dragend="(e) => dragEnd(e, item)"
-                class="editor-left-menu-content-item"
+                  draggable="true"
+                  @dragstart="(e) => dragStart(e, item)"
+                  @dragend="(e) => dragEnd(e, item)"
+                  class="editor-left-menu-content-item"
               >
                 <component :is="item.preview"></component>
               </div>
@@ -59,29 +61,31 @@
         </el-collapse-item>
       </el-collapse>
       <div
-        class="editor-left-expand"
-        @click="toggleExpand"
-        :style="{ right: !isExpanded ? '.1429rem' : '-0.2857rem' }"
+          class="editor-left-expand"
+          @click="toggleExpand"
+          :style="{ right: !isExpanded ? '.1429rem' : '-0.2857rem' }"
       >
         <el-icon
-          :style="{ transform: isExpanded ? 'rotate(180deg)' : 'none' }"
-          style="font-size: 0.3143rem"
-          ><i-ep-CaretLeft
-        /></el-icon>
+            :style="{ transform: isExpanded ? 'rotate(180deg)' : 'none' }"
+            style="font-size: 0.3143rem"
+        >
+          <i-ep-CaretLeft
+          />
+        </el-icon>
       </div>
     </div>
     <!-- 顶部菜单栏 -->
     <EditorTop
-      :buttons="buttons"
-      :editorOperatorStatus="editorOperatorStatus"
+        :buttons="buttons"
+        :editorOperatorStatus="editorOperatorStatus"
     ></EditorTop>
     <!-- 右侧属性控制栏 -->
     <div class="editor-right">
       <EditorOperator
-        :block="lastSelectBlock"
-        :data="EditorDataStore.data"
-        :updateContainer="commands.updateContainer"
-        :updateBlock="commands.updateBlock"
+          :block="lastSelectBlock"
+          :data="EditorDataStore.data"
+          :updateContainer="commands.updateContainer"
+          :updateBlock="commands.updateBlock"
       >
       </EditorOperator>
     </div>
@@ -91,102 +95,102 @@
       <div class="editor-container-canvas">
         <!-- 产生内容区域 -->
         <div
-          class="editor-container-canvas-content"
-          ref="containerRef"
-          :style="containerStyles"
-          @mousedown="(e) => containerMouseDown(e)"
-          @contextmenu="(e) => onContextMenu(e, null)"
+            class="editor-container-canvas-content"
+            ref="containerRef"
+            :style="containerStyles"
+            @mousedown="(e) => containerMouseDown(e)"
+            @contextmenu="(e) => onContextMenu(e, null)"
         >
           <canvas
-            ref="canvasRef"
-            :width="containerStyles.width"
-            :height="containerStyles.height"
-            class="grid-canvas"
+              ref="canvasRef"
+              :width="containerStyles.width"
+              :height="containerStyles.height"
+              class="grid-canvas"
           ></canvas>
           <EditorBlocks
-            v-for="(item, index) in EditorDataStore.data.blocks"
-            :key="`${EditorDataStore.focusUpdate}${item.id}`"
-            :class="{
+              v-for="(item, index) in EditorDataStore.data.blocks"
+              :key="`${EditorDataStore.focusUpdate}${item.id}`"
+              :class="{
               'editor-block-focus': item.focus,
             }"
-            :block="item"
-            @mousedown="(e) => blockMouseDown(e, item, index)"
-            :focusBlocksNum="focusData.focus.length"
-            @Contextmenu="(e) => onContextBlock(e, item)"
-            :blockReizeMousedown="onMouseDown"
-            :formData="EditorDataStore.formData"
+              :block="item"
+              @mousedown="(e) => blockMouseDown(e, item, index)"
+              :focusBlocksNum="focusData.focus.length"
+              @Contextmenu="(e) => onContextBlock(e, item)"
+              :blockReizeMousedown="onMouseDown"
+              :formData="EditorDataStore.formData"
           >
           </EditorBlocks>
           <!-- 辅助线 -->
           <div
-            v-show="markline.x"
-            class="line-x"
-            :style="{ left: markline.x + 'px' }"
+              v-show="markline.x"
+              class="line-x"
+              :style="{ left: markline.x + 'px' }"
           ></div>
           <div
-            v-show="markline.y"
-            class="line-y"
-            :style="{ top: markline.y + 'px' }"
+              v-show="markline.y"
+              class="line-y"
+              :style="{ top: markline.y + 'px' }"
           ></div>
           <!-- 选中的边界框 -->
           <div
-            v-if="selectionBounds"
-            class="selectionBounds"
-            :style="{
+              v-if="selectionBounds"
+              class="selectionBounds"
+              :style="{
               top: selectionBounds.top + 'px',
               left: selectionBounds.left + 'px',
               width: selectionBounds.width + 'px',
               height: selectionBounds.height + 'px',
             }"
-            @mousedown="(e) => selectionBoundsMouseDown(e)"
-            @contextmenu="(e) => onContextBlock(e, focusData.focus)"
+              @mousedown="(e) => selectionBoundsMouseDown(e)"
+              @contextmenu="(e) => onContextBlock(e, focusData.focus)"
           >
             <template
-              v-if="
+                v-if="
                 focusData.focus
                   .map((item) => config.componentMap[item.key])
                   .reduce((pre, cur) => pre + cur.resize?.width, 0)
               "
             >
               <div
-                class="block-resize block-resize-left"
-                @mousedown="
+                  class="block-resize block-resize-left"
+                  @mousedown="
                   (e) =>
                     onMouseDown(e, { horizontal: 'start', vertical: 'center' })
                 "
               ></div>
               <div
-                class="block-resize block-resize-right"
-                @mousedown="
+                  class="block-resize block-resize-right"
+                  @mousedown="
                   (e) =>
                     onMouseDown(e, { horizontal: 'end', vertical: 'center' })
                 "
               ></div>
             </template>
             <template
-              v-if="
+                v-if="
                 focusData.focus
                   .map((item) => config.componentMap[item.key])
                   .reduce((pre, cur) => pre + cur.resize?.height, 0)
               "
             >
               <div
-                class="block-resize block-resize-top"
-                @mousedown="
+                  class="block-resize block-resize-top"
+                  @mousedown="
                   (e) =>
                     onMouseDown(e, { horizontal: 'center', vertical: 'start' })
                 "
               ></div>
               <div
-                class="block-resize block-resize-bottom"
-                @mousedown="
+                  class="block-resize block-resize-bottom"
+                  @mousedown="
                   (e) =>
                     onMouseDown(e, { horizontal: 'center', vertical: 'end' })
                 "
               ></div>
             </template>
             <template
-              v-if="
+                v-if="
                 focusData.focus
                   .map((item) => config.componentMap[item.key])
                   .reduce((pre, cur) => pre + cur.resize?.height, 0) &&
@@ -196,29 +200,29 @@
               "
             >
               <div
-                class="block-resize block-resize-top-left"
-                @mousedown="
+                  class="block-resize block-resize-top-left"
+                  @mousedown="
                   (e) =>
                     onMouseDown(e, { horizontal: 'start', vertical: 'start' })
                 "
               ></div>
               <div
-                class="block-resize block-resize-top-right"
-                @mousedown="
+                  class="block-resize block-resize-top-right"
+                  @mousedown="
                   (e) =>
                     onMouseDown(e, { horizontal: 'end', vertical: 'start' })
                 "
               ></div>
               <div
-                class="block-resize block-resize-bottom-left"
-                @mousedown="
+                  class="block-resize block-resize-bottom-left"
+                  @mousedown="
                   (e) =>
                     onMouseDown(e, { horizontal: 'start', vertical: 'end' })
                 "
               ></div>
               <div
-                class="block-resize block-resize-bottom-right"
-                @mousedown="
+                  class="block-resize block-resize-bottom-right"
+                  @mousedown="
                   (e) => onMouseDown(e, { horizontal: 'end', vertical: 'end' })
                 "
               ></div>
@@ -226,9 +230,9 @@
           </div>
           <!-- 鼠标选中区域 -->
           <div
-            v-if="mouseDrag.dragging"
-            class="mouse-select-area"
-            :style="{
+              v-if="mouseDrag.dragging"
+              class="mouse-select-area"
+              :style="{
               top: mouseSelectArea.top + 'px',
               left: mouseSelectArea.left + 'px',
               width: mouseSelectArea.width + 'px',
@@ -245,19 +249,14 @@
 import EditorTop from "../EditorTop/index.vue";
 import EditorBlocks from "../EditorBlocks/index.vue";
 import EditorOperator from "../EditorOperator/index.vue";
-import { events } from "../../utils/event";
-import {
-  useFocus,
-  useMenuDragger,
-  useBlockDragger,
-  useBlockResize,
-  useCommand,
-} from "@/utils/DragCommand";
-import { $dropdown } from "@/components/Dropdown";
+import {events} from "../../utils/event";
+import {useBlockDragger, useBlockResize, useCommand, useFocus, useMenuDragger,} from "@/utils/DragCommand";
+import {$dropdown} from "@/components/Dropdown";
 import DropdownItem from "@/components/Dropdown/components/DropdownItem/index.vue";
-import { $dialog } from "@/components/Dialog";
-import { $previewDialog } from "../../components/PreviewDialog";
-import { useEditorDataStore } from "@/store/index";
+import {$dialog} from "@/components/Dialog";
+import {$previewDialog} from "../../components/PreviewDialog";
+import {useEditorDataStore} from "@/store/index";
+
 const EditorDataStore = useEditorDataStore();
 // 预览时 内容不再能操作，可以点击输入内容，方便看效果
 const previewRef = ref(false);
@@ -288,6 +287,7 @@ const canvas = () => {
   if (EditorDataStore.data.container.grid) {
     drawGrid(width, height);
   }
+
   function drawGrid(width, height) {
     const gridSize = 6; // 网格大小
 
@@ -317,11 +317,11 @@ const containerSize = computed(() => {
 
 // 使用 watch 监听 containerSize 的变化
 watch(
-  [() => containerSize.value, () => EditorDataStore.data.container.grid],
-  () => {
-    canvas();
-  },
-  { deep: true }
+    [() => containerSize.value, () => EditorDataStore.data.container.grid],
+    () => {
+      canvas();
+    },
+    {deep: true}
 );
 // 性能是否有点差？本质上是想要实现副作用的效果，即editorOperatorStatus变量变成false时，清除选中的节点（抓手模式不需要选中）
 watch(editorOperatorStatus, () => {
@@ -331,9 +331,9 @@ watch(editorOperatorStatus, () => {
 });
 
 // 1. 实现物料堆拖拽
-const { dragStart, dragEnd } = useMenuDragger(
-  containerRef,
-  EditorDataStore.data
+const {dragStart, dragEnd} = useMenuDragger(
+    containerRef,
+    EditorDataStore.data
 );
 
 // 2.获取焦点后即可直接拖拽
@@ -352,21 +352,21 @@ let {
 });
 
 // 3. 实现组件拖拽
-let { mousedown, markline } = useBlockDragger(
-  focusData,
-  lastSelectBlock,
-  EditorDataStore.data,
-  selectionBounds
+let {mousedown, markline} = useBlockDragger(
+    focusData,
+    lastSelectBlock,
+    EditorDataStore.data,
+    selectionBounds
 );
 // 4. 实现组件缩放
-let { onMouseDown } = useBlockResize(
-  focusData,
-  selectionBounds,
-  EditorDataStore.data
+let {onMouseDown} = useBlockResize(
+    focusData,
+    selectionBounds,
+    EditorDataStore.data
 );
 
 // 用于保存可能使用的所有指令(操作)
-const { commands } = useCommand(EditorDataStore.data, focusData, containerRef);
+const {commands} = useCommand(EditorDataStore.data, focusData, containerRef);
 
 const onContextMenu = (e) => {
   if (!editorOperatorStatus.value) return;
@@ -510,8 +510,8 @@ const buttons = [
     icon: "icon-mouse",
     handler: () => (editorOperatorStatus.value = true),
   },
-  { label: "撤销", icon: "icon-chehui", handler: commands.undo },
-  { label: "重做", icon: "icon-zhongzuo", handler: commands.redo },
+  {label: "撤销", icon: "icon-chehui", handler: commands.undo},
+  {label: "重做", icon: "icon-zhongzuo", handler: commands.redo},
   {
     label: "导出",
     icon: "icon-daochu",
@@ -536,9 +536,9 @@ const buttons = [
       });
     },
   },
-  { label: "置顶", icon: "icon-dingceng", handler: commands.placeTop },
-  { label: "置底", icon: "icon-diceng", handler: commands.placeBottom },
-  { label: "删除", icon: "icon-shanchu", handler: commands.delete },
+  {label: "置顶", icon: "icon-dingceng", handler: commands.placeTop},
+  {label: "置底", icon: "icon-diceng", handler: commands.placeBottom},
+  {label: "删除", icon: "icon-shanchu", handler: commands.delete},
   {
     label: () => (previewRef.value ? "编辑" : "预览"),
     icon: () => (previewRef.value ? "icon-bianji" : "icon-yulan"),
@@ -591,10 +591,12 @@ onMounted(() => {
       margin-top: 0.2857rem;
       font-size: 0.3143rem;
     }
+
     &-search {
       margin-left: 0.2857rem;
       width: 90%;
     }
+
     &-menu {
       margin-left: 0.4143rem;
       width: 89%;
@@ -604,6 +606,7 @@ onMounted(() => {
       padding-right: 0.0571rem;
       scrollbar-gutter: stable;
     }
+
     &-menu-content {
       display: flex;
       justify-content: space-around;
@@ -619,6 +622,7 @@ onMounted(() => {
         margin-right: 0.0714rem;
         // border-bottom: #e0dfff .0143rem solid;
       }
+
       &-item {
         width: 100%;
         display: flex;
@@ -640,6 +644,7 @@ onMounted(() => {
           width: 100%;
           text-align: center;
         }
+
         &:hover {
           border: 0.0143rem solid #6965db;
         }
@@ -672,6 +677,7 @@ onMounted(() => {
       background-color: #ffffff;
       transition: transform 0.8s;
       cursor: pointer;
+
       &:hover {
         background-color: #e0dfff;
         color: white;
@@ -757,6 +763,7 @@ onMounted(() => {
   background-color: rgba(105, 101, 219, 0.15);
   border: #6965db solid 1px;
 }
+
 $pre: "block-resize";
 .#{$pre} {
   position: absolute;
@@ -767,6 +774,7 @@ $pre: "block-resize";
   border-radius: 0.0286rem;
   user-select: none;
 }
+
 .#{$pre}-top {
   top: -0.0571rem;
   left: calc(50% - 0.0429rem);

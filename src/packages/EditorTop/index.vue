@@ -1,34 +1,36 @@
 <template>
   <div
-    class="editor-top"
-    :style="{ top: isExpanded ? '-0.8571rem' : '.1429rem' }"
+      class="editor-top"
+      :style="{ top: isExpanded ? '-0.8571rem' : '.1429rem' }"
   >
     <div
-      v-for="btn in buttons"
-      :key="btn.label"
-      @click="btn.handler"
-      class="editor-top-button"
-      :class="{ 'editor-top-button-active': isActive(btn) }"
+        v-for="btn in buttons"
+        :key="btn.label"
+        @click="btn.handler"
+        class="editor-top-button"
+        :class="{ 'editor-top-button-active': isActive(btn) }"
     >
       <i
-        :class="typeof btn.icon == 'function' ? btn.icon() : btn.icon"
-        class="iconfont"
+          :class="typeof btn.icon == 'function' ? btn.icon() : btn.icon"
+          class="iconfont"
       ></i>
     </div>
     <div class="editor-top-expand" @click="toggleExpand">
       <el-icon
-        :style="{ transform: isExpanded ? 'rotate(180deg)' : 'none' }"
-        style="font-size: 0.3143rem; transition: transform 0.5s"
-        ><i-ep-CaretTop
-      /></el-icon>
+          :style="{ transform: isExpanded ? 'rotate(180deg)' : 'none' }"
+          style="font-size: 0.3143rem; transition: transform 0.5s"
+      >
+        <i-ep-CaretTop
+        />
+      </el-icon>
     </div>
   </div>
 </template>
 
 <script setup>
-const { buttons, editorOperatorStatus: status } = defineProps({
-  buttons: { type: Array },
-  editorOperatorStatus: { type: Boolean },
+const {buttons, editorOperatorStatus: status} = defineProps({
+  buttons: {type: Array},
+  editorOperatorStatus: {type: Boolean},
 });
 
 const isExpanded = ref(false);
@@ -71,16 +73,20 @@ const isActive = (btn) => {
     cursor: pointer;
     color: black;
     border-radius: 0.1429rem;
+
     &:hover {
       background-color: #f1f0ff;
     }
+
     .iconfont {
       font-size: 0.3429rem;
       color: #606266;
     }
+
     span {
       font-size: 0.1714rem;
     }
+
     & + & {
       margin-left: 0.0429rem;
     }
@@ -89,6 +95,7 @@ const isActive = (btn) => {
   &-button-active {
     background-color: #f1f0ff;
   }
+
   &-expand {
     z-index: 99999;
     position: absolute;
@@ -103,6 +110,7 @@ const isActive = (btn) => {
     align-items: center;
     cursor: pointer;
     box-shadow: 0.0286rem 0.0286rem 0.0714rem rgba(0, 0, 0, 0.15);
+
     &:hover {
       background-color: #e0dfff;
       color: white;
