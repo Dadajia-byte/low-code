@@ -8,9 +8,9 @@
       <el-table :data="state.editData">
         <el-table-column type="index"></el-table-column>
         <el-table-column
-          align="center"
-          v-for="(item, index) in state.option.config.table.options"
-          :label="item.label"
+            align="center"
+            v-for="(item, index) in state.option.config.table.options"
+            :label="item.label"
         >
           <template #default="{ row }">
             <el-input v-model="row[item.field]"></el-input>
@@ -31,10 +31,11 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
-import { cloneDeep } from "lodash";
-const { option } = defineProps({
-  option: { type: Object },
+import {reactive} from "vue";
+import {cloneDeep} from "lodash";
+
+const {option} = defineProps({
+  option: {type: Object},
 });
 const state = reactive({
   option: option,
@@ -56,7 +57,7 @@ const reset = () => {
   state.editData = [];
 };
 const deleteItem = (index) => {
- 
+
   state.editData.splice(index, 1)
 };
 const onConfirm = () => {

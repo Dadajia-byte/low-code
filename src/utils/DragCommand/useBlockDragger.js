@@ -137,8 +137,8 @@ export function useBlockDragger(focusData, lastSelectBlock,containerRef,scale, d
     }
   };
 
-  return {
-    mousedown,
-    markline,
-  };
+    return {
+        mousedown,
+        markline,
+    };
 }

@@ -1,5 +1,5 @@
+import {useEditorDataStore} from "./module/editorData"
 
-import { useEditorDataStore } from "./module/editorData"
 export {
     useEditorDataStore
 }

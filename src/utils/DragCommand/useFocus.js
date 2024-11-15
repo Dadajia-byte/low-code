@@ -1,49 +1,49 @@
 /**
- * 
+ *
  * @param {*reactive} data 传入的data数据（就是editorStore那个，后期需要考虑二选一，现在混在一起）
  * @param {*ref} editorOperatorStatus 编辑操作栏中的状态，如果是true代表鼠标模式，false代表抓手模式应该禁用focus相关操作
  * @param {*ref} containerRef 容器的ref
  * @param {*function} callback 回调函数
- * @returns 
+ * @returns
  */
 export function useFocus(data,  editorOperatorStatus,containerRef,scale, callback) {
 
-  const selectIndex = ref(-1); // 记录最后一个被点击的元素
-  const lastSelectBlock = computed(() => data.blocks[selectIndex.value]);
-  // 获取哪些元素
-  const focusData = computed(() => {
-    let focus = [];
-    let unfocused = [];
-    data.blocks.forEach((item) => {
-      if (item.focus) {
-        focus.push(item);
-      } else {
-        unfocused.push(item);
-      }
+    const selectIndex = ref(-1); // 记录最后一个被点击的元素
+    const lastSelectBlock = computed(() => data.blocks[selectIndex.value]);
+    // 获取哪些元素
+    const focusData = computed(() => {
+        let focus = [];
+        let unfocused = [];
+        data.blocks.forEach((item) => {
+            if (item.focus) {
+                focus.push(item);
+            } else {
+                unfocused.push(item);
+            }
+        });
+        return {focus, unfocused};
     });
-    return { focus, unfocused };
-  });
-  // 计算选中元素的边界
-  const calculateSelectionBounds = computed(() => {
-    if (focusData.value.focus.length <= 1) return null;
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-    focusData.value.focus.forEach(item => {
-      const { left, top, width, height } = item;
-      minX = Math.min(minX, left);
-      minY = Math.min(minY, top);
-      maxX = Math.max(maxX, left + width);
-      maxY = Math.max(maxY, top + height);
-    });  
-    return {
-      left: minX - 4,
-      top: minY - 4,
-      width: maxX - minX + 6,
-      height: maxY - minY + 6
-    }
-  })
+    // 计算选中元素的边界
+    const calculateSelectionBounds = computed(() => {
+        if (focusData.value.focus.length <= 1) return null;
+        let minX = Infinity;
+        let minY = Infinity;
+        let maxX = -Infinity;
+        let maxY = -Infinity;
+        focusData.value.focus.forEach(item => {
+            const {left, top, width, height} = item;
+            minX = Math.min(minX, left);
+            minY = Math.min(minY, top);
+            maxX = Math.max(maxX, left + width);
+            maxY = Math.max(maxY, top + height);
+        });
+        return {
+            left: minX - 4,
+            top: minY - 4,
+            width: maxX - minX + 6,
+            height: maxY - minY + 6
+        }
+    })
 
   const mouseDrag = ref({
     dragging: false,
@@ -147,10 +147,10 @@ export function useFocus(data,  editorOperatorStatus,containerRef,scale, callbac
   const onMouseUpSelect = () => {
     mouseDrag.value.dragging = false;
 
-    data.blocks.forEach(item => {
-      const { left, top, width, height } = item;
-      const itemRight = left + width;
-      const itemBottom = top + height;
+        data.blocks.forEach(item => {
+            const {left, top, width, height} = item;
+            const itemRight = left + width;
+            const itemBottom = top + height;
 
       item.focus = (
         top >= mouseSelectArea.value.top &&

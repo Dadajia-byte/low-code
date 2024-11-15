@@ -39,28 +39,29 @@ export function useMenuDragger(containerRef) {
         })
   
 
-    currentComponent = null;
-  };
 
-  const dragStart = (e, component) => {
-    containerRef.value.addEventListener("dragenter", dragenter);
-    containerRef.value.addEventListener("dragover", dragover);
-    containerRef.value.addEventListener("dragleave", dragleave);
-    containerRef.value.addEventListener("drop", drop);
-    currentComponent = component;
-    events.emit("start"); // 发布start
-  };
-  const dragEnd = () => {
-    // 移除事件
-    containerRef.value.removeEventListener("dragenter", dragenter);
-    containerRef.value.removeEventListener("dragover", dragover);
-    containerRef.value.removeEventListener("dragleave", dragleave);
-    containerRef.value.removeEventListener("drop", drop);
-    events.emit("end"); // 发布end
-  };
+        currentComponent = null;
+    };
 
-  return {
-    dragStart,
-    dragEnd,
-  };
+    const dragStart = (e, component) => {
+        containerRef.value.addEventListener("dragenter", dragenter);
+        containerRef.value.addEventListener("dragover", dragover);
+        containerRef.value.addEventListener("dragleave", dragleave);
+        containerRef.value.addEventListener("drop", drop);
+        currentComponent = component;
+        events.emit("start"); // 发布start
+    };
+    const dragEnd = (e) => {
+        // 移除事件
+        containerRef.value.removeEventListener("dragenter", dragenter);
+        containerRef.value.removeEventListener("dragover", dragover);
+        containerRef.value.removeEventListener("dragleave", dragleave);
+        containerRef.value.removeEventListener("drop", drop);
+        events.emit("end"); // 发布end
+    };
+
+    return {
+        dragStart,
+        dragEnd,
+    };
 }
