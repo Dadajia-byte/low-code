@@ -18,7 +18,7 @@
       </el-form-item>
       <el-button class="login-content-form-btn" :loading="durLog" @click="handleLogin">登录</el-button>
     </el-form>
-    <span class="login-content-span-other">
+    <div class="login-content-span-other">
             其他登录方式
             <div class="login-content-span-other-set">
                 <i class="iconfont icon-github"></i>
@@ -26,7 +26,7 @@
                 <i class="iconfont icon-github"></i>
                 <i class="iconfont icon-github"></i>
             </div>
-        </span>
+        </div>
 
     <span class="login-content-span-link" @click="checkStatus('Register')">没有账号?点击注册</span>
   </div>

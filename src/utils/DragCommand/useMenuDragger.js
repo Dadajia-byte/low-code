@@ -1,7 +1,7 @@
 // 拖拽相关
 
 import {events} from "../event";
-import {useEditorDataStore} from "@/store/index.js";
+import {useEditorDataStore} from "../../store/index.js";
 
 /*
 1. dragenter 进入元素 增加移动标识
@@ -10,34 +10,33 @@ import {useEditorDataStore} from "@/store/index.js";
 4. drop 松手时 根据拖拽组件放置组件
  */
 export function useMenuDragger(containerRef) {
-  // 引入Store
-  const editorDataStore = useEditorDataStore();
-  // 增设当前拖动元素
-  let currentComponent = null;
-  const dragenter = (e) => {
-    // 增设图标
-    e.dataTransfer.dropEffect = "move";
-  };
-  const dragover = (e) => {
-    e.preventDefault();
-  };
-  const dragleave = (e) => {
-    // 增设离开图标
-    e.dataTransfer.dropEffect = "none";
-  };
-  const drop = (e) => {
-    
-   editorDataStore.data.blocks.push({
-          top: e.offsetY,
-          left: e.offsetX,
-          zIndex: 1,
-          key: currentComponent.key,
-          alignCenter: true, // 希望松手的时候可以居中
-          id:String(new Date().getTime()) + String(Math.floor(Math.random() * 1000)),// 这里用于生成id便于for的key，不然出现很多bug
-          props:{},
-          model:{}
-        })
-  
+    // 引入Store
+    const editorDataStore = useEditorDataStore();
+    // 增设当前拖动元素
+    let currentComponent = null;
+    const dragenter = (e) => {
+        // 增设图标
+        e.dataTransfer.dropEffect = "move";
+    };
+    const dragover = (e) => {
+        e.preventDefault();
+    };
+    const dragleave = (e) => {
+        // 增设离开图标
+        e.dataTransfer.dropEffect = "none";
+    };
+    const drop = (e) => {
+
+        editorDataStore.data.blocks.push({
+            top: e.offsetY,
+            left: e.offsetX,
+            zIndex: 1,
+            key: currentComponent.key,
+            alignCenter: true, // 希望松手的时候可以居中
+            id: String(new Date().getTime()) + String(Math.floor(Math.random() * 1000)),// 这里用于生成id便于for的key，不然出现很多bug
+            props: {},
+            model: {}
+        },)
 
 
         currentComponent = null;
@@ -51,7 +50,7 @@ export function useMenuDragger(containerRef) {
         currentComponent = component;
         events.emit("start"); // 发布start
     };
-    const dragEnd = (e) => {
+    const dragEnd = () => {
         // 移除事件
         containerRef.value.removeEventListener("dragenter", dragenter);
         containerRef.value.removeEventListener("dragover", dragover);

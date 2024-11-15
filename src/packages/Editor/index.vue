@@ -39,8 +39,8 @@
         >
           <div class="editor-left-menu-content">
             <div
-              class="editor-left-menu-content-row"
-              v-for="item in config.componentList.filter(
+                class="editor-left-menu-content-row"
+                v-for="item in config.componentList.filter(
                 (i) => i.category.indexOf(menu.id) !== -1
               )"
                 :key="item.key"

@@ -1,5 +1,5 @@
 <template>
-  <ElDialog v-model="state.isShow">
+  <ElDialog v-model="state.isShow" title="预览">
     <template v-slot:default>
       <div class="editor-container-canvas">
         <!-- 产生内容区域 -->
@@ -31,7 +31,8 @@
 
 <script setup>
 import EditorBlocks from "../../packages/EditorBlocks/index.vue";
-import { useEditorDataStore } from "@/store/index.js";
+import {useEditorDataStore} from "../../store/index.js";
+
 const EditorDataStore = useEditorDataStore();
 const props = defineProps({
   option: {type: Object},
@@ -56,7 +57,7 @@ const onConfirm = () => {
   state.isShow = false;
 };
 
-function showDialog(option) {
+function showDialog() {
   state.isShow = true;
   state.option = option;
 }
@@ -87,7 +88,6 @@ defineExpose({
     width: 4.2857rem;
     border: #e3e3e3 .0143rem solid;
     background-color: #fff;
-    height: 11.4286rem;
     height: calc(100% - 1.4286rem);
     box-shadow: .0714rem .0571rem .1143rem rgba(0, 0, 0, 0.15);
     transition: all 0.5s;

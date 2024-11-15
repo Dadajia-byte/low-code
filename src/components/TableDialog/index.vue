@@ -9,7 +9,7 @@
         <el-table-column type="index"></el-table-column>
         <el-table-column
             align="center"
-            v-for="(item, index) in state.option.config.table.options"
+            v-for="item in state.option.config.table.options"
             :label="item.label"
         >
           <template #default="{ row }">

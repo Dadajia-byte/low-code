@@ -1,5 +1,5 @@
 import {events} from "../event";
-import {useEditorDataStore} from "@/store/index.js";
+import {useEditorDataStore} from "../../store/index.js";
 import {cloneDeep} from "lodash";
 
 let history = [];
