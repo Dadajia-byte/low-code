@@ -14,15 +14,19 @@ const state = reactive({
   option: props.option,
   isShow: false,
   top: 0,
-  left: 0
+  left: 0,
 })
 defineExpose({
   showDropdown(option) {
     state.option = option;
     state.isShow = true;
-    let {top, left, height} = option.el.getBoundingClientRect();
-    state.top = top + height;
-    state.left = left;
+    nextTick(() => { // 这里必须等待dom更新完成后再执行，否则获取的dropHeight为0
+      let {top, left} = option.el.getBoundingClientRect();
+      let canvasHeight = document.querySelector('.editor-container-canvas').clientHeight;
+      let dropdownHeight = el.value.clientHeight;
+      state.top = (top + dropdownHeight > canvasHeight) ? top - dropdownHeight : top; // 判断实现dropMenu是否会超出画布，并做出相应处理
+      state.left = left;
+    });
   },
 })
 const onMousedownDocument = (e) => {
@@ -40,7 +44,7 @@ onMounted(() => {
   document.addEventListener('mousedown', onMousedownDocument, true)
 })
 onBeforeUnmount(() => {
-  documentNaNpxoveEventListener('mousedown', onMousedownDocument)
+  document.removeEventListener('mousedown', onMousedownDocument)
 })
 </script>
 

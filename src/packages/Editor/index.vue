@@ -249,7 +249,7 @@
 import EditorTop from "../EditorTop/index.vue";
 import EditorBlocks from "../EditorBlocks/index.vue";
 import EditorOperator from "../EditorOperator/index.vue";
-import {events} from "../../utils/event";
+import {events} from "@/utils/event.js";
 import {useBlockDragger, useBlockResize, useCommand, useFocus, useMenuDragger,} from "@/utils/DragCommand";
 import {$dropdown} from "@/components/Dropdown";
 import DropdownItem from "@/components/Dropdown/components/DropdownItem/index.vue";
@@ -376,7 +376,6 @@ const onContextMenu = (e) => {
     return {
       left: e.clientX,
       top: e.clientY,
-      height: 0,
     };
   };
 
@@ -398,6 +397,12 @@ const onContextBlock = (e, block) => {
   if (!editorOperatorStatus.value) return; // 抓手模式不需要右键菜单
   e.stopPropagation();
   e.preventDefault();
+  e.getBoundingClientRect = () => {
+    return {
+      left: e.clientX,
+      top: e.clientY,
+    };
+  };
   let ifBlocks = false;
   if (Array.isArray(block)) ifBlocks = true;
   const contentVnode = h("div", {}, [
@@ -486,7 +491,8 @@ const onContextBlock = (e, block) => {
     }),
   ]);
   $dropdown({
-    el: e.target, // 以哪个元素作为基准
+    // el: e.target, // 以哪个元素作为基准
+    el:e, // 原来是以某个元素为基准，现在变成鼠标位置
     content: () => contentVnode,
   });
 };
