@@ -23,7 +23,7 @@ const hide = inject('hide')
 .dropdown-item {
   display: flex;
   justify-content: space-between;
-  padding: 0rem .1714rem;
+  padding: 0 .1714rem;
   line-height: .3143rem;
   margin-top: .0714rem;
   text-align: center;
@@ -50,7 +50,7 @@ const hide = inject('hide')
 .dropdown-item-disabled {
   display: flex;
   justify-content: space-between;
-  padding: 0rem .1714rem;
+  padding: 0 .1714rem;
   line-height: .3143rem;
   margin-top: .0714rem;
   text-align: center;
