@@ -114,7 +114,7 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale, callba
     mouseDrag.value.dragging = true;
     mouseDrag.value.startX = x;
     mouseDrag.value.startY = y;
-    
+
     document.addEventListener('mousemove', onMouseMoveSelect);
     document.addEventListener('mouseup', onMouseUpSelect);
 
@@ -124,23 +124,24 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale, callba
   //鼠标移动
   const onMouseMoveSelect = (e) => {
     const { x, y } = getCorrectedMousePosition(e);
-    mouseDrag.value.currentX = x;
-    mouseDrag.value.currentY = y;
-    
     const {
       left: containerLeft,
       top: containerTop,
       width: containerWidth,
       height: containerHeight
     } = containerRef.value.getBoundingClientRect();
+    mouseDrag.value.currentX = Math.min(containerWidth,Math.max(0, x));
+    mouseDrag.value.currentY = Math.min(containerHeight,Math.max(0, y));
+
+   
     const width = Math.abs(mouseDrag.value.currentX - mouseDrag.value.startX);
     const height = Math.abs(mouseDrag.value.currentY - mouseDrag.value.startY);
 
-    const newLeft = Math.min(mouseDrag.value.startX, mouseDrag.value.currentX);
-    const newTop = Math.min(mouseDrag.value.startY, mouseDrag.value.currentY);
-    const newWidth = Math.min(Math.abs(width), containerWidth - (newLeft - containerLeft));
-    const newHeight = Math.min(Math.abs(height), containerHeight - (newTop - containerTop));
-    
+    const newLeft = Math.max(0, Math.min(mouseDrag.value.startX, mouseDrag.value.currentX));
+    const newTop = Math.max(0, Math.min(mouseDrag.value.startY, mouseDrag.value.currentY));
+    const newWidth = Math.min(Math.abs(width), newLeft + width);
+    const newHeight = Math.min(Math.abs(height), newTop + height);
+
     mouseSelectArea.value.top = newTop;
     mouseSelectArea.value.left = newLeft;
     mouseSelectArea.value.width = newWidth;
@@ -155,10 +156,10 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale, callba
       currentX: 0,
       currentY: 0,
     };
-    mouseSelectArea.top = 0;
-    mouseSelectArea.left = 0;
-    mouseSelectArea.width = 0;
-    mouseSelectArea.height = 0;
+    mouseSelectArea.value.top = 0;
+    mouseSelectArea.value.left = 0;
+    mouseSelectArea.value.width = 0;
+    mouseSelectArea.value.height = 0;
   };
   //鼠标抬起
   const onMouseUpSelect = () => {
@@ -170,10 +171,10 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale, callba
       const itemBottom = top + height;
 
       item.focus = (
-        top >= mouseSelectArea.top &&
-        left >= mouseSelectArea.left &&
-        itemBottom <= mouseSelectArea.top + mouseSelectArea.height &&
-        itemRight <= mouseSelectArea.left + mouseSelectArea.width
+        top >= mouseSelectArea.value.top &&
+        left >= mouseSelectArea.value.left &&
+        itemBottom <= mouseSelectArea.value.top + mouseSelectArea.value.height &&
+        itemRight <= mouseSelectArea.value.left + mouseSelectArea.value.width
       );
     });
     resetDragData();
