@@ -7,7 +7,7 @@ let historyIndex = -1;
 export const setHistoryIndex = (num)=>{
     historyIndex = num
 }
-function useBlockResize(focusData,selectionBounds,data) {
+function useBlockResize(focusData,selectionBounds,scale,data) {
     const editorDataStore = useEditorDataStore();
     let stateData = {}
     // 获取容器边界
@@ -18,8 +18,8 @@ function useBlockResize(focusData,selectionBounds,data) {
 
         blocks.forEach((block) => {
             let { startWidth, startHeight, startLeft, startTop } = block;
-            let durX = clientX - startX;
-            let durY = clientY - startY;
+            let durX = (clientX - startX)/scale.value;
+            let durY = (clientY - startY)/scale.value;
 
             if (direction.horizontal === 'center') {
                 clientX = startX;

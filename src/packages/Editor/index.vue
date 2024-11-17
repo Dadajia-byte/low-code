@@ -353,7 +353,7 @@ let { mousedown, markline } = useBlockDragger(
 );
 
 // 4. 实现组件缩放
-let { onMouseDown } = useBlockResize(focusData, selectionBounds, EditorDataStore.data);
+let { onMouseDown } = useBlockResize(focusData, selectionBounds, scale,EditorDataStore.data);
 
 
 
