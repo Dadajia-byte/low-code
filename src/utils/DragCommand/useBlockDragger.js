@@ -126,20 +126,21 @@ export function useBlockDragger(focusData, lastSelectBlock,containerRef,scale, d
     focusData.value.focus.forEach((block, index) => {
       block.top = dragState.startPos[index].top + durY;
       block.left = dragState.startPos[index].left + durX;
-    });
-  };
-  const mouseup = (e) => {
-    document.removeEventListener("mousemove", mousemove);
-    document.removeEventListener("mouseup", mouseup);
-    markline.x = null;
-    markline.y = null;
-    if (dragState.dragging) {
-      events.emit("end");
-    }
-  };
+   
+        });
+    };
+    const mouseup = () => {
+        document.removeEventListener("mousemove", mousemove);
+        document.removeEventListener("mouseup", mouseup);
+        markline.x = null;
+        markline.y = null;
+        if (dragState.dragging) {
+            events.emit("end");
+        }
+    };
 
-  return {
-    mousedown,
-    markline,
-  };
+    return {
+        mousedown,
+        markline,
+    };
 }

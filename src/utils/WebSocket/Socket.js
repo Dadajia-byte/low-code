@@ -1,4 +1,5 @@
 import {event} from '../event'
+
 /* export interface HeaderBeatProps {
   //心跳发送时间
   time: number;
@@ -20,66 +21,71 @@ class Socket extends WebSocket {
     reconnectTimmer;
     reconnectCurrent;
     url;
-    constructor(url,protocols) {
-        super(url,protocols);
+
+    constructor(url, protocols) {
+        super(url, protocols);
         this.WebSocketState = false;
         this.heartBeat = {
-            time:30*1000,
-            timeout:3*1000,
-            reconnect:10*1000,
+            time: 30 * 1000,
+            timeout: 3 * 1000,
+            reconnect: 10 * 1000,
         }
-        this.reconnectCurrent=0;
-        this.url=url;
-        this.reconnectTimmer=null;
-        this.isReconnect=true;
+        this.reconnectCurrent = 0;
+        this.url = url;
+        this.reconnectTimmer = null;
+        this.isReconnect = true;
         return this
     }
-    init(heartBeatConfig,isReconnect=true) {
-        if(heartBeatConfig) this.heartBeat =heartBeatConfig;
+
+    init(heartBeatConfig, isReconnect = true) {
+        if (heartBeatConfig) this.heartBeat = heartBeatConfig;
         this.isReconnect = isReconnect;
-        this.onopen = ()=>{
+        this.onopen = () => {
             console.log('连接成功');
             this.WebSocketState = true;
             this.send(JSON.stringify({
-                type:'heart_beat',
-                msg:new Date().toString(),
-                url:this.url,
+                type: 'heart_beat',
+                msg: new Date().toString(),
+                url: this.url,
             }));
-            if(heartBeatConfig?.openHandler) heartBeatConfig?.openHandler();
+            if (heartBeatConfig?.openHandler) heartBeatConfig?.openHandler();
         }
-        this.onclose = (error)=>{
-            console.error('连接断开',error);
+        this.onclose = (error) => {
+            console.error('连接断开', error);
             this.WebSocketState = false;
             this.reconnectWebSocket();
-            if(heartBeatConfig?.closeHandler) heartBeatConfig?.closeHandler();
+            if (heartBeatConfig?.closeHandler) heartBeatConfig?.closeHandler();
         }
-        this.onerror = ()=>{
+        this.onerror = () => {
             this.WebSocketState = false;
             console.error('连接错误,请查看网络条件');
-            if(heartBeatConfig?.errorHandler) heartBeatConfig?.errorHandler();
+            if (heartBeatConfig?.errorHandler) heartBeatConfig?.errorHandler();
         }
-        this.onmessage = (e)=>{
-            console.log('收到消息',e);
-            if(heartBeatConfig?.messageHandler) heartBeatConfig?.messageHandler(e);
+        this.onmessage = (e) => {
+            console.log('收到消息', e);
+            if (heartBeatConfig?.messageHandler) heartBeatConfig?.messageHandler(e);
         }
     }
-    getMsg(){}
-    
-    startHeartBeat(time){
-        setTimeout(()=>{
-            if(this.WebSocketState) {
+
+    getMsg() {
+    }
+
+    startHeartBeat(time) {
+        setTimeout(() => {
+            if (this.WebSocketState) {
                 this.send(JSON.stringify({
-                    type:'heart_beat',
-                    msg:new Date().toString(),
-                    url:this.url,
+                    type: 'heart_beat',
+                    msg: new Date().toString(),
+                    url: this.url,
                 }));
                 console.log('发送心跳消息');
                 this.waitingServer()
             }
-        },time)
+        }, time)
     }
-    waitingServer(){
-        setTimeout(()=>{
+
+    waitingServer() {
+        setTimeout(() => {
             if (this.webSocketState) {
                 this.startHeartBeat(this.heartBeat.time)
                 return
@@ -91,8 +97,9 @@ class Socket extends WebSocket {
                 console.error('链接已关闭');
             }
             this.reconnectWebSocket()
-        },this.heartBeat.timeout)
+        }, this.heartBeat.timeout)
     }
+
     reconnectWebSocket() {
         if (!this.isReconnect) return;
         if (this.reconnectCurrent === this.heartBeat.reconnectTotal) {
@@ -106,4 +113,5 @@ class Socket extends WebSocket {
         }, this.heartBeat.reconnect)
     }
 }
+
 export default Socket;

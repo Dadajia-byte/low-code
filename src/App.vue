@@ -5,15 +5,14 @@
 </template>
 <script setup>
 import './assets/icons/iconfont/iconfont.css'
-import { registerConfig as config } from './utils/EditorConfig';
+import {registerConfig as config} from './utils/EditorConfig';
 provide('config', config)
 
 
 </script>
 
 
-
-<style >
+<style>
 .app {
   height: 100vh;
 }
