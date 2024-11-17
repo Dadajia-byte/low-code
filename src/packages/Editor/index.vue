@@ -342,13 +342,21 @@ const {dragStart, dragEnd} = useMenuDragger(
     containerRef,
     EditorDataStore.data
 );
+//画布偏移量，用于拖拽
+const offsetState = ref({
+    preOffsetX: 0,
+    preOffsetY: 0,
+    offsetX: 0,
+    offsetY: 0,
+
+  })
 
 
 // 5. 实现滚轮缩放
 let{
   handleMousewheel,
   scale,
-} = useMouseWheel(containerRef)
+} = useMouseWheel(containerRef,offsetState)
 
 // 2.获取焦点后即可直接拖拽
 let {
@@ -360,8 +368,8 @@ let {
   selectionBounds,
   selectionBoundsMouseDown,
   mouseSelectArea,
-  mouseDrag
-} = useFocus(EditorDataStore.data, editorOperatorStatus,containerRef,scale, (e) => {
+  mouseDrag,
+} = useFocus(EditorDataStore.data, editorOperatorStatus, containerRef,scale,offsetState, (e) => {
   mousedown(e);
 });
 

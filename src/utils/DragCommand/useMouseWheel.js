@@ -2,7 +2,7 @@ import { reactive, ref } from "vue";
 
 
 
-export function useMouseWheel(containerRef) {
+export function useMouseWheel(containerRef,offsetState) {
 
     
     let scale = ref(1);//缩放比例
@@ -38,8 +38,8 @@ export function useMouseWheel(containerRef) {
         let offsetY = (1 - scaleRatio) * (clientY - rect.top);
         
         // 更新容器的变换样式以实现缩放和位置调整
-        container.style.transform = `scale(${newScale})`;
-        // container.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${newScale})`;
+        // container.style.transform = `transl scale(${newScale})`;
+        container.style.transform = `translate(${offsetState.value.preOffsetX}px, ${offsetState.value.preOffsetX}px) scale(${newScale})`;
     }
 
    
