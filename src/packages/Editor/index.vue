@@ -95,7 +95,8 @@
           ref="containerRef"
           :style="containerStyles"
           @mousedown="(e) => containerMouseDown(e)"
-          @contextmenu="(e) => onContextMenu(e)"
+          @contextmenu.prevent="(e) => onContextMenu(e, null)"
+          @wheel="(e) =>handleMousewheel(e)"
         >
           <canvas
             ref="canvasRef"
@@ -245,13 +246,20 @@
 import EditorTop from "../EditorTop/index.vue";
 import EditorBlocks from "../EditorBlocks/index.vue";
 import EditorOperator from "../EditorOperator/index.vue";
-import {events} from "@/utils/event.js";
-import {useBlockDragger, useBlockResize, useCommand, useFocus, useMenuDragger,} from "@/utils/DragCommand";
-import {$dropdown} from "@/components/Dropdown";
+import { events } from "../../utils/event";
+import {
+  useFocus,
+  useMenuDragger,
+  useBlockDragger,
+  useBlockResize,
+  useCommand,
+  useMouseWheel,
+} from "@/utils/DragCommand";
+import { $dropdown } from "@/components/Dropdown";
 import DropdownItem from "@/components/Dropdown/components/DropdownItem/index.vue";
-import {$dialog} from "@/components/Dialog";
-import {$previewDialog} from "../../components/PreviewDialog";
-import {useEditorDataStore} from "@/store/index";
+import { $dialog } from "@/components/Dialog";
+import { $previewDialog } from "../../components/PreviewDialog";
+import { useEditorDataStore } from "@/store/index";
 
 const EditorDataStore = useEditorDataStore();
 // 预览时 内容不再能操作，可以点击输入内容，方便看效果
@@ -260,7 +268,6 @@ const previewRef = ref(false);
 const editorOperatorStatus = ref(true);
 
 const config = inject("config");
-// const data = EditorDataStore.data
 // 获取data.json中的样式
 const containerStyles = computed(() => ({
   width: `${EditorDataStore.data.container.width}px`,
@@ -331,6 +338,13 @@ const { dragStart, dragEnd } = useMenuDragger(
   EditorDataStore.data
 );
 
+
+// 5. 实现滚轮缩放
+let{
+  handleMousewheel,
+  scale,
+} = useMouseWheel(containerRef)
+
 // 2.获取焦点后即可直接拖拽
 let {
   blockMouseDown,
@@ -341,8 +355,8 @@ let {
   selectionBounds,
   selectionBoundsMouseDown,
   mouseSelectArea,
-  mouseDrag,
-} = useFocus(EditorDataStore.data, editorOperatorStatus, containerRef, (e) => {
+  mouseDrag
+} = useFocus(EditorDataStore.data, editorOperatorStatus,containerRef,scale, (e) => {
   mousedown(e);
 });
 
@@ -350,15 +364,16 @@ let {
 let { mousedown, markline } = useBlockDragger(
   focusData,
   lastSelectBlock,
+  containerRef,
+  scale,
   EditorDataStore.data,
   selectionBounds
 );
+
 // 4. 实现组件缩放
-let { onMouseDown } = useBlockResize(
-  focusData,
-  selectionBounds,
-  EditorDataStore.data
-);
+let { onMouseDown } = useBlockResize(focusData, selectionBounds, scale,EditorDataStore.data);
+
+
 
 // 用于保存可能使用的所有指令(操作)
 const { commands } = useCommand(EditorDataStore.data, focusData, containerRef);
