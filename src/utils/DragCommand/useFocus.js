@@ -98,7 +98,7 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale,offsetS
   };
   //鼠标点击画板
   const containerMouseDown = (e) => {
-    if (editorOperatorStatus.value) {
+    if (!editorOperatorStatus.value) {
       // onMouseDownGrab(e);
       return;
     }
