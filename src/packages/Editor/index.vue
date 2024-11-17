@@ -46,10 +46,10 @@
                 :key="item.key"
             >
               <div
-                draggable="true"
-                @dragstart="(e) => dragStart(e, item)"
-                @dragend="(e) => dragEnd(e)"
-                class="editor-left-menu-content-item"
+                  draggable="true"
+                  @dragstart="(e) => dragStart(e, item)"
+                  @dragend="(e) => dragEnd(e, item)"
+                  class="editor-left-menu-content-item"
               >
                 <component :is="item.preview"></component>
               </div>
@@ -114,12 +114,12 @@
               :class="{
               'editor-block-focus': item.focus,
             }"
-            :block="item"
-            @mousedown="(e) => blockMouseDown(e, item, index)"
-            :focusBlocksNum="focusData.focus.length"
-            @Contextmenu="(e) => onContextBlock(e, item)"
-            :blockResizeMousedown="onMouseDown"
-            :formData="EditorDataStore.formData"
+              :block="item"
+              @mousedown="(e) => blockMouseDown(e, item, index)"
+              :focusBlocksNum="focusData.focus.length"
+              @Contextmenu="(e) => onContextBlock(e, item)"
+              :blockReizeMousedown="onMouseDown"
+              :formData="EditorDataStore.formData"
           >
           </EditorBlocks>
           <!-- 辅助线 -->
