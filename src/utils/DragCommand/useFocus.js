@@ -1,4 +1,4 @@
-import { reactive } from "vue";
+
 
 /**
  *
@@ -8,7 +8,7 @@ import { reactive } from "vue";
  * @param {*function} callback 回调函数
  * @returns
  */
-export function useFocus(data, editorOperatorStatus, containerRef, scale, callback) {
+export function useFocus(data, editorOperatorStatus, containerRef, scale,offsetState, callback) {
 
   const selectIndex = ref(-1); // 记录最后一个被点击的元素
   const lastSelectBlock = computed(() => data.blocks[selectIndex.value]);
@@ -48,7 +48,7 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale, callba
       height: maxY - minY + 6
     }
   })
-
+  //鼠标拖拽状态
   const mouseDrag = ref({
     dragging: false,
     startX: 0,
@@ -56,7 +56,7 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale, callba
     currentX: 0,
     currentY: 0,
   });
-
+  
 
   function getCorrectedMousePosition(e) {
     const rect = containerRef.value.getBoundingClientRect();
@@ -103,7 +103,10 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale, callba
   };
   //鼠标点击画板
   const containerMouseDown = (e) => {
-    if (editorOperatorStatus.value) return;
+    if (editorOperatorStatus.value) {
+      // onMouseDownGrab(e);
+      return;
+    }
     e.preventDefault();
     e.stopPropagation();
     clearBlockFocus();
@@ -120,8 +123,46 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale, callba
 
   };
 
+  //鼠标抓手移动点击
+  const onMouseDownGrab = (e) => {
 
-  //鼠标移动
+    e.preventDefault();
+    e.stopPropagation();
+    clearBlockFocus();
+
+    const { x, y } = getCorrectedMousePosition(e);
+
+    mouseDrag.value.startX = x;
+    mouseDrag.value.startY = y;
+    document.addEventListener("mousemove", onMouseMoveGrab);
+    document.addEventListener("mouseup", onMouseUpGrab);
+  };
+  const onMouseMoveGrab = (e) => {
+    const { x, y } = getCorrectedMousePosition(e)
+    mouseDrag.value.currentX = x;
+    mouseDrag.value.currentY = y;
+    offsetState.value.offsetX = mouseDrag.value.currentX - mouseDrag.value.startX
+    offsetState.value.offsetY = mouseDrag.value.currentY - mouseDrag.value.startY
+    
+    containerRef.value.style.transform = `translate(${offsetState.value.offsetX + offsetState.value.preOffsetX}px, ${offsetState.value.offsetY + offsetState.value.preOffsetY}px) scale(${scale.value})`;
+  };
+  const onMouseUpGrab = (e) => {
+    const { x, y } = getCorrectedMousePosition(e)
+    mouseDrag.value.currentX = x;
+    mouseDrag.value.currentY = y;
+    // 计算本次拖拽的偏移量
+    const finalOffsetX = mouseDrag.value.currentX - mouseDrag.value.startX;
+    const finalOffsetY = mouseDrag.value.currentY - mouseDrag.value.startY;
+
+    // 更新累计偏移量
+    offsetState.value.preOffsetX += finalOffsetX;
+    offsetState.value.preOffsetY += finalOffsetY;
+
+    document.removeEventListener('mousemove', onMouseMoveGrab);
+    document.removeEventListener('mouseup', onMouseUpGrab);
+  };
+
+  //鼠标选取移动
   const onMouseMoveSelect = (e) => {
     const { x, y } = getCorrectedMousePosition(e);
     const {
@@ -130,10 +171,10 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale, callba
       width: containerWidth,
       height: containerHeight
     } = containerRef.value.getBoundingClientRect();
-    mouseDrag.value.currentX = Math.min(containerWidth,Math.max(0, x));
-    mouseDrag.value.currentY = Math.min(containerHeight,Math.max(0, y));
+    mouseDrag.value.currentX = Math.min(containerWidth, Math.max(0, x));
+    mouseDrag.value.currentY = Math.min(containerHeight, Math.max(0, y));
 
-   
+
     const width = Math.abs(mouseDrag.value.currentX - mouseDrag.value.startX);
     const height = Math.abs(mouseDrag.value.currentY - mouseDrag.value.startY);
 
@@ -147,7 +188,7 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale, callba
     mouseSelectArea.value.width = newWidth;
     mouseSelectArea.value.height = newHeight;
   };
-
+  //重置拖拽数据
   const resetDragData = () => {
     mouseDrag.value = {
       dragging: false,
@@ -160,6 +201,8 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale, callba
     mouseSelectArea.value.left = 0;
     mouseSelectArea.value.width = 0;
     mouseSelectArea.value.height = 0;
+
+
   };
   //鼠标抬起
   const onMouseUpSelect = () => {
@@ -197,6 +240,7 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale, callba
     clearBlockFocus,
     selectionBounds: calculateSelectionBounds,
     mouseSelectArea,
-    mouseDrag
+    mouseDrag,
+   
   };
 }
