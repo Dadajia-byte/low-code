@@ -3,11 +3,6 @@ import {cloneDeep} from "lodash";
 import {useEditorDataStore} from "@/store/index.js";
 import {getActivePinia, setActivePinia} from 'pinia';
 import {history, historyIndex, setHistoryIndex} from "./useBlockResize";
-import {events} from "../event";
-import {cloneDeep} from "lodash";
-import {useEditorDataStore} from "@/store/index.js";
-import {getActivePinia, setActivePinia} from 'pinia';
-import {history, historyIndex, setHistoryIndex} from "./useBlockResize";
 
 
 export const useCommand = (data, focusData, containerRef = null) => {

@@ -1,5 +1,4 @@
 import {events} from "../event";
-import {events} from "../event";
 
 export function useBlockDragger(focusData, lastSelectBlock,containerRef,scale, data,selectionBounds) {
   let dragState = {
