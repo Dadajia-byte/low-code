@@ -6,7 +6,7 @@
  * @param {*function} callback 回调函数
  * @returns 
  */
-export function useFocus(data,  editorOperatorStatus,containerRef, callback) {
+export function useFocus(data,  editorOperatorStatus,containerRef,scale, callback) {
 
   const selectIndex = ref(-1); // 记录最后一个被点击的元素
   const lastSelectBlock = computed(() => data.blocks[selectIndex.value]);
@@ -52,16 +52,27 @@ export function useFocus(data,  editorOperatorStatus,containerRef, callback) {
     currentX: 0,
     currentY: 0,
   });
+
+
+  function getCorrectedMousePosition(e) {
+    const rect = containerRef.value.getBoundingClientRect();
+    // 校正鼠标位置，缩放对应的缩放比例
+    const correctedX = (e.clientX - rect.left) / scale.value;
+    const correctedY = (e.clientY - rect.top) / scale.value;
+    return { x: correctedX, y: correctedY };
+  }
   //鼠标选取范围
-  const mouseSelectArea = reactive({
+  const mouseSelectArea = ref({
     top: 0,
     left: 0,
     width: 0,
-    height: 0,
+    height: 0
   });
 
   const clearBlockFocus = () => {
-    data.blocks.forEach((item) => item.focus = false)
+    data.blocks.forEach((item) => {
+      item.focus = false;
+    });
   };
   const blockMouseDown = (e, block, index) => {
     if (!editorOperatorStatus.value) return;
@@ -93,33 +104,27 @@ export function useFocus(data,  editorOperatorStatus,containerRef, callback) {
     clearBlockFocus();
     selectIndex.value = -1;
     // 初始化
-    mouseDrag.value = {
-      dragging: true,
-      startX: e.clientX,
-      startY: e.clientY,
-      currentX: e.clientX,
-      currentY: e.clientY,
-    };
+    const { x, y } = getCorrectedMousePosition(e);  // 获取相对于画布的坐标
+    mouseDrag.value.dragging = true;
+    mouseDrag.value.startX = x;
+    mouseDrag.value.startY = y;
+    
     document.addEventListener('mousemove', onMouseMoveSelect);
     document.addEventListener('mouseup', onMouseUpSelect);
+
   };
   //鼠标移动
   const onMouseMoveSelect = (e) => {
-    mouseDrag.value.currentX = e.clientX;
-    mouseDrag.value.currentY = e.clientY;
-    const { left: containerLeft, top: containerTop, width: containerWidth, height: containerHeight } = containerRef.value.getBoundingClientRect();
-    const width = mouseDrag.value.currentX - mouseDrag.value.startX;
-    const height = mouseDrag.value.currentY - mouseDrag.value.startY;
+    const { x, y } = getCorrectedMousePosition(e);
+    mouseDrag.value.currentX = x;
+    mouseDrag.value.currentY = y;
 
-    const newLeft = Math.max(containerLeft, Math.min(mouseDrag.value.startX, mouseDrag.value.currentX));
-    const newTop = Math.max(containerTop, Math.min(mouseDrag.value.startY, mouseDrag.value.currentY));
-    const newWidth = Math.min(Math.abs(width), containerWidth - (newLeft - containerLeft));
-    const newHeight = Math.min(Math.abs(height), containerHeight - (newTop - containerTop));
-
-    mouseSelectArea.top = newTop - containerTop;
-    mouseSelectArea.left = newLeft - containerLeft;
-    mouseSelectArea.width = newWidth;
-    mouseSelectArea.height = newHeight;
+    mouseSelectArea.value = {
+      top: Math.min(mouseDrag.value.startY, mouseDrag.value.currentY),
+      left: Math.min(mouseDrag.value.startX, mouseDrag.value.currentX),
+      width: Math.abs(mouseDrag.value.currentX - mouseDrag.value.startX),
+      height: Math.abs(mouseDrag.value.currentY - mouseDrag.value.startY),
+    };
   };
 
   const resetDragData = () => {
@@ -130,12 +135,15 @@ export function useFocus(data,  editorOperatorStatus,containerRef, callback) {
       currentX: 0,
       currentY: 0,
     };
-    mouseSelectArea.top = 0;
-    mouseSelectArea.left = 0;
-    mouseSelectArea.width = 0;
-    mouseSelectArea.height = 0;
+
+    mouseSelectArea.value = {
+      top: 0,
+      left: 0,
+      width: 0,
+      height: 0
+    };
   };
-//鼠标抬起
+  //鼠标抬起
   const onMouseUpSelect = () => {
     mouseDrag.value.dragging = false;
 
@@ -145,18 +153,17 @@ export function useFocus(data,  editorOperatorStatus,containerRef, callback) {
       const itemBottom = top + height;
 
       item.focus = (
-        top >= mouseSelectArea.top &&
-        left >= mouseSelectArea.left &&
-        itemBottom <= mouseSelectArea.top + mouseSelectArea.height &&
-        itemRight <= mouseSelectArea.left + mouseSelectArea.width
+        top >= mouseSelectArea.value.top &&
+        left >= mouseSelectArea.value.left &&
+        itemBottom <= mouseSelectArea.value.top + mouseSelectArea.value.height &&
+        itemRight <= mouseSelectArea.value.left + mouseSelectArea.value.width
       );
     });
     resetDragData();
     document.removeEventListener('mousemove', onMouseMoveSelect);
     document.removeEventListener('mouseup', onMouseUpSelect);
-    
   };
- 
+
   const selectionBoundsMouseDown = (e) => {
     if (!editorOperatorStatus.value) return;
     e.stopPropagation();
