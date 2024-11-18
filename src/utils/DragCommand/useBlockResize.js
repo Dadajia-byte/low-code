@@ -1,25 +1,25 @@
+import {events} from "../event";
+import {useEditorDataStore} from "@/store/index.js";
+import {cloneDeep} from "lodash";
 
-import { events } from "../event";
-import { useEditorDataStore}  from "../../store/module/editorData";
-import { cloneDeep } from "lodash";
 let history = [];
 let historyIndex = -1;
-export const setHistoryIndex = (num)=>{
+export const setHistoryIndex = (num) => {
     historyIndex = num
 }
-function useBlockResize(focusData,selectionBounds,data) {
+function useBlockResize(focusData,selectionBounds,scale,data) {
     const editorDataStore = useEditorDataStore();
     let stateData = {}
     // 获取容器边界
-    const containerRect = data.container;    
+    const containerRect = data.container;
     const onMouseMove = (e) => {
-        let { clientX, clientY } = e;
-        let { startX, startY, blocks, direction, dragging } = stateData;
+        let {clientX, clientY} = e;
+        let {startX, startY, blocks, direction, dragging} = stateData;
 
         blocks.forEach((block) => {
             let { startWidth, startHeight, startLeft, startTop } = block;
-            let durX = clientX - startX;
-            let durY = clientY - startY;
+            let durX = (clientX - startX)/scale.value;
+            let durY = (clientY - startY)/scale.value;
 
             if (direction.horizontal === 'center') {
                 clientX = startX;
@@ -68,8 +68,8 @@ function useBlockResize(focusData,selectionBounds,data) {
             events.emit('resizeStart');
         }
     }
-    
-    const onMouseDown = (e,direction)=>{
+
+    const onMouseDown = (e, direction) => {
         e.stopPropagation();
         const blocks = [
             selectionBounds.value,
@@ -95,10 +95,10 @@ function useBlockResize(focusData,selectionBounds,data) {
         }
         history.push(cloneDeep(editorDataStore.data.blocks));
         setHistoryIndex(history.length - 1);
-        console.log(history,'before');
-        
-        document.body.addEventListener('mousemove',onMouseMove)
-        document.body.addEventListener('mouseup',onMouseUp)
+        console.log(history, 'before');
+
+        document.body.addEventListener('mousemove', onMouseMove)
+        document.body.addEventListener('mouseup', onMouseUp)
     }
     const onMouseUp = () => {
         if (stateData.dragging) {
@@ -108,8 +108,8 @@ function useBlockResize(focusData,selectionBounds,data) {
             // 记录缩放结束时的状态
             history.push(cloneDeep(editorDataStore.data.blocks));
             setHistoryIndex(history.length - 1);
-            console.log(history,'after');
-            
+            console.log(history, 'after');
+
         }
 
         document.body.removeEventListener('mousemove', onMouseMove);
@@ -119,7 +119,7 @@ function useBlockResize(focusData,selectionBounds,data) {
     return {
         onMouseDown
     }
-    
+
 }
 
 export {

@@ -3,11 +3,12 @@
 }
 
 .custom1-color {
-   --el-color-primary: #6965db; /* 主色 */
-    --el-color-hover: #6965db; /* hover 颜色 */
-    --el-color-focus: #6965db; /* focus 颜色 */
-    --el-color-active: #6965db; /* active 颜色 */
+  --el-color-primary: #6965db; /* 主色 */
+  --el-color-hover: #6965db; /* hover 颜色 */
+  --el-color-focus: #6965db; /* focus 颜色 */
+  --el-color-active: #6965db; /* active 颜色 */
 }
+
 /* 自定义滚动条样式 */
 ::-webkit-scrollbar {
   width: 4px; /* 滚动条宽度 */
@@ -31,3 +32,4 @@
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0, 0, 0, 0.4); /* 悬停时滑块颜色 */
 }
+

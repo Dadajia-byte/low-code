@@ -2,7 +2,7 @@
   <div class="editor">
     <!-- 左侧物料堆 -->
     <div
-      class="editor-left"
+      class="editor-left custom1-color"
       :style="{ left: isExpanded ? '-4.1429rem' : '.0714rem' }"
     >
       <el-text class="mx-1 editor-left-title" size="large">物料堆</el-text>
@@ -14,13 +14,11 @@
           margin-bottom: 0.0714rem;
         "
       />
-      <el-select
-        filterable
-        placeholder="nodo搜索,树形更好？"
-        class="editor-left-search"
-      >
+      <el-select filterable placeholder="search sth" class="editor-left-search">
         <template #prefix>
-          <el-icon><i-ep-Search /></el-icon>
+          <el-icon>
+            <i-ep-Search />
+          </el-icon>
         </template>
         <el-option />
       </el-select>
@@ -39,14 +37,14 @@
             <div
               class="editor-left-menu-content-row"
               v-for="item in config.componentList.filter(
-                (item) => item.category.indexOf(menu.id) !== -1
+                (i) => i.category.indexOf(menu.id) !== -1
               )"
               :key="item.key"
             >
               <div
                 draggable="true"
                 @dragstart="(e) => dragStart(e, item)"
-                @dragend="(e) => dragEnd(e, item)"
+                @dragend="(e) => dragEnd(e)"
                 class="editor-left-menu-content-item"
               >
                 <component :is="item.preview"></component>
@@ -66,8 +64,9 @@
         <el-icon
           :style="{ transform: isExpanded ? 'rotate(180deg)' : 'none' }"
           style="font-size: 0.3143rem"
-          ><i-ep-CaretLeft
-        /></el-icon>
+        >
+          <i-ep-CaretLeft />
+        </el-icon>
       </div>
     </div>
     <!-- 顶部菜单栏 -->
@@ -76,7 +75,7 @@
       :editorOperatorStatus="editorOperatorStatus"
     ></EditorTop>
     <!-- 右侧属性控制栏 -->
-    <div class="editor-right">
+    <div class="editor-right custom1-color">
       <EditorOperator
         :block="lastSelectBlock"
         :data="EditorDataStore.data"
@@ -95,7 +94,8 @@
           ref="containerRef"
           :style="containerStyles"
           @mousedown="(e) => containerMouseDown(e)"
-          @contextmenu="(e) => onContextMenu(e, null)"
+          @contextmenu.prevent="(e) => onContextMenu(e, null)"
+          @wheel="(e) => handleMousewheel(e)"
         >
           <canvas
             ref="canvasRef"
@@ -113,7 +113,7 @@
             @mousedown="(e) => blockMouseDown(e, item, index)"
             :focusBlocksNum="focusData.focus.length"
             @Contextmenu="(e) => onContextBlock(e, item)"
-            :blockReizeMousedown="onMouseDown"
+            :blockResizeMousedown="onMouseDown"
             :formData="EditorDataStore.formData"
           >
           </EditorBlocks>
@@ -252,12 +252,14 @@ import {
   useBlockDragger,
   useBlockResize,
   useCommand,
+  useMouseWheel,
 } from "@/utils/DragCommand";
 import { $dropdown } from "@/components/Dropdown";
 import DropdownItem from "@/components/Dropdown/components/DropdownItem/index.vue";
 import { $dialog } from "@/components/Dialog";
 import { $previewDialog } from "../../components/PreviewDialog";
 import { useEditorDataStore } from "@/store/index";
+
 const EditorDataStore = useEditorDataStore();
 // 预览时 内容不再能操作，可以点击输入内容，方便看效果
 const previewRef = ref(false);
@@ -265,7 +267,6 @@ const previewRef = ref(false);
 const editorOperatorStatus = ref(true);
 
 const config = inject("config");
-// const data = EditorDataStore.data
 // 获取data.json中的样式
 const containerStyles = computed(() => ({
   width: `${EditorDataStore.data.container.width}px`,
@@ -288,6 +289,7 @@ const canvas = () => {
   if (EditorDataStore.data.container.grid) {
     drawGrid(width, height);
   }
+
   function drawGrid(width, height) {
     const gridSize = 6; // 网格大小
 
@@ -336,6 +338,9 @@ const { dragStart, dragEnd } = useMenuDragger(
   EditorDataStore.data
 );
 
+// 5. 实现滚轮缩放
+let { handleMousewheel, scale } = useMouseWheel(containerRef);
+
 // 2.获取焦点后即可直接拖拽
 let {
   blockMouseDown,
@@ -347,21 +352,31 @@ let {
   selectionBoundsMouseDown,
   mouseSelectArea,
   mouseDrag,
-} = useFocus(EditorDataStore.data, editorOperatorStatus, containerRef, (e) => {
-  mousedown(e);
-});
+} = useFocus(
+  EditorDataStore.data,
+  editorOperatorStatus,
+  containerRef,
+  scale,
+  (e) => {
+    mousedown(e);
+  }
+);
 
 // 3. 实现组件拖拽
 let { mousedown, markline } = useBlockDragger(
   focusData,
   lastSelectBlock,
+  containerRef,
+  scale,
   EditorDataStore.data,
   selectionBounds
 );
+
 // 4. 实现组件缩放
 let { onMouseDown } = useBlockResize(
   focusData,
   selectionBounds,
+  scale,
   EditorDataStore.data
 );
 
@@ -376,7 +391,6 @@ const onContextMenu = (e) => {
     return {
       left: e.clientX,
       top: e.clientY,
-      height: 0,
     };
   };
 
@@ -398,6 +412,12 @@ const onContextBlock = (e, block) => {
   if (!editorOperatorStatus.value) return; // 抓手模式不需要右键菜单
   e.stopPropagation();
   e.preventDefault();
+  e.getBoundingClientRect = () => {
+    return {
+      left: e.clientX,
+      top: e.clientY,
+    };
+  };
   let ifBlocks = false;
   if (Array.isArray(block)) ifBlocks = true;
   const contentVnode = h("div", {}, [
@@ -486,7 +506,8 @@ const onContextBlock = (e, block) => {
     }),
   ]);
   $dropdown({
-    el: e.target, // 以哪个元素作为基准
+    // el: e.target, // 以哪个元素作为基准
+    el: e, // 原来是以某个元素为基准，现在变成鼠标位置
     content: () => contentVnode,
   });
 };
@@ -558,6 +579,7 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+@import "@/styles/mixin.scss";
 .editor {
   width: 100%;
   height: 100%;
@@ -571,7 +593,7 @@ onMounted(() => {
     top: 0.4286rem;
     bottom: 0;
     height: 100%;
-    z-index: 999;
+    @include out-z-index;
   }
 
   &-left {
@@ -580,7 +602,6 @@ onMounted(() => {
     width: 4.2857rem;
     border: #e3e3e3 0.0143rem solid;
     background-color: #fff;
-    height: 11.4286rem;
     height: calc(100% - 1.4286rem);
     box-shadow: 0.0714rem 0.0571rem 0.1143rem rgba(0, 0, 0, 0.15);
     transition: all 0.5s;
@@ -591,10 +612,12 @@ onMounted(() => {
       margin-top: 0.2857rem;
       font-size: 0.3143rem;
     }
+
     &-search {
       margin-left: 0.2857rem;
       width: 90%;
     }
+
     &-menu {
       margin-left: 0.4143rem;
       width: 89%;
@@ -604,6 +627,7 @@ onMounted(() => {
       padding-right: 0.0571rem;
       scrollbar-gutter: stable;
     }
+
     &-menu-content {
       display: flex;
       justify-content: space-around;
@@ -619,6 +643,7 @@ onMounted(() => {
         margin-right: 0.0714rem;
         // border-bottom: #e0dfff .0143rem solid;
       }
+
       &-item {
         width: 100%;
         display: flex;
@@ -640,13 +665,14 @@ onMounted(() => {
           width: 100%;
           text-align: center;
         }
+
         &:hover {
           border: 0.0143rem solid #6965db;
         }
 
         &::after {
           content: "";
-          z-index: 999;
+          @include out-z-index;
           position: absolute;
           top: 0;
           left: 0;
@@ -660,7 +686,7 @@ onMounted(() => {
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 1000;
+      @include out-z-index;
       position: absolute;
       right: 0.1429rem;
       top: 0.2857rem;
@@ -672,6 +698,7 @@ onMounted(() => {
       background-color: #ffffff;
       transition: transform 0.8s;
       cursor: pointer;
+
       &:hover {
         background-color: #e0dfff;
         color: white;
@@ -689,7 +716,6 @@ onMounted(() => {
     margin-bottom: 0.5714rem;
     box-sizing: border-box;
     border: #e3e3e3 0.0143rem solid;
-    z-index: 1;
 
     &-canvas {
       height: 100%;
@@ -716,7 +742,7 @@ onMounted(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 99;
+    @include out-z-index;
   }
 }
 
@@ -738,6 +764,7 @@ onMounted(() => {
   top: 0;
   bottom: 0;
   border-left: 0.0143rem dashed #6965db;
+  @include modal-z-index;
 }
 
 .line-y {
@@ -745,18 +772,22 @@ onMounted(() => {
   left: 0;
   right: 0;
   border-top: 0.0143rem dashed #6965db;
+  @include modal-z-index;
 }
 
 .selectionBounds {
   position: absolute;
   border: #6965db dashed 0.0143rem;
+  @include modal-z-index;
 }
 
 .mouse-select-area {
   position: absolute;
   background-color: rgba(105, 101, 219, 0.15);
   border: #6965db solid 1px;
+  @include topest-z-index;
 }
+
 $pre: "block-resize";
 .#{$pre} {
   position: absolute;
@@ -767,6 +798,7 @@ $pre: "block-resize";
   border-radius: 0.0286rem;
   user-select: none;
 }
+
 .#{$pre}-top {
   top: -0.0571rem;
   left: calc(50% - 0.0429rem);
