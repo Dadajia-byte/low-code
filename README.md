@@ -11,4 +11,7 @@ vue3.5 + vite + element-plus + mitt(手写了一个EventDispatcher后期可能�
 3. 离线存储实现
 4. monorepo重构（maybe）
 5. 着手搭建平台 / 优化base功能(丰满物料堆)
-   
+
+### any others
+如果你想加入我们了解更详细的内容和文档，请联系我哦。<br>
+绿泡泡：cjj1814650097
