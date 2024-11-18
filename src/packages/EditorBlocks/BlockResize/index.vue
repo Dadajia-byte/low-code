@@ -34,6 +34,7 @@ const {width, height} = component.resize || {}
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/mixin.scss";
 $pre: "block-resize";
 .#{$pre} {
   position: absolute;
@@ -41,7 +42,7 @@ $pre: "block-resize";
   height: .0857rem;
   background-color: #fff;
   border: .0143rem solid #6965db;
-  z-index: 1000;
+  @include modal-z-index;
   border-radius: .0286rem;
   user-select: none;
 

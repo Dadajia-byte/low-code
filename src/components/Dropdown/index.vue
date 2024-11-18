@@ -49,6 +49,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/mixin.scss";
 .dropdown {
   display: none;
   position: absolute;
@@ -59,7 +60,7 @@ onBeforeUnmount(() => {
   width: 2.8571rem;
   padding-bottom: .0714rem;
   overflow: hidden;
-  z-index: 9999;
+  @include modal-z-index;
 }
 
 .dropdown-isShow {

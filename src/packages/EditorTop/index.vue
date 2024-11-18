@@ -43,6 +43,7 @@ const isActive = (btn) => {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/mixin.scss";
 .editor-top {
   position: absolute;
   top: 0.1429rem;
@@ -59,7 +60,7 @@ const isActive = (btn) => {
   border: #e3e3e3 0.0143rem solid;
   box-shadow: 0.0857rem 0.0571rem 0.1429rem rgba(0, 0, 0, 0.1);
   transition: all 0.5s;
-  z-index: 999;
+  @include out-z-index;
 
   &-button,
   &-button-active {
@@ -97,7 +98,7 @@ const isActive = (btn) => {
   }
 
   &-expand {
-    z-index: 99999;
+    @include out-z-index;
     position: absolute;
     background-color: white;
     top: 0.7143rem;

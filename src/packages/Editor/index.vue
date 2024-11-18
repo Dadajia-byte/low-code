@@ -126,6 +126,7 @@
               v-show="markline.x"
               class="line-x"
               :style="{ left: markline.x + 'px' }"
+
           ></div>
           <div
               v-show="markline.y"
@@ -564,6 +565,7 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+@import "@/styles/mixin.scss";
 .editor {
   width: 100%;
   height: 100%;
@@ -577,7 +579,7 @@ onMounted(() => {
     top: 0.4286rem;
     bottom: 0;
     height: 100%;
-    z-index: 999;
+    @include out-z-index;
   }
 
   &-left {
@@ -656,7 +658,7 @@ onMounted(() => {
 
         &::after {
           content: "";
-          z-index: 999;
+          @include out-z-index;
           position: absolute;
           top: 0;
           left: 0;
@@ -670,7 +672,7 @@ onMounted(() => {
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 1000;
+      @include out-z-index;
       position: absolute;
       right: 0.1429rem;
       top: 0.2857rem;
@@ -700,7 +702,6 @@ onMounted(() => {
     margin-bottom: 0.5714rem;
     box-sizing: border-box;
     border: #e3e3e3 0.0143rem solid;
-    z-index: 1;
 
     &-canvas {
       height: 100%;
@@ -727,7 +728,7 @@ onMounted(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 99;
+    @include out-z-index;
   }
 }
 
@@ -761,12 +762,14 @@ onMounted(() => {
 .selectionBounds {
   position: absolute;
   border: #6965db dashed 0.0143rem;
+  @include modal-z-index;
 }
 
 .mouse-select-area {
   position: absolute;
   background-color: rgba(105, 101, 219, 0.15);
   border: #6965db solid 1px;
+  @include topest-z-index;
 }
 
 $pre: "block-resize";

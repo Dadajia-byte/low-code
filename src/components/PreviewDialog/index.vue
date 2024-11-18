@@ -31,7 +31,7 @@
 
 <script setup>
 import EditorBlocks from "../../packages/EditorBlocks/index.vue";
-import {useEditorDataStore} from "../../store/index.js";
+import {useEditorDataStore} from "@/store/index.js";
 
 const EditorDataStore = useEditorDataStore();
 const props = defineProps({
@@ -67,6 +67,7 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
+@import "@/styles/mixin.scss";
 .editor {
   width: 100%;
   height: 100%;
@@ -173,7 +174,7 @@ defineExpose({
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 9999;
+      @include out-z-index;
       position: absolute;
       right: .1429rem;
       top: .2857rem;
@@ -203,8 +204,6 @@ defineExpose({
     margin-bottom: .5714rem;
     box-sizing: border-box;
     border: #e3e3e3 .0143rem solid;
-    z-index: 1;
-
     &-canvas {
       height: 100%;
       overflow: scroll;

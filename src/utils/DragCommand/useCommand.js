@@ -1,6 +1,6 @@
 import {events} from "../event";
 import {cloneDeep} from "lodash";
-import {useEditorDataStore} from "../../store/index.js";
+import {useEditorDataStore} from "@/store/index.js";
 import {getActivePinia, setActivePinia} from 'pinia';
 import {history, historyIndex, setHistoryIndex} from "./useBlockResize";
 
@@ -96,8 +96,6 @@ export const useCommand = (data, focusData, containerRef = null) => {
             let after = history[historyIndex];
             return {
                 redo() {
-                    console.log(111);
-
                     if (historyIndex < history.length - 1) {
                         setHistoryIndex(historyIndex + 1)
                         after = history[historyIndex]
@@ -106,9 +104,7 @@ export const useCommand = (data, focusData, containerRef = null) => {
                 },
                 undo() {
                     // data = { ...data, blocks: before };
-
                     if (historyIndex > 0) {
-                        console.log(111);
                         setHistoryIndex(historyIndex - 1);
                         before = history[historyIndex];
                         editorDataStore.updateData({...data, blocks: before})
@@ -334,10 +330,12 @@ export const useCommand = (data, focusData, containerRef = null) => {
         execute() {
             let before = cloneDeep(data.blocks);
             let after = (() => {
-                // 置顶就是在所有的block中找到最大的zIndex再加1
+                // 置顶就是在所有的block（unfocused）中找到最大的zIndex
+                // 当然以上情况仅在选中单个block中适用，如果选中多个block，应当保留多选的blocks中的层级顺序，所以应当是unfocused中的maxZIndex加上原来的focus中的zIndex
+                // 最后，需要考虑到unfocused数组可能为空（即全选），显然这时maxZIndex赋0后处理即可
                 let {focus, unfocused} = focusData.value;
-                let maxZIndex = Math.max(...unfocused.map((item) => item.zIndex)) + 1;
-                focus.forEach((block) => (block.zIndex = maxZIndex++)); // 让当前选中的比最大的+1
+                let maxZIndex = unfocused.length>0?Math.max(...unfocused.map((item) => item.zIndex)):0;
+                focus.forEach((block) => (block.zIndex = maxZIndex+block.zIndex));
                 return data.blocks;
             })();
             return {
@@ -361,27 +359,22 @@ export const useCommand = (data, focusData, containerRef = null) => {
         execute() {
             let before = cloneDeep(data.blocks);
             let after = (() => {
-                // 置底就是在所有的block中找到最小的zIndex再减1，但是index不能是负的,所以让其他unfocused全部+1即可
+                // 类似于置顶操作，再执行操作之后，应当保证选中blocks内部的层级关系保证不变
+                // 由于要保证zIndex>0，所以再执行操作时尽量不要使用减法操作，所以不妨将思维反转，对所有的unfocused进行加法操作
+                // 同样需要考虑null的情况
                 let {focus, unfocused} = focusData.value;
-                let minZIndex = Math.min(...unfocused.map((item) => item.zIndex)) - 1;
-                if (minZIndex < 0) {
-                    const dur = Math.abs(minZIndex);
-                    minZIndex = 0;
-                    unfocused.forEach((block) => (block.zIndex += dur));
-                }
-                focus.forEach((block) => (block.zIndex = minZIndex));
+                let maxZIndex = focus.length>0?Math.max(...focus.map((item) => item.zIndex)):0;
+                unfocused.forEach((block) => (block.zIndex = maxZIndex+block.zIndex));
                 return data.blocks;
             })();
             return {
                 undo: () => {
                     // data = { ...data, blocks: before };
                     editorDataStore.updateData({...data, blocks: before})
-
                 },
                 redo: () => {
                     // data = { ...data, blocks: after };
                     editorDataStore.updateData({...data, blocks: after})
-
                 },
             };
         },
@@ -396,8 +389,6 @@ export const useCommand = (data, focusData, containerRef = null) => {
             let after = (() => {
                 let {focus} = focusData.value
                 focus.forEach(block => block.zIndex++)
-                console.log(data.blocks);
-
                 return data.blocks
             })()
             return {
