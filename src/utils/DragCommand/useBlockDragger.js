@@ -1,4 +1,5 @@
 import {events} from "../event";
+import {events} from "../event";
 
 export function useBlockDragger(focusData, lastSelectBlock,containerRef,scale, data,selectionBounds) {
   let dragState = {
@@ -87,38 +88,38 @@ export function useBlockDragger(focusData, lastSelectBlock,containerRef,scale, d
     let left = dragState.startLeft + (moveX - dragState.startX);
     let top = dragState.startTop + (moveY - dragState.startY);
 
-    // 获取容器的边界
-    const containerRect = data.container;
-    const BWidth = (selectionBounds.value || lastSelectBlock.value).width;
-    const BHeight = (selectionBounds.value || lastSelectBlock.value).height;
+        // 获取容器的边界
+        const containerRect = data.container;
+        const BWidth = (selectionBounds.value || lastSelectBlock.value).width;
+        const BHeight = (selectionBounds.value || lastSelectBlock.value).height;
 
-    // 限制边界框不超出容器
-    left = Math.max(0, Math.min(left, containerRect.width - BWidth));
-    top = Math.max(0, Math.min(top, containerRect.height - BHeight));
-    
-    // 先计算横线 距离参照物元素还有5px时显示辅助线
-    let y = null;
-    let x = null;
-    for (let i = 0; i < dragState.lines.y.length; i++) {
-      const { top: t, showTop: s } = dragState.lines.y[i];
-      if (Math.abs(t - top) < 5) {
-        y = s; // 要显示线的位置
-        moveY = dragState.startY - dragState.startTop + t; // 容器距离顶部的距离+目标高度
-        // 实现快速贴合元素
-        break; // 找到一根线后就退出
-      }
-    }
-    for (let i = 0; i < dragState.lines.x.length; i++) {
-      const { left: l, showLeft: s } = dragState.lines.x[i];
-      if (Math.abs(l - left) < 5) {
-        x = s; // 要显示线的位置
-        moveX = dragState.startX - dragState.startLeft + l; // 容器距离顶部的距离+目标高度
-        // 实现快速贴合元素
-        break; // 找到一根线后就退出
-      }
-    }
-    markline.x = x; // markline时响应式数据 xy更新会导致视图更新
-    markline.y = y;
+        // 限制边界框不超出容器
+        left = Math.max(0, Math.min(left, containerRect.width - BWidth));
+        top = Math.max(0, Math.min(top, containerRect.height - BHeight));
+
+        // 先计算横线 距离参照物元素还有5px时显示辅助线
+        let y = null;
+        let x = null;
+        for (let i = 0; i < dragState.lines.y.length; i++) {
+            const {top: t, showTop: s} = dragState.lines.y[i];
+            if (Math.abs(t - top) < 5) {
+                y = s; // 要显示线的位置
+                moveY = dragState.startY - dragState.startTop + t; // 容器距离顶部的距离+目标高度
+                // 实现快速贴合元素
+                break; // 找到一根线后就退出
+            }
+        }
+        for (let i = 0; i < dragState.lines.x.length; i++) {
+            const {left: l, showLeft: s} = dragState.lines.x[i];
+            if (Math.abs(l - left) < 5) {
+                x = s; // 要显示线的位置
+                moveX = dragState.startX - dragState.startLeft + l; // 容器距离顶部的距离+目标高度
+                // 实现快速贴合元素
+                break; // 找到一根线后就退出
+            }
+        }
+        markline.x = x; // markline时响应式数据 xy更新会导致视图更新
+        markline.y = y;
 
     let durX = moveX - dragState.startX;
     let durY = moveY - dragState.startY; // 之前和之后的距离
@@ -137,8 +138,8 @@ export function useBlockDragger(focusData, lastSelectBlock,containerRef,scale, d
     }
   };
 
-  return {
-    mousedown,
-    markline,
-  };
+    return {
+        mousedown,
+        markline,
+    };
 }

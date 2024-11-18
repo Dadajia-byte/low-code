@@ -1,0 +1,12 @@
+@mixin out-z-index {// 外部操作栏z-index
+  z-index: 999;
+}
+@mixin out-z-index-1 { // 外部操作栏但是+1
+  z-index: 1000;
+}
+@mixin modal-z-index {// 弹窗z-index
+  z-index:9999;
+}
+@mixin topest-z-index {
+    z-index: 99999;
+}

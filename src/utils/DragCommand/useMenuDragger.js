@@ -39,8 +39,8 @@ export function useMenuDragger(containerRef) {
         })
   
 
-    currentComponent = null;
-  };
+        currentComponent = null;
+    };
 
   const dragStart = (e, component) => {
     containerRef.value.addEventListener("dragenter", dragenter);
@@ -59,8 +59,8 @@ export function useMenuDragger(containerRef) {
     events.emit("end"); // 发布end
   };
 
-  return {
-    dragStart,
-    dragEnd,
-  };
+    return {
+        dragStart,
+        dragEnd,
+    };
 }
