@@ -750,6 +750,7 @@ onMounted(() => {
   top: 0;
   bottom: 0;
   border-left: 0.0143rem dashed #6965db;
+  @include modal-z-index;
 }
 
 .line-y {
@@ -757,6 +758,7 @@ onMounted(() => {
   left: 0;
   right: 0;
   border-top: 0.0143rem dashed #6965db;
+  @include modal-z-index;
 }
 
 .selectionBounds {
