@@ -216,18 +216,15 @@ export const useCommand = (data, focusData, containerRef = null) => {
             return {
                 redo() {
                     if (focus.length > 0) {
-
                         // 计算基准位置（选中块的最小 left 和 top）
                         const offsetX = Math.min(...focus.map(block => block.left));
                         const offsetY = Math.min(...focus.map(block => block.top));
-
                         editorDataStore.clipboard = {
                             blocks: cloneDeep(focus),
                             offsetX,  // 保存偏移位置
                             offsetY
                         };
                     }
-
                 }
             }
         }
@@ -250,7 +247,6 @@ export const useCommand = (data, focusData, containerRef = null) => {
                         // 计算基准位置（选中块的最小 left 和 top）
                         const offsetX = Math.min(...focus.map(block => block.left));
                         const offsetY = Math.min(...focus.map(block => block.top));
-
                         editorDataStore.clipboard = {
                             blocks: cloneDeep(focus),
                             offsetX,  // 保存偏移位置

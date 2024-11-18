@@ -2,7 +2,7 @@
   <div class="editor">
     <!-- 左侧物料堆 -->
     <div
-        class="editor-left"
+        class="editor-left custom1-color"
         :style="{ left: isExpanded ? '-4.1429rem' : '.0714rem' }"
     >
       <el-text class="mx-1 editor-left-title" size="large">物料堆</el-text>
@@ -16,7 +16,7 @@
       />
       <el-select
           filterable
-          placeholder="nodo搜索,树形更好？"
+          placeholder="search sth"
           class="editor-left-search"
       >
         <template #prefix>
@@ -80,7 +80,7 @@
         :editorOperatorStatus="editorOperatorStatus"
     ></EditorTop>
     <!-- 右侧属性控制栏 -->
-    <div class="editor-right">
+    <div class="editor-right custom1-color">
       <EditorOperator
           :block="lastSelectBlock"
           :data="EditorDataStore.data"

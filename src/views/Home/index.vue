@@ -7,13 +7,14 @@
       </div>
       <el-divider style="margin-top: 10px;"></el-divider>
     </header>
+    <Search></Search>
   </div>
 </template>
 
 <script setup>
 import {useRouter} from 'vue-router';
 import {$Account} from '../../components/Account';
-
+import Search from '@/components/Search/index.vue';
 const router = useRouter();
 const getStart = () => {
   router.push('/test')
