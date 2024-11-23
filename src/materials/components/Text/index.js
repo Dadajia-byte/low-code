@@ -42,9 +42,8 @@ const config = {
 }
 
 // 后续拓展可以新写几个别的Text类覆盖preview和render，然后再写几个config
-const text = new Text(config);
-console.log(text);
+const textComponent = new Text(config);
 
 export {
-    text,
+    textComponent,
 }

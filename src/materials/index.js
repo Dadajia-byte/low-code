@@ -32,9 +32,11 @@ async function registerComponents() {
     for (const [path, loadModule] of Object.entries(modules)) {
         try {
             const module = await loadModule();
-            const componentName = Object.keys(module)[0]; // 假设每个文件只有一个默认导出或命名导出
-            const component = module[componentName];
-            registerConfig.register(component);
+            const componentNames = Object.keys(module)
+            componentNames.forEach(componentName =>{                
+                // 要求必须是具名导出，而且如果导出的是物料必须以Component结尾这样才能注册
+                if (componentName.endsWith('Component')) registerConfig.register(module[componentName]);
+            })
         } catch (error) {
             console.error(`加载并注册 ${path} 组件失败:`, error);
         }

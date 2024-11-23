@@ -43,8 +43,8 @@ const config = {
     weight: 1 >> 1,
 }
 
-const tag = new Tag(config);
+const tagComponent = new Tag(config);
 
 export {
-    tag
+    tagComponent
 }
