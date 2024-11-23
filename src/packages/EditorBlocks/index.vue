@@ -25,7 +25,7 @@ const component = config.componentMap[props.block.key];
 const blockRef = ref(null);
 
 
-let propName = props.block.model[Object.keys(component.model)[0]]
+let propName = props.block.model[Object.keys(component.model||{})[0]]
 const _value = computed({
   get: () => props.formData[propName],
   set: (v) => {

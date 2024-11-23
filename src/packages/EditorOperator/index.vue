@@ -101,7 +101,7 @@ const props = defineProps({
 });
 const componentProps = computed(() => {
   if (props.block) {
-    return config.componentMap[props.block.key].props;
+    return config.componentMap[props.block.key].props();
   }
   return {};
 });

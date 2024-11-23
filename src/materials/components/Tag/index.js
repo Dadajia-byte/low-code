@@ -1,16 +1,12 @@
-import Component from "../base";
+import Component from "../../base";
 import {
     createSelectProp,
     createInputProp
-} from "../prop";
+} from "../../prop";
 
 class Tag extends Component {
     constructor(config) {
-        super(
-            config.label, 
-            config.category, 
-            config.key, 
-        );
+        super(config);
     }
     preview() {
         return h(ElTag, { size: 'small' }, () => '标签');
@@ -44,6 +40,11 @@ const config = {
     label: "标签",
     category: [1],
     key: "tag",
+    weight: 1 >> 1,
 }
 
 const tag = new Tag(config);
+
+export {
+    tag
+}

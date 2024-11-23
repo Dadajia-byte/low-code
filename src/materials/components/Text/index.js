@@ -1,17 +1,13 @@
-import Component from "../base";
+import Component from "../../base";
 import {
-    creatColorProp,
+    createColorProp,
     createInputProp,
     createSelectProp
-} from "../prop";
+} from "../../prop";
 
 class Text extends Component {
     constructor(config) {
-        super(
-            config.label, 
-            config.category, 
-            config.key, 
-        );
+        super(config);    
     }
     preview() {
         return '普通文本'
@@ -28,7 +24,7 @@ class Text extends Component {
     props() {
         return {
             text: createInputProp('文本内容'),
-            color: creatColorProp('字体颜色'),
+            color: createColorProp('字体颜色'),
             size: createSelectProp('字体大小', [
                 {label: '小', value: '14px'},
                 {label: '中', value: '20px'},
@@ -42,7 +38,13 @@ const config = {
     label: "文本",
     category: [1],
     key: "text",
+    weight: 1,
 }
 
 // 后续拓展可以新写几个别的Text类覆盖preview和render，然后再写几个config
 const text = new Text(config);
+console.log(text);
+
+export {
+    text,
+}
