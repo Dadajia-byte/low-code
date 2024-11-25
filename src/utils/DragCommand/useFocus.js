@@ -77,7 +77,7 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale,offsetS
     });
   };
   const blockMouseDown = (e, block, index) => {
-    if (editorOperatorStatus.value) return;
+    if (!editorOperatorStatus.value) return;
     // 在block上规划一个属性 focus 获取焦点后将focus变为true
     e.preventDefault();
     e.stopPropagation();
