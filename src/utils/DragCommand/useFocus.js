@@ -102,7 +102,7 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale,offsetS
   //鼠标点击画板
   const containerMouseDown = (e) => {
     if (!editorOperatorStatus.value) {
-      // onMouseDownGrab(e);
+      onMouseDownGrab(e);
       return;
     }
     e.preventDefault();
@@ -142,7 +142,7 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale,offsetS
     offsetState.value.offsetX = mouseDrag.value.currentX - mouseDrag.value.startX
     offsetState.value.offsetY = mouseDrag.value.currentY - mouseDrag.value.startY
     
-    containerRef.value.style.transform = `translate(${offsetState.value.offsetX + offsetState.value.preOffsetX}px, ${offsetState.value.offsetY + offsetState.value.preOffsetY}px) scale(${scale.value})`;
+    containerRef.value.style.transform = `translate(${(offsetState.value.offsetX + offsetState.value.preOffsetX) * scale.value}px, ${(offsetState.value.offsetY + offsetState.value.preOffsetY) * scale.value}px) scale(${scale.value})`;
   };
   const onMouseUpGrab = (e) => {
     const { x, y } = getCorrectedMousePosition(e)
@@ -169,18 +169,19 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale,offsetS
       width: containerWidth,
       height: containerHeight
     } = containerRef.value.getBoundingClientRect();
-    mouseDrag.value.currentX = Math.min(containerWidth, Math.max(0, x));
-    mouseDrag.value.currentY = Math.min(containerHeight, Math.max(0, y));
+    mouseDrag.value.currentX = Math.min(containerWidth/scale.value, Math.max(0, x));
+    mouseDrag.value.currentY = Math.min(containerHeight/scale.value, Math.max(0, y));
 
 
-    const width = Math.abs(mouseDrag.value.currentX - mouseDrag.value.startX);
-    const height = Math.abs(mouseDrag.value.currentY - mouseDrag.value.startY);
+    const Bwidth = Math.abs(mouseDrag.value.currentX - mouseDrag.value.startX);
+    const Bheight = Math.abs(mouseDrag.value.currentY - mouseDrag.value.startY);
 
     const newLeft = Math.max(0, Math.min(mouseDrag.value.startX, mouseDrag.value.currentX));
     const newTop = Math.max(0, Math.min(mouseDrag.value.startY, mouseDrag.value.currentY));
-    const newWidth = Math.min(Math.abs(width), newLeft + width);
-    const newHeight = Math.min(Math.abs(height), newTop + height);
-
+    const newWidth = Math.min(Bwidth, (containerWidth / scale.value) - newLeft);
+    const newHeight = Math.min(Bheight, (containerHeight / scale.value) - newTop);
+    
+    
     mouseSelectArea.value.top = newTop;
     mouseSelectArea.value.left = newLeft;
     mouseSelectArea.value.width = newWidth;

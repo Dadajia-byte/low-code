@@ -292,8 +292,6 @@ const canvas = () => {
   const height = EditorDataStore.data.container.height;
   ctx.clearRect(0, 0, width, height);
   if (EditorDataStore.data.container.grid) {
-    console.log("画网格");
-    
     drawGrid(width, height);
   }
 
