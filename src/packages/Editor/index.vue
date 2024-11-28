@@ -276,6 +276,7 @@ const config = inject("config");
 const containerStyles = computed(() => ({
   width: `${EditorDataStore.data.container.width}px`,
   height: `${EditorDataStore.data.container.height}px`,
+  transform: `translate(${(offsetState.value.offsetX + offsetState.value.preOffsetX) * scale.value}px, ${(offsetState.value.offsetY + offsetState.value.preOffsetY) * scale.value}px) scale(${scale.value})`,
 }));
 
 const containerRef = ref(null);

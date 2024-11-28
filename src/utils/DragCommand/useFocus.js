@@ -55,10 +55,9 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale,offsetS
     currentY: 0,
   });
   
-
+  // 校正鼠标位置，缩放对应的缩放比例
   function getCorrectedMousePosition(e) {
     const rect = containerRef.value.getBoundingClientRect();
-    // 校正鼠标位置，缩放对应的缩放比例
     const correctedX = (e.clientX - rect.left) / scale.value;
     const correctedY = (e.clientY - rect.top) / scale.value;
     return { x: correctedX, y: correctedY };
@@ -142,7 +141,8 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale,offsetS
     offsetState.value.offsetX = mouseDrag.value.currentX - mouseDrag.value.startX
     offsetState.value.offsetY = mouseDrag.value.currentY - mouseDrag.value.startY
     
-    containerRef.value.style.transform = `translate(${(offsetState.value.offsetX + offsetState.value.preOffsetX) * scale.value}px, ${(offsetState.value.offsetY + offsetState.value.preOffsetY) * scale.value}px) scale(${scale.value})`;
+    // containerRef.value.style.transform = `translate(${(offsetState.value.offsetX + offsetState.value.preOffsetX) * scale.value}px, ${(offsetState.value.offsetY + offsetState.value.preOffsetY) * scale.value}px) scale(${scale.value})`;
+    
   };
   const onMouseUpGrab = (e) => {
     const { x, y } = getCorrectedMousePosition(e)
@@ -155,7 +155,10 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale,offsetS
     // 更新累计偏移量
     offsetState.value.preOffsetX += finalOffsetX;
     offsetState.value.preOffsetY += finalOffsetY;
+    offsetState.value.offsetX = 0;
+    offsetState.value.offsetY = 0;  
 
+  
     document.removeEventListener('mousemove', onMouseMoveGrab);
     document.removeEventListener('mouseup', onMouseUpGrab);
   };
