@@ -38,7 +38,7 @@
               class="editor-left-menu-content-row"
               v-for="item in config.componentList.filter(
                 (i) => i.category.indexOf(menu.id) !== -1
-              )"
+              ).sort((a,b)=>b.weight-a.weight)"
               :key="item.key"
             >
               <div
