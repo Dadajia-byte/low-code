@@ -271,6 +271,7 @@ const config = inject("config");
 const containerStyles = computed(() => ({
   width: `${EditorDataStore.data.container.width}px`,
   height: `${EditorDataStore.data.container.height}px`,
+  transform: `translate(${(offsetState.value.offsetX + offsetState.value.preOffsetX) * scale.value}px, ${(offsetState.value.offsetY + offsetState.value.preOffsetY) * scale.value}px) scale(${scale.value})`,
 }));
 
 const containerRef = ref(null);
@@ -291,8 +292,7 @@ const canvas = () => {
   }
 
   function drawGrid(width, height) {
-    const gridSize = 6; // 网格大小
-
+    const gridSize = 20; // 网格大小
     for (let x = 0; x < width; x += gridSize) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
@@ -319,11 +319,13 @@ const containerSize = computed(() => {
 
 // 使用 watch 监听 containerSize 的变化
 watch(
-  [() => containerSize.value, () => EditorDataStore.data.container.grid],
-  () => {
-    canvas();
-  },
-  { deep: true }
+    [() => containerSize.value, () => EditorDataStore.data.container.grid],
+    () => {
+      nextTick(()=>{
+        canvas();
+      })
+    },
+    {deep: true}
 );
 // 性能是否有点差？本质上是想要实现副作用的效果，即editorOperatorStatus变量变成false时，清除选中的节点（抓手模式不需要选中）
 watch(editorOperatorStatus, () => {
@@ -337,9 +339,21 @@ const { dragStart, dragEnd } = useMenuDragger(
   containerRef,
   EditorDataStore.data
 );
+//画布偏移量，用于拖拽
+const offsetState = ref({
+    preOffsetX: 0,
+    preOffsetY: 0,
+    offsetX: 0,
+    offsetY: 0,
+
+  })
+
 
 // 5. 实现滚轮缩放
-let { handleMousewheel, scale } = useMouseWheel(containerRef);
+let{
+  handleMousewheel,
+  scale,
+} = useMouseWheel(containerRef,offsetState)
 
 // 2.获取焦点后即可直接拖拽
 let {
@@ -354,9 +368,10 @@ let {
   mouseDrag,
 } = useFocus(
   EditorDataStore.data,
-  editorOperatorStatus,
+  editorOperatorStatus, 
   containerRef,
   scale,
+  offsetState,
   (e) => {
     mousedown(e);
   }
