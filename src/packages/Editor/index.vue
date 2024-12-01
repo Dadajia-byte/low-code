@@ -297,7 +297,7 @@ const canvas = () => {
   }
 
   function drawGrid(width, height) {
-    const gridSize = 6; // 网格大小
+    const gridSize = 20; // 网格大小
     for (let x = 0; x < width; x += gridSize) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
