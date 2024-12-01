@@ -8,10 +8,10 @@
       <el-text class="mx-1 editor-left-title" size="large">物料堆</el-text>
       <el-divider
         style="
-          margin-left: 0.2857rem;
+          margin-left: .2857rem;
           width: 90%;
-          margin-top: 0.2143rem;
-          margin-bottom: 0.0714rem;
+          margin-top: .2143rem;
+          margin-bottom: .0714rem;
         "
       />
       <el-select filterable placeholder="search sth" class="editor-left-search">
@@ -63,7 +63,7 @@
       >
         <el-icon
           :style="{ transform: isExpanded ? 'rotate(180deg)' : 'none' }"
-          style="font-size: 0.3143rem"
+          style="font-size: .3143rem"
         >
           <i-ep-CaretLeft />
         </el-icon>
@@ -596,50 +596,51 @@ onMounted(() => {
 <style scoped lang="scss">
 @import "@/styles/mixin.scss";
 .editor {
+
   width: 100%;
   height: 100%;
   position: relative;
   overflow: hidden;
-  background-color: #ffffff;
+  background-color: #f3f4f4;
 
   &-left,
   &-right {
     position: absolute;
-    top: 0.4286rem;
+    top: .4286rem;
     bottom: 0;
     height: 100%;
     @include out-z-index;
   }
 
   &-left {
-    left: 0.0714rem;
-    border-radius: 0.2857rem;
+    left: .0714rem;
+    border-radius: .2857rem;
     width: 4.2857rem;
-    border: #e3e3e3 0.0143rem solid;
+    border: #e3e3e3 .0143rem solid;
     background-color: #fff;
     height: calc(100% - 1.4286rem);
-    box-shadow: 0.0714rem 0.0571rem 0.1143rem rgba(0, 0, 0, 0.15);
+    box-shadow: .0714rem .0571rem .1143rem rgba(0, 0, 0, 0.15);
     transition: all 0.5s;
     // overflow: hidden;
     &-title {
       display: flex;
-      margin-left: 0.5rem;
-      margin-top: 0.2857rem;
-      font-size: 0.3143rem;
+      margin-left: .5rem;
+      margin-top: .2857rem;
+      font-size: .3143rem;
     }
 
     &-search {
-      margin-left: 0.2857rem;
+      margin-left: .2857rem;
       width: 90%;
     }
 
     &-menu {
-      margin-left: 0.4143rem;
+      margin-left: .4143rem;
       width: 89%;
-      margin-top: 0.1429rem;
+      margin-top: .1429rem;
       overflow-y: auto;
       height: 80%;
-      padding-right: 0.0571rem;
+      padding-right: .0571rem;
       scrollbar-gutter: stable;
     }
 
@@ -654,8 +655,8 @@ onMounted(() => {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-top: 0.0714rem;
-        margin-right: 0.0714rem;
+        margin-top: .0714rem;
+        margin-right: .0714rem;
         // border-bottom: #e0dfff .0143rem solid;
       }
 
@@ -668,21 +669,21 @@ onMounted(() => {
         box-sizing: border-box;
         cursor: move;
         user-select: none;
-        min-height: 0.5714rem;
+        min-height: .5714rem;
         position: relative;
-        border-radius: 0.0714rem;
-        border: 0.0143rem dashed #6965db;
-        padding: 0 0.0571rem;
+        border-radius: .0714rem;
+        border: .0143rem dashed #6965db;
+        padding: 0 .0571rem;
 
         &-label {
-          font-size: 0.1714rem;
+          font-size: .1714rem;
           color: #7d7d7d;
           width: 100%;
           text-align: center;
         }
 
         &:hover {
-          border: 0.0143rem solid #6965db;
+          border: .0143rem solid #6965db;
         }
 
         &::after {
@@ -703,13 +704,13 @@ onMounted(() => {
       align-items: center;
       @include out-z-index;
       position: absolute;
-      right: 0.1429rem;
-      top: 0.2857rem;
-      border: #e3e3e3 0.0143rem solid;
-      border-radius: 0.2143rem;
-      height: 0.4286rem;
-      width: 0.4286rem;
-      box-shadow: 0.0286rem 0.0286rem 0.0714rem rgba(0, 0, 0, 0.15);
+      right: .1429rem;
+      top: .2857rem;
+      border: #e3e3e3 .0143rem solid;
+      border-radius: .2143rem;
+      height: .4286rem;
+      width: .4286rem;
+      box-shadow: .0286rem .0286rem .0714rem rgba(0, 0, 0, 0.15);
       background-color: #ffffff;
       transition: transform 0.8s;
       cursor: pointer;
@@ -726,22 +727,25 @@ onMounted(() => {
   }
 
   &-container {
-    padding: 0.5714rem 2.8571rem 0;
+    padding: .5714rem 2.8571rem 0;
     height: 95%;
-    margin-bottom: 0.5714rem;
+    margin-bottom: .5714rem;
     box-sizing: border-box;
-    border: #e3e3e3 0.0143rem solid;
-
+    border: #e3e3e3 .0143rem solid;
+    
     &-canvas {
       height: 100%;
       overflow: scroll;
-
+      border-radius: .2857rem;      
+      box-shadow: .0714rem .0714rem .1429rem rgba(0,0,0,0.2);
+      background-color: #fff;
       &-content {
-        margin: 0.5714rem auto;
+        background-color: #fff;
+        margin: .5714rem auto;
+        border: .0143rem #6965db solid;
         // background-color: #f1f1f1;
         position: relative;
-        border-radius: 0.1429rem;
-        border: #e3e3e3 0.0286rem dashed;
+      
       }
     }
   }
@@ -767,10 +771,10 @@ onMounted(() => {
     position: absolute;
     top: -0.0571rem;
     left: -0.0571rem;
-    width: calc(100% + 0.0857rem);
-    height: calc(100% + 0.0857rem);
-    border-radius: 0.0286rem;
-    border: 0.0143rem solid #6965db;
+    width: calc(100% + .0857rem);
+    height: calc(100% + .0857rem);
+    border-radius: .0286rem;
+    border: .0143rem solid #6965db;
   }
 }
 
@@ -778,7 +782,7 @@ onMounted(() => {
   position: absolute;
   top: 0;
   bottom: 0;
-  border-left: 0.0143rem dashed #6965db;
+  border-left: .0143rem dashed #6965db;
   @include modal-z-index;
 }
 
@@ -786,55 +790,55 @@ onMounted(() => {
   position: absolute;
   left: 0;
   right: 0;
-  border-top: 0.0143rem dashed #6965db;
+  border-top: .0143rem dashed #6965db;
   @include modal-z-index;
 }
 
 .selectionBounds {
   position: absolute;
-  border: #6965db dashed 0.0143rem;
+  border: #6965db dashed .0143rem;
   @include modal-z-index;
 }
 
 .mouse-select-area {
   position: absolute;
   background-color: rgba(105, 101, 219, 0.15);
-  border: #6965db solid 1px;
+  border: #6965db solid 1.001px;
   @include topest-z-index;
 }
 
 $pre: "block-resize";
 .#{$pre} {
   position: absolute;
-  width: 0.0857rem;
-  height: 0.0857rem;
+  width: .0857rem;
+  height: .0857rem;
   background-color: #fff;
-  border: 0.0143rem solid #6965db;
-  border-radius: 0.0286rem;
+  border: .0143rem solid #6965db;
+  border-radius: .0286rem;
   user-select: none;
 }
 
 .#{$pre}-top {
   top: -0.0571rem;
-  left: calc(50% - 0.0429rem);
+  left: calc(50% - .0429rem);
   cursor: n-resize; /* 设置为向上箭头光标 */
 }
 
 .#{$pre}-bottom {
   bottom: -0.0571rem;
-  left: calc(50% - 0.0429rem);
+  left: calc(50% - .0429rem);
   cursor: s-resize; /* 设置为向下箭头光标 */
 }
 
 .#{$pre}-left {
   left: -0.0571rem;
-  top: calc(50% - 0.0429rem);
+  top: calc(50% - .0429rem);
   cursor: w-resize; /* 设置为向左箭头光标 */
 }
 
 .#{$pre}-right {
   right: -0.0571rem;
-  top: calc(50% - 0.0429rem);
+  top: calc(50% - .0429rem);
   cursor: e-resize; /* 设置为向右箭头光标 */
 }
 
