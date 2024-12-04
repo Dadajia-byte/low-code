@@ -5,6 +5,7 @@ class Component {
         this.category = config.category;
         this.key = config.key;
         this.weight = config.weight;
+        this.model = config.model;
     }
     render() {
         return null
