@@ -1,3 +1,4 @@
+import {debounce} from 'lodash'
 /**
  *
  * @param {*reactive} data 传入的data数据（就是editorStore那个，后期需要考虑二选一，现在混在一起）
@@ -101,9 +102,9 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale,offsetS
   //鼠标点击画板
   const containerMouseDown = (e) => {
     if (!editorOperatorStatus.value) {
-      onMouseDownGrab(e);
+      debounce(onMouseDownGrab(e),10);
       return;
-    }
+    } 
     e.preventDefault();
     e.stopPropagation();
     clearBlockFocus();
