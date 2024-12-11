@@ -8,10 +8,10 @@
       <el-text class="mx-1 editor-left-title" size="large">物料堆</el-text>
       <el-divider
         style="
-          margin-left: .2857rem;
+          margin-left: 0.2857rem;
           width: 90%;
-          margin-top: .2143rem;
-          margin-bottom: .0714rem;
+          margin-top: 0.2143rem;
+          margin-bottom: 0.0714rem;
         "
       />
       <el-select filterable placeholder="search sth" class="editor-left-search">
@@ -36,9 +36,9 @@
           <div class="editor-left-menu-content">
             <div
               class="editor-left-menu-content-row"
-              v-for="item in config.componentList.filter(
-                (i) => i.category.indexOf(menu.id) !== -1
-              ).sort((a,b)=>b.weight-a.weight)"
+              v-for="item in config.componentList
+                .filter((i) => i.category.indexOf(menu.id) !== -1)
+                .sort((a, b) => b.weight - a.weight)"
               :key="item.key"
             >
               <div
@@ -63,7 +63,7 @@
       >
         <el-icon
           :style="{ transform: isExpanded ? 'rotate(180deg)' : 'none' }"
-          style="font-size: .3143rem"
+          style="font-size: 0.3143rem"
         >
           <i-ep-CaretLeft />
         </el-icon>
@@ -91,6 +91,7 @@
         <!-- 产生内容区域 -->
         <div
           class="editor-container-canvas-content"
+          :class="{ 'editor-container-canvas-grab': !editorOperatorStatus }"
           ref="containerRef"
           :style="containerStyles"
           @mousedown="(e) => containerMouseDown(e)"
@@ -151,15 +152,13 @@
               <div
                 class="block-resize block-resize-left"
                 @mousedown="
-                  (e) =>
-                    onMouseDown(e, { horizontal: 'start', vertical: 'center' })
+                  (e) => onMouseDown(e, { horizontal: 'start', vertical: 'center' })
                 "
               ></div>
               <div
                 class="block-resize block-resize-right"
                 @mousedown="
-                  (e) =>
-                    onMouseDown(e, { horizontal: 'end', vertical: 'center' })
+                  (e) => onMouseDown(e, { horizontal: 'end', vertical: 'center' })
                 "
               ></div>
             </template>
@@ -173,15 +172,13 @@
               <div
                 class="block-resize block-resize-top"
                 @mousedown="
-                  (e) =>
-                    onMouseDown(e, { horizontal: 'center', vertical: 'start' })
+                  (e) => onMouseDown(e, { horizontal: 'center', vertical: 'start' })
                 "
               ></div>
               <div
                 class="block-resize block-resize-bottom"
                 @mousedown="
-                  (e) =>
-                    onMouseDown(e, { horizontal: 'center', vertical: 'end' })
+                  (e) => onMouseDown(e, { horizontal: 'center', vertical: 'end' })
                 "
               ></div>
             </template>
@@ -198,29 +195,24 @@
               <div
                 class="block-resize block-resize-top-left"
                 @mousedown="
-                  (e) =>
-                    onMouseDown(e, { horizontal: 'start', vertical: 'start' })
+                  (e) => onMouseDown(e, { horizontal: 'start', vertical: 'start' })
                 "
               ></div>
               <div
                 class="block-resize block-resize-top-right"
                 @mousedown="
-                  (e) =>
-                    onMouseDown(e, { horizontal: 'end', vertical: 'start' })
+                  (e) => onMouseDown(e, { horizontal: 'end', vertical: 'start' })
                 "
               ></div>
               <div
                 class="block-resize block-resize-bottom-left"
                 @mousedown="
-                  (e) =>
-                    onMouseDown(e, { horizontal: 'start', vertical: 'end' })
+                  (e) => onMouseDown(e, { horizontal: 'start', vertical: 'end' })
                 "
               ></div>
               <div
                 class="block-resize block-resize-bottom-right"
-                @mousedown="
-                  (e) => onMouseDown(e, { horizontal: 'end', vertical: 'end' })
-                "
+                @mousedown="(e) => onMouseDown(e, { horizontal: 'end', vertical: 'end' })"
               ></div>
             </template>
           </div>
@@ -259,6 +251,7 @@ import DropdownItem from "@/components/Dropdown/components/DropdownItem/index.vu
 import { $dialog } from "@/components/Dialog";
 import { $previewDialog } from "../../components/PreviewDialog";
 import { useEditorDataStore } from "@/store/index";
+import { watch } from "vue";
 
 const EditorDataStore = useEditorDataStore();
 // 预览时 内容不再能操作，可以点击输入内容，方便看效果
@@ -271,7 +264,11 @@ const config = inject("config");
 const containerStyles = computed(() => ({
   width: `${EditorDataStore.data.container.width}px`,
   height: `${EditorDataStore.data.container.height}px`,
-  transform: `translate(${(offsetState.value.offsetX + offsetState.value.preOffsetX) * scale.value}px, ${(offsetState.value.offsetY + offsetState.value.preOffsetY) * scale.value}px) scale(${scale.value})`,
+  transform: `translate(${
+    (offsetState.value.offsetX + offsetState.value.preOffsetX) * scale.value
+  }px, ${
+    (offsetState.value.offsetY + offsetState.value.preOffsetY) * scale.value
+  }px) scale(${scale.value})`,
 }));
 
 const containerRef = ref(null);
@@ -319,41 +316,37 @@ const containerSize = computed(() => {
 
 // 使用 watch 监听 containerSize 的变化
 watch(
-    [() => containerSize.value, () => EditorDataStore.data.container.grid],
-    () => {
-      nextTick(()=>{
-        canvas();
-      })
-    },
-    {deep: true}
+  [() => containerSize.value, () => EditorDataStore.data.container.grid],
+  () => {
+    nextTick(() => {
+      canvas();
+    });
+  },
+  { deep: true }
 );
+
+
+
 // 性能是否有点差？本质上是想要实现副作用的效果，即editorOperatorStatus变量变成false时，清除选中的节点（抓手模式不需要选中）
-watch(editorOperatorStatus, () => {
+watch(editorOperatorStatus, (newValue) => {
   if (!editorOperatorStatus.value) {
     clearBlockFocus();
   }
+  containerRef.value.style.cursor = newValue ? 'default' : 'grab';
 });
 
 // 1. 实现物料堆拖拽
-const { dragStart, dragEnd } = useMenuDragger(
-  containerRef,
-  EditorDataStore.data
-);
+const { dragStart, dragEnd } = useMenuDragger(containerRef, EditorDataStore.data);
 //画布偏移量，用于拖拽
 const offsetState = ref({
-    preOffsetX: 0,
-    preOffsetY: 0,
-    offsetX: 0,
-    offsetY: 0,
-
-  })
-
+  preOffsetX: 0,
+  preOffsetY: 0,
+  offsetX: 0,
+  offsetY: 0,
+});
 
 // 5. 实现滚轮缩放
-let{
-  handleMousewheel,
-  scale,
-} = useMouseWheel(containerRef,offsetState)
+let { handleMousewheel, scale } = useMouseWheel(containerRef, offsetState);
 
 // 2.获取焦点后即可直接拖拽
 let {
@@ -368,7 +361,7 @@ let {
   mouseDrag,
 } = useFocus(
   EditorDataStore.data,
-  editorOperatorStatus, 
+  editorOperatorStatus,
   containerRef,
   scale,
   offsetState,
@@ -596,7 +589,6 @@ onMounted(() => {
 <style scoped lang="scss">
 @import "@/styles/mixin.scss";
 .editor {
-
   width: 100%;
   height: 100%;
   position: relative;
@@ -606,41 +598,41 @@ onMounted(() => {
   &-left,
   &-right {
     position: absolute;
-    top: .4286rem;
+    top: 0.4286rem;
     bottom: 0;
     height: 100%;
     @include out-z-index;
   }
 
   &-left {
-    left: .0714rem;
-    border-radius: .2857rem;
+    left: 0.0714rem;
+    border-radius: 0.2857rem;
     width: 4.2857rem;
-    border: #e3e3e3 .0143rem solid;
+    border: #e3e3e3 0.0143rem solid;
     background-color: #fff;
     height: calc(100% - 1.4286rem);
-    box-shadow: .0714rem .0571rem .1143rem rgba(0, 0, 0, 0.15);
+    box-shadow: 0.0714rem 0.0571rem 0.1143rem rgba(0, 0, 0, 0.15);
     transition: all 0.5s;
     // overflow: hidden;
     &-title {
       display: flex;
-      margin-left: .5rem;
-      margin-top: .2857rem;
-      font-size: .3143rem;
+      margin-left: 0.5rem;
+      margin-top: 0.2857rem;
+      font-size: 0.3143rem;
     }
 
     &-search {
-      margin-left: .2857rem;
+      margin-left: 0.2857rem;
       width: 90%;
     }
 
     &-menu {
-      margin-left: .4143rem;
+      margin-left: 0.4143rem;
       width: 89%;
-      margin-top: .1429rem;
+      margin-top: 0.1429rem;
       overflow-y: auto;
       height: 80%;
-      padding-right: .0571rem;
+      padding-right: 0.0571rem;
       scrollbar-gutter: stable;
     }
 
@@ -655,8 +647,8 @@ onMounted(() => {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-top: .0714rem;
-        margin-right: .0714rem;
+        margin-top: 0.0714rem;
+        margin-right: 0.0714rem;
         // border-bottom: #e0dfff .0143rem solid;
       }
 
@@ -669,21 +661,21 @@ onMounted(() => {
         box-sizing: border-box;
         cursor: move;
         user-select: none;
-        min-height: .5714rem;
+        min-height: 0.5714rem;
         position: relative;
-        border-radius: .0714rem;
-        border: .0143rem dashed #6965db;
-        padding: 0 .0571rem;
+        border-radius: 0.0714rem;
+        border: 0.0143rem dashed #6965db;
+        padding: 0 0.0571rem;
 
         &-label {
-          font-size: .1714rem;
+          font-size: 0.1714rem;
           color: #7d7d7d;
           width: 100%;
           text-align: center;
         }
 
         &:hover {
-          border: .0143rem solid #6965db;
+          border: 0.0143rem solid #6965db;
         }
 
         &::after {
@@ -704,13 +696,13 @@ onMounted(() => {
       align-items: center;
       @include out-z-index;
       position: absolute;
-      right: .1429rem;
-      top: .2857rem;
-      border: #e3e3e3 .0143rem solid;
-      border-radius: .2143rem;
-      height: .4286rem;
-      width: .4286rem;
-      box-shadow: .0286rem .0286rem .0714rem rgba(0, 0, 0, 0.15);
+      right: 0.1429rem;
+      top: 0.2857rem;
+      border: #e3e3e3 0.0143rem solid;
+      border-radius: 0.2143rem;
+      height: 0.4286rem;
+      width: 0.4286rem;
+      box-shadow: 0.0286rem 0.0286rem 0.0714rem rgba(0, 0, 0, 0.15);
       background-color: #ffffff;
       transition: transform 0.8s;
       cursor: pointer;
@@ -727,25 +719,29 @@ onMounted(() => {
   }
 
   &-container {
-    padding: .5714rem 2.8571rem 0;
+    padding: 0.5714rem 2.8571rem 0;
     height: 95%;
-    margin-bottom: .5714rem;
+    margin-bottom: 0.5714rem;
     box-sizing: border-box;
-    border: #e3e3e3 .0143rem solid;
-    
+    border: #e3e3e3 0.0143rem solid;
+
     &-canvas {
       height: 100%;
       overflow: scroll;
-      border-radius: .2857rem;      
-      box-shadow: .0714rem .0714rem .1429rem rgba(0,0,0,0.2);
+      border-radius: 0.2857rem;
+      box-shadow: 0.0714rem 0.0714rem 0.1429rem rgba(0, 0, 0, 0.2);
       background-color: #fff;
+
       &-content {
         background-color: #fff;
-        margin: .5714rem auto;
-        border: .0143rem #6965db solid;
+        margin: 0.5714rem auto;
+        border: 0.0143rem #6965db solid;
         // background-color: #f1f1f1;
         position: relative;
-      
+        cursor: default;
+      }
+      &-grab {
+        cursor: grab;
       }
     }
   }
@@ -771,10 +767,10 @@ onMounted(() => {
     position: absolute;
     top: -0.0571rem;
     left: -0.0571rem;
-    width: calc(100% + .0857rem);
-    height: calc(100% + .0857rem);
-    border-radius: .0286rem;
-    border: .0143rem solid #6965db;
+    width: calc(100% + 0.0857rem);
+    height: calc(100% + 0.0857rem);
+    border-radius: 0.0286rem;
+    border: 0.0143rem solid #6965db;
   }
 }
 
@@ -782,7 +778,7 @@ onMounted(() => {
   position: absolute;
   top: 0;
   bottom: 0;
-  border-left: .0143rem dashed #6965db;
+  border-left: 0.0143rem dashed #6965db;
   @include modal-z-index;
 }
 
@@ -790,13 +786,13 @@ onMounted(() => {
   position: absolute;
   left: 0;
   right: 0;
-  border-top: .0143rem dashed #6965db;
+  border-top: 0.0143rem dashed #6965db;
   @include modal-z-index;
 }
 
 .selectionBounds {
   position: absolute;
-  border: #6965db dashed .0143rem;
+  border: #6965db dashed 0.0143rem;
   @include modal-z-index;
 }
 
@@ -810,35 +806,35 @@ onMounted(() => {
 $pre: "block-resize";
 .#{$pre} {
   position: absolute;
-  width: .0857rem;
-  height: .0857rem;
+  width: 0.0857rem;
+  height: 0.0857rem;
   background-color: #fff;
-  border: .0143rem solid #6965db;
-  border-radius: .0286rem;
+  border: 0.0143rem solid #6965db;
+  border-radius: 0.0286rem;
   user-select: none;
 }
 
 .#{$pre}-top {
   top: -0.0571rem;
-  left: calc(50% - .0429rem);
+  left: calc(50% - 0.0429rem);
   cursor: n-resize; /* 设置为向上箭头光标 */
 }
 
 .#{$pre}-bottom {
   bottom: -0.0571rem;
-  left: calc(50% - .0429rem);
+  left: calc(50% - 0.0429rem);
   cursor: s-resize; /* 设置为向下箭头光标 */
 }
 
 .#{$pre}-left {
   left: -0.0571rem;
-  top: calc(50% - .0429rem);
+  top: calc(50% - 0.0429rem);
   cursor: w-resize; /* 设置为向左箭头光标 */
 }
 
 .#{$pre}-right {
   right: -0.0571rem;
-  top: calc(50% - .0429rem);
+  top: calc(50% - 0.0429rem);
   cursor: e-resize; /* 设置为向右箭头光标 */
 }
 

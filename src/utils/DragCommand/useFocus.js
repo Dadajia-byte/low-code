@@ -1,4 +1,4 @@
-import {debounce} from 'lodash'
+import {throttle} from 'lodash'
 /**
  *
  * @param {*reactive} data 传入的data数据（就是editorStore那个，后期需要考虑二选一，现在混在一起）
@@ -102,7 +102,7 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale,offsetS
   //鼠标点击画板
   const containerMouseDown = (e) => {
     if (!editorOperatorStatus.value) {
-      debounce(onMouseDownGrab(e),10);
+      onMouseDownGrab(e)
       return;
     } 
     e.preventDefault();
@@ -123,11 +123,12 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale,offsetS
 
   //鼠标抓手移动点击
   const onMouseDownGrab = (e) => {
-
+    console.log(111);
+    
     e.preventDefault();
     e.stopPropagation();
     clearBlockFocus();
-
+    containerRef.value.style.cursor = "grabbing";
     const { x, y } = getCorrectedMousePosition(e);
 
     mouseDrag.value.startX = x;
@@ -158,8 +159,9 @@ export function useFocus(data, editorOperatorStatus, containerRef, scale,offsetS
     offsetState.value.preOffsetY += finalOffsetY;
     offsetState.value.offsetX = 0;
     offsetState.value.offsetY = 0;  
-
-  
+    
+    containerRef.value.style.cursor = 'grab';
+    
     document.removeEventListener('mousemove', onMouseMoveGrab);
     document.removeEventListener('mouseup', onMouseUpGrab);
   };
